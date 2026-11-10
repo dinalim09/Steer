@@ -1725,8 +1725,8 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   function goHome(){ close(); const top = $('p13'); if (top) top.click(); }
   $('rsHome').addEventListener('click', goHome);
   $('rsHome').addEventListener('pointerup', e => { if (e.pointerType !== 'mouse') goHome(); });
-  $('rsNav').addEventListener('click', () => show('land'));
-  $('rsNav').addEventListener('pointerup', e => { if (e.pointerType !== 'mouse') show('land'); });
+  $('rsNav').addEventListener('click', () => location.assign('./research.html'));
+  $('rsNav').addEventListener('pointerup', e => { if (e.pointerType !== 'mouse') location.assign('./research.html'); });
 
   document.addEventListener('keydown', e => {
     if (!isOpen()) return;
@@ -1746,7 +1746,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   $('rsNav').addEventListener('click', poke);
 
   const h = (location.hash || '').slice(1).toUpperCase();
-  if (h === 'RESEARCH') show('land'); else if (P[h]) show(h);
+  if (h === 'RESEARCH') location.replace('./research.html'); else if (P[h]) show(h);
 })();
 </script>
 <script>
