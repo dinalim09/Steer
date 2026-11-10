@@ -1,0 +1,41 @@
+name: Connect coded Research to exhibition
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/connect-research.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  patch-research-navigation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Wire exhibition Research button to HTML version
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("index.html")
+          s = p.read_text(encoding="utf-8")
+          edits = [
+              ("$('rsNav').addEventListener('click', () => show('land'));", "$('rsNav').addEventListener('click', () => location.assign('./research.html'));"),
+              ("$('rsNav').addEventListener('pointerup', e => { if (e.pointerType !== 'mouse') show('land'); });", "$('rsNav').addEventListener('pointerup', e => { if (e.pointerType !== 'mouse') location.assign('./research.html'); });"),
+              ("if (h === 'RESEARCH') show('land'); else if (P[h]) show(h);", "if (h === 'RESEARCH') location.replace('./research.html'); else if (P[h]) show(h);"),
+          ]
+          for original, updated in edits:
+              if original in s:
+                  s = s.replace(original, updated, 1)
+              elif updated not in s:
+                  raise SystemExit(f"Target not found: {original}")
+          p.write_text(s, encoding="utf-8")
+          PY
+      - name: Commit only if changed
+        run: |
+          git add index.html
+          if ! git diff --cached --quiet; then
+            git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'fix: open coded research from exhibition nav'
+            git push
+          fi
