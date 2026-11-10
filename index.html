@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body class="bare">
 
 <!-- Google Analytics 4: put the measurement ID (G-…) below; until then nothing is sent -->
 <script>
@@ -297,7 +297,7 @@ a,button,[role=button],label,select,.pill,#screen:active,body.grabbing,body.grab
 <style id="rsxStyle">
 /* ===== Research (Figma 2038:8 조합안) — overlay inside the 1366×1024 #screen; opened from the top nav "Research" ===== */
 /* frameless mode: the floating toolbar strip spans the top edge — let taps fall through to the nav except on the toggle itself */
-body.bare .bar{pointer-events:none}
+body.bare .bar{display:none!important}
 body.bare .bar>*{pointer-events:auto}
 #rsHome{position:absolute;left:18px;top:12px;width:100px;height:76px;z-index:75;border:0;padding:0;margin:0;background:transparent;border-radius:16px;-webkit-tap-highlight-color:transparent}
 #rsHome:focus-visible{outline:3px solid #87E6FF;outline-offset:2px}
@@ -486,7 +486,7 @@ body.bare .bar>*{pointer-events:auto}
   const dropC = document.getElementById('drops'), ctx = dropC.getContext('2d');
   const hint = document.getElementById('hint');
   const BEZEL = 34;
-  let framed = true, version = 2, scale = 1;
+  let framed = false, version = 2, scale = 1;
   // quality tiers, stepped down automatically when frames run long
   const Q = [{sea:.35, ocean:.45, step:24, emit:90, ripples:0, dof:false}, {sea:.4, ocean:.65, step:20, emit:160, ripples:40, dof:true}, {sea:.55, ocean:.85, step:16, emit:260, ripples:90, dof:true}];
   let q = 2;
