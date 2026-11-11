@@ -382,6 +382,21 @@ body.bare .bar>*{pointer-events:auto}
 #rsx .htm .stl{font:500 13px/16px 'Noto Sans KR',var(--font-ui)}
 #rsx .htm .vsl{font:500 13px/28px 'Noto Sans KR',var(--font-ui);color:#767676}
 #rsx .htm .xbr{position:absolute;border-radius:14px}
+/* R4 stacked cards (redesign) */
+#rsx .htm .r4c{border-radius:20px;overflow:hidden;color:#fff;background:linear-gradient(150deg,#94C5C5,#536B6E 55%,#242A31)}
+#rsx .htm .r4c.m{background:linear-gradient(140deg,#ABC9D7,#63757D 55%,#2F313B)}
+#rsx .htm .r4c:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,rgba(0,0,0,.62))}
+#rsx .htm .r4c .cap{color:rgba(255,255,255,.82);z-index:1}
+#rsx .htm .r4c .cw{position:absolute;left:28px;bottom:26px;z-index:1}
+#rsx .htm .r4c strong{display:block;font:700 24px/33px 'Noto Sans KR',var(--font-ui);letter-spacing:-.5px;margin:0 0 10px}
+#rsx .htm .r4c small{font:400 14px/18px 'Noto Sans KR',var(--font-ui);color:rgba(255,255,255,.85)}
+/* R5 place-attachment diagram (redesign) */
+#rsx .htm .dgm{background:#F2F2F2;border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:36px;padding:40px 36px}
+#rsx .htm .dgm .row{display:flex;gap:18px;width:100%}
+#rsx .htm .dgm .nd{border:1px solid #333;border-radius:8px;background:#fff;padding:16px 18px;flex:1;text-align:center;font:500 15px/20px 'Noto Sans KR',var(--font-ui)}
+#rsx .htm .dgm .nd.rs{background:#87E6FF;border:0;flex:0 0 auto;width:200px}
+#rsx .htm .dgm .ln{width:68%;height:1px;background:#777;position:relative;margin:-18px 0}
+#rsx .htm .dgm .ln:after{content:"";position:absolute;left:50%;top:0;width:1px;height:19px;background:#777}
 /* R4 carousel */
 #rsx .htm .car{position:absolute;left:96px;top:384px;right:0;height:470px;display:flex;gap:16px;overflow-x:auto;overflow-y:hidden;padding-right:40px;touch-action:pan-x;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 #rsx .htm .car::-webkit-scrollbar{display:none}
@@ -1581,7 +1596,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   const TOG_L = {x:40,y:384,w:575,h:62}, TOG_R = {x:703,y:244,w:575,h:62};
   const P = {
     land:{hits:[{x:40,y:262,w:633,h:658,go:'R1',label:'01 Desk Research 열기'},{x:693,y:262,w:633,h:658,go:'I1',label:'02 Interview 열기'}]},
-    R1:{tog:[TOG_L,'dR1']}, R2:{tog:[TOG_L,'dR2']}, R3:{tog:[TOG_L,'dR3']}, R4:{tog:[TOG_R,'dR4']}, R5:{tog:[TOG_L,'dR5']},
+    R1:{tog:[TOG_L,'dR1']}, R2:{tog:[TOG_L,'dR2']}, R3:{tog:[TOG_L,'dR3']}, R4:{tog:[TOG_L,'dR4']}, R5:{tog:[TOG_L,'dR5']},
     R6:{hits:[{x:76,y:530,w:177,h:52,go:'I1',label:'인터뷰 결과 보기'}]},
     I1:{tog:[TOG_R,'dI1']},
     I2:{hits:'ABCDEF'.split('').map((L,i) => ({x:600+246*(i%3),y:120+406*Math.floor(i/3),w:234,h:394,card:'g'+L,label:'그룹 '+L+' 대표 목소리'}))},
@@ -1667,35 +1682,19 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     +   '<span class="in stl" style="left:790px;top:214px">방문객 증가</span>'
     +   '<span class="in stl" style="left:962px;top:214px">2026.4 방문객</span>'
     +   '<span class="in stl" style="left:1102px;top:214px">점괘 실험 참여자</span></div>',
-  R4: '<div class="el" data-g="h" style="left:40px;top:142px;width:600px;height:21px"><span class="eb">인문학 · 행동</span></div>'
-    + '<div class="el" data-g="h" style="left:40px;top:178px;width:620px;height:116px"><span class="h2">행동에 따라<br>달라질 수 있는 운</span></div>'
-    + '<p class="el it" data-g="d" style="left:703px;top:190px;width:500px;margin:0">순자와 와이즈먼에게서 ‘오늘 내가 고를 수 있는 일’을 읽었습니다.</p>'
-    + '<div class="el tgline" data-g="d" style="left:703px;top:246px;width:575px"><span>순자 「천론」 · 와이즈먼 · 기회 포착</span>' + CHEVD + '</div>'
-    + '<button type="button" class="cbt cprev" style="left:1226px" aria-label="이전 카드"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#0A0A0A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.8 2.5 4.3 7l4.5 4.5"/></svg></button>'
-    + '<button type="button" class="cbt cnext" style="left:1276px" aria-label="다음 카드"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#0A0A0A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5.2 2.5 9.7 7l-4.5 4.5"/></svg></button>'
-    + '<div class="car" aria-label="연구 관점 카드">'
-    +   '<article class="sl" data-g="v"><div class="simg"><span class="in xpl sky sm" style="left:14px;top:14px;height:28px">자연의 질서 ↔ 사람의 일</span><span class="cap" style="left:16px;top:52px;right:16px">사진 · 고전 서책 · 「순자」 펼친 면</span></div><p class="ssm">고전 · 순자</p><p class="stt">→ 「천론」 — 하늘의 일과 사람의 일을 나누다</p></article>'
-    +   '<article class="sl" data-g="v"><div class="simg"><span class="in xpl bk sm" style="left:14px;top:14px;height:28px">기회 포착</span><span class="cap" style="left:16px;top:52px;right:16px">사진 · 책 사진 (직접 촬영)</span></div><p class="ssm">2003 · Richard Wiseman</p><p class="stt">→ The Luck Factor — 운이 좋은 사람의 행동</p></article>'
-    +   '<article class="sl" data-g="v"><div class="simg"><span class="cap" style="left:16px;top:52px;right:16px">사진 · 산책길에서 우연히 발견한 장면</span></div><p class="ssm">연구 관점 01</p><p class="stt">→ 알아차리기 — 우연한 기회를 발견하다</p></article>'
-    +   '<article class="sl" data-g="v"><div class="simg"><span class="cap" style="left:16px;top:52px;right:16px">사진 · 갈림길에서 방향을 고르는 장면</span></div><p class="ssm">연구 관점 02</p><p class="stt">→ 선택하기 · 움직이기</p></article></div>'
-    + '<div class="dots" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></div>',
-  R5: col('공간 경험', '같은 장소도', '무엇을 하느냐에 따라 다른 경험', '장소의 속성뿐 아니라, 그곳에서 무엇을 하는지가 경험을 만듭니다.', '장소 애착 · 의례와 공동체 · 일반화 주의')
-    + '<div class="el gph" data-g="v" style="left:830px;top:120px;width:496px;height:496px;border-radius:24px"><span class="cap" style="left:16px;top:52px;right:16px">사진 · 동네 공원 · 산책로 (서울숲 등)</span></div>'
-    + '<span class="el xpl sky" data-g="k" style="left:800px;top:170px;height:33px">● 보기</span>'
-    + '<span class="el xpl" data-g="k" style="left:1220px;top:260px;height:35px">● 걷기</span>'
-    + '<span class="el xpl" data-g="k" style="left:1190px;top:440px;height:35px">● 머무르기</span>'
-    + '<span class="el xpl" data-g="k" style="left:860px;top:560px;height:35px">● 기록하기</span>'
-    + '<div class="el acc" data-g="v" style="left:40px;top:640px;width:1286px;height:280px">'
-    +   '<span class="in xpl sm" style="left:28px;top:26px;height:26px">Mazumdar &amp; Mazumdar(2004)</span>'
-    +   '<h3 class="in acch" style="left:28px;top:62px;width:400px;margin:0">장소 애착은<br>그곳에서 한 행동과 함께 생긴다</h3>'
-    +   '<div class="in fact" style="left:28px;top:156px;width:360px;height:100px"><b>주의</b><p>종교적 장소 연구 — 일상 산책의 효과로 일반화하지 않음</p></div>'
-    +   '<div class="in gph" style="left:410px;top:26px;width:190px;height:230px"><span class="cap" style="left:16px;top:52px;right:16px">사진 · 벤치에 머무는 사람</span></div>'
-    +   '<div class="in gph" style="left:612px;top:26px;width:190px;height:230px"><span class="cap" style="left:16px;top:52px;right:16px">사진 · 사진으로 기록하는 손</span></div>'
-    +   '<span class="in xpl" style="left:840px;top:40px;height:33px">장소</span>'
-    +   '<span class="in xpl" style="left:840px;top:90px;height:33px">의례 · 행동</span>'
-    +   '<span class="in xpl" style="left:840px;top:140px;height:33px">함께한 사람</span>'
-    +   '<svg class="in" style="left:985px;top:50px" width="70" height="120" viewBox="0 0 70 120" fill="none" stroke="#0A0A0A" stroke-width="1.5" aria-hidden="true"><path d="M5 8 55 80M5 69 55 80M5 108 55 80"/></svg>'
-    +   '<span class="in xpl bk" style="left:1050px;top:112px;height:36px">장소 애착</span></div>',
+  R4: col('인문학 · 행동', '행동에 따라', '달라질 수 있는 운', '순자는 주어진 조건 속 실천을, 와이즈먼은 우연한 기회를 만들고 알아차리는 행동을 강조합니다.', '순자 「천론」 · 와이즈먼의 기회 포착')
+    + '<div class="el r4c" data-g="v" style="left:703px;top:120px;width:623px;height:390px"><span class="cap" style="left:22px;top:20px">사진 · 고전 서책 · 「순자」 펼친 면</span><div class="cw"><strong>상황을 바꾸지 못해도<br>태도는 선택할 수 있다</strong><small>고전 사상 · 순자 「천론」</small></div></div>'
+    + '<div class="el r4c m" data-g="v" style="left:703px;top:530px;width:623px;height:390px"><span class="cap" style="left:22px;top:20px">사진 · 책 사진 (직접 촬영)</span><div class="cw"><strong>행동으로<br>기회를 늘릴 수 있다</strong><small>현대 심리학 · Richard Wiseman</small></div></div>',
+  R5: col('공간 경험', '같은 장소에서도', '행동에 따라 달라지는 경험', '장소의 의미를 이해하려면 공간의 특성뿐 아니라, 그곳에서 한 행동과 함께한 관계를 살펴봐야 합니다.', '공간 경험의 연구 배경')
+    + '<div class="el gph" data-g="v" style="left:703px;top:120px;width:623px;height:420px;border-radius:20px"><span class="cap" style="left:22px;top:20px">사진 · 동네 공원 · 산책로 (서울숲 등)</span></div>'
+    + '<span class="el xpl sky" data-g="k" style="left:743px;top:273px;height:34px">● 보기</span>'
+    + '<span class="el xpl" data-g="k" style="left:1097px;top:336px;height:34px">● 걷기</span>'
+    + '<span class="el xpl" data-g="k" style="left:813px;top:370px;height:34px">● 머무르기</span>'
+    + '<span class="el xpl" data-g="k" style="left:1075px;top:431px;height:34px">● 기록하기</span>'
+    + '<div class="el dgm" data-g="v" style="left:703px;top:560px;width:623px;height:360px">'
+    +   '<div class="row"><div class="nd">장소</div><div class="nd">의례 · 행동</div><div class="nd">함께한 사람</div></div>'
+    +   '<div class="ln"></div>'
+    +   '<div class="nd rs">장소 애착</div></div>',
   R6: '<div class="el dkp" data-g="v">'
     +   '<span class="in dkpill" style="left:36px;top:36px">● 데스크리서치 → 인터뷰</span>'
     +   '<span class="in dkcap" style="left:1060px;top:36px">사진 · 인터뷰 가이드 · 질문지</span></div>'
@@ -1731,13 +1730,6 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
       host.appendChild(sv); drawNum(n, fin); return n;
     });
     pg._lay = {parts, nums};
-    if (id === 'R4'){
-      const car = pg.querySelector('.car'), dots = [...pg.querySelectorAll('.dots i')];
-      ['pointerdown','pointermove','pointerup','touchstart','touchmove','touchend'].forEach(t => car.addEventListener(t, e => e.stopPropagation(), {passive:true}));
-      car.addEventListener('scroll', () => { const k = Math.max(0, Math.min(3, Math.round(car.scrollLeft/396))); dots.forEach((d, i) => d.classList.toggle('on', i === k)); }, {passive:true});
-      pg.querySelector('.cprev').addEventListener('click', () => car.scrollBy({left:-396, behavior:'smooth'}));
-      pg.querySelector('.cnext').addEventListener('click', () => car.scrollBy({left:396, behavior:'smooth'}));
-    }
   }
   function buildLayers(pg, id, base){
     const L = LAY[id]; base.src = BL(L.b);
@@ -1843,8 +1835,8 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     if (window.steerTrack) steerTrack('research_page', {page_id:id});
   }
   // ---- Desk Research 더보기: opens in place, under the line, like a Notion toggle (interview pages keep their drawers) ----
-  const TG = {"R1":{"b":"명리학은 태어난 때로 정해지는 사주를 命으로, 시간에 따라 바뀌는 흐름을 運으로 나누어 읽습니다. 運에는 ‘옮기다·움직이다’라는 뜻도 있습니다. Steer는 이 글자에서, 주어진 바탕 위에서 오늘의 방향은 스스로 고른다는 태도를 가져왔습니다.","c":[["命 · 명 · 목숨 / 명령","태어난 때로 정해지는 사주 원국. 바꿀 수 없는 나의 바탕."],["運 · 운 · 옮기다 / 움직이다","대운·세운처럼 시간에 따라 바뀌는 흐름. Steer는 여기서 ‘움직임’을 읽었다."]],"s":""},"R2":{"b":"한국갤럽의 2026년 조사에서 점·사주를 믿는다는 응답은 40%로, 1991년 수준으로 돌아왔습니다. 20대는 믿는 비율이 27%인데 AI로 운세·사주를 본 경험은 46%였습니다. 믿지 않으면서도 본 20대가 적어도 19%는 된다는 뜻입니다. 사람들은 믿어서라기보다, 불확실한 순간에 기대어 볼 기준이 필요해 운세를 찾고 있었습니다.","c":[["수치","점·사주 신뢰 · 1991 40% → 2004 34% → 2009 31% → 2026 40%\n운명관 · 타고나는 것 20% · 노력/능력 37% · 반반 41%\n20대 · 점·사주 신뢰 27% · AI 운세·사주 이용 경험 46%"],["근거","염은영(2022) · 불안이 일상이 된 사회에서 점복이 불안을 다루는 방식으로 쓰인다는 점을 심층면접으로 분석.\nCase 외(2004) · 불확실성이 클수록 미신적 전략을 택하는 경향을 실험으로 확인."]],"s":"출처 · 한국갤럽(2026.4.30 발표 · 3.13–26 조사), 전국(제주 제외) 만 19세 이상 1,507명 · 20대 수치는 머니투데이(2026.05.01) 보도 기준 · 신뢰·운명관·AI 경험은 서로 다른 문항"},"R3":{"b":"‘운이 안 풀릴 때는 관악산 연주대에 가라’는 방송 발언 뒤로, 관악산에는 ‘기 받으러 왔다’는 방문이 이어졌습니다. 서울등산관광센터 관악산점의 2026년 4월 방문객은 전년 같은 달보다 41.2% 늘었습니다. 운에 대한 관심은 읽는 데서 그치지 않고, 직접 찾아가는 경험으로 번지고 있었습니다.","c":[["수치","서울등산관광센터 관악산점 방문객 · 3,909명 → 5,521명 (2025.4 → 2026.4, +41.2%)\n센터 방문객이며 산 전체 입산객 수나 개운 목적 방문자 수가 아님."],["근거","Tan 외(2022) · 3개 실험 총 886명. 긍정적인 점괘를 받은 남성이 재무 위험을 더 감수했고, 점을 믿지 않는 참여자에게서도 효과가 보고됐다. 일상 행동이나 기분 개선을 검증한 연구는 아님."]],"s":"출처 · 서울신문(2026.05.21), 서울관광재단 집계 인용 · Tan, van Prooijen & van Lange(2022), PLOS ONE"},"R4":{"b":"순자 「천론」은 자연의 질서와 인간이 할 일을 구분하고, 주어진 조건을 활용하는 태도를 다룹니다. 와이즈먼은 자신을 운이 좋다고 여기는 사람들의 기회 포착과 행동 방식을 탐구했습니다. 서로 다른 맥락의 두 관점에서 우리는 ‘오늘 내가 선택할 수 있는 일’이라는 질문을 얻었습니다.","c":[["연구 관점 요약","우연한 기회를 만들고 알아차리는 방식에 주목하기.\n알아차리기 → 선택하기 → 움직이기"],["근거","Richard Wiseman · Luck 연구 및 The Luck Factor(2003)를 참고한 요약. 직접 인용이나 개운 효과의 검증이 아님."]],"s":"출처 · 순자 「천론(天論)」 · Richard Wiseman(2003), The Luck Factor"},"R5":{"b":"Mazumdar와 Mazumdar(2004)는 종교적 장소에서 의례와 공동체 경험이 장소 애착과 연결되는 방식을 다룹니다. 우리는 이 관점에서 장소의 속성뿐 아니라 그곳에서 하는 행동에도 주목했습니다. 일상 탐험에서도 무엇을 할지 구체적으로 떠올릴 수 있는지는 인터뷰로 확인하고자 했습니다.","c":[["근거","Mazumdar & Mazumdar(2004) · Religion and place attachment: A study of sacred places. 종교적 장소·의례·공동체와 장소 애착을 다룬 연구."],["주의","종교적 공간 경험을 다룬 연구를 일상 산책의 효과로 일반화하지 않는다. Steer는 추천 구성에 관한 관점으로 참고했다."]],"s":"출처 · Mazumdar & Mazumdar(2004) · Religion and place attachment: A study of sacred places"}};
-  const TGL = {R1:'命과 運 · ‘움직이다’의 뜻 · 명리학', R2:'한국갤럽 2026 · 불안과 점 · 미신적 전략', R3:'‘기 받으러’ 방문 · 방문객 집계 · 점괘와 위험 감수', R4:'순자 「천론」 · 와이즈먼 · 기회 포착', R5:'장소 애착 · 의례와 공동체 · 일반화 주의'};
+  const TG = {"R1":{"b":"명리학은 태어난 때로 정해지는 사주를 命으로, 시간에 따라 바뀌는 흐름을 運으로 나누어 읽습니다. 運에는 ‘옮기다·움직이다’라는 뜻도 있습니다. Steer는 이 글자에서, 주어진 바탕 위에서 오늘의 방향은 스스로 고른다는 태도를 가져왔습니다.","c":[["命 · 명 · 목숨 / 명령","태어난 때로 정해지는 사주 원국. 바꿀 수 없는 나의 바탕."],["運 · 운 · 옮기다 / 움직이다","대운·세운처럼 시간에 따라 바뀌는 흐름. Steer는 여기서 ‘움직임’을 읽었다."]],"s":""},"R2":{"b":"한국갤럽의 2026년 조사에서 점·사주를 믿는다는 응답은 40%로, 1991년 수준으로 돌아왔습니다. 20대는 믿는 비율이 27%인데 AI로 운세·사주를 본 경험은 46%였습니다. 믿지 않으면서도 본 20대가 적어도 19%는 된다는 뜻입니다. 사람들은 믿어서라기보다, 불확실한 순간에 기대어 볼 기준이 필요해 운세를 찾고 있었습니다.","c":[["수치","점·사주 신뢰 · 1991 40% → 2004 34% → 2009 31% → 2026 40%\n운명관 · 타고나는 것 20% · 노력/능력 37% · 반반 41%\n20대 · 점·사주 신뢰 27% · AI 운세·사주 이용 경험 46%"],["근거","염은영(2022) · 불안이 일상이 된 사회에서 점복이 불안을 다루는 방식으로 쓰인다는 점을 심층면접으로 분석.\nCase 외(2004) · 불확실성이 클수록 미신적 전략을 택하는 경향을 실험으로 확인."]],"s":"출처 · 한국갤럽(2026.4.30 발표 · 3.13–26 조사), 전국(제주 제외) 만 19세 이상 1,507명 · 20대 수치는 머니투데이(2026.05.01) 보도 기준 · 신뢰·운명관·AI 경험은 서로 다른 문항"},"R3":{"b":"‘운이 안 풀릴 때는 관악산 연주대에 가라’는 방송 발언 뒤로, 관악산에는 ‘기 받으러 왔다’는 방문이 이어졌습니다. 서울등산관광센터 관악산점의 2026년 4월 방문객은 전년 같은 달보다 41.2% 늘었습니다. 운에 대한 관심은 읽는 데서 그치지 않고, 직접 찾아가는 경험으로 번지고 있었습니다.","c":[["수치","서울등산관광센터 관악산점 방문객 · 3,909명 → 5,521명 (2025.4 → 2026.4, +41.2%)\n센터 방문객이며 산 전체 입산객 수나 개운 목적 방문자 수가 아님."],["근거","Tan 외(2022) · 3개 실험 총 886명. 긍정적인 점괘를 받은 남성이 재무 위험을 더 감수했고, 점을 믿지 않는 참여자에게서도 효과가 보고됐다. 일상 행동이나 기분 개선을 검증한 연구는 아님."]],"s":"출처 · 서울신문(2026.05.21), 서울관광재단 집계 인용 · Tan, van Prooijen & van Lange(2022), PLOS ONE"},"R4":{"b":"운을 고정된 결과로만 이해하지 않고, 주어진 조건 속에서 사람이 할 수 있는 행동을 살펴보기 위해 두 관점을 함께 참고했습니다.","c":[["순자 「천론」 · 자연과 인간의 역할","자연의 질서는 사람의 바람과 별개로 이어진다고 보며, 하늘의 일과 사람이 해야 할 일을 구분합니다. 주어진 조건에 대한 인간의 대응과 실천에 초점을 둡니다."],["와이즈먼 · 우연한 기회의 확대","스스로 운이 좋다고 여기는 사람들의 행동과 습관을 살폈습니다. 네 가지 원리 중 하나는 우연한 기회를 만들고, 알아차리고, 활용하는 것입니다."]],"s":"출처 · 순자 「천론」 / Chinese Text Project · Richard Wiseman, The Luck Factor(2003)"},"R5":{"b":"이 연구는 종교적 장소에서 장소 애착이 형성되는 방식을 다룹니다. 공간의 특성뿐 아니라 의례, 사물, 이야기, 방문을 통해 장소의 의미를 배우고 공유하는 과정에 주목합니다.","c":[["일상 경험에 참고한 관점","장소의 속성과 함께, 그곳에서 하는 행동과 사람 사이의 관계를 살펴봤습니다. 화면의 활동은 일상에 적용해 본 예시이며, 산책이나 기록의 효과를 검증한 결과는 아닙니다."]],"s":"출처 · Mazumdar & Mazumdar(2004), Religion and place attachment: A study of sacred places, Journal of Environmental Psychology, 24(3), 385–397."}};
+  const TGL = {R1:'命과 運 · ‘움직이다’의 뜻 · 명리학', R2:'한국갤럽 2026 · 불안과 점 · 미신적 전략', R3:'‘기 받으러’ 방문 · 방문객 집계 · 점괘와 위험 감수', R4:'순자 「천론」 · 와이즈먼의 기회 포착', R5:'공간 경험의 연구 배경'};
   function tgBuild(id, r){
     const d = TG[id], el = document.createElement('div'); el.className = 'rs-tg';
     Object.assign(el.style, {left:r.x + 'px', top:(r.y + 2) + 'px', width:r.w + 'px'}); if (r.x < 100) el.classList.add('L');
