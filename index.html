@@ -1682,7 +1682,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   };
   const HTM = {
   land: '<div class="el" data-g="h" style="left:40px;top:122px;width:280px;height:95px"><img src="assets/rs3-ri0-word.webp" alt="Research" style="width:270px;display:block"></div>'
-    + '<p class="el ridesc" data-g="h" style="left:802px;top:122px;width:524px;margin:0">운세에 대한 관심이 어디까지 이어지는지, 데스크 리서치와 인터뷰 두 갈래로 살펴봤습니다.</p>'
+    + '<p class="el ridesc" data-g="h" style="left:802px;top:122px;width:524px;margin:0"><span style="display:inline-block">운세에 대한 관심이 어디까지 이어지는지, 데스크 리서치와 인터뷰 두 갈래로 살펴봤습니다.</span></p>'
     + '<div class="el brch" data-g="v" style="left:40px;top:262px;width:633px;height:640px"><img class="in" src="assets/rs3-ri0-t1.webp" alt="01 Desk Research" style="left:43px;top:30px;width:278px"><p class="bd">운을 읽는 관심에서,<br>오늘의 움직임으로.</p><span class="bub"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11h12M12 5l6 6-6 6"/></svg></span></div>'
     + '<div class="el brch iv" data-g="v" style="left:693px;top:262px;width:633px;height:640px"><img class="in" src="assets/rs3-ri0-t2.webp" alt="02 Interview" style="left:46px;top:30px;width:213px"><p class="bd">작은 조언은 따라 해도<br>장소 방문은 동기가 필요</p><span class="bub"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#0A0A0A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11h12M12 5l6 6-6 6"/></svg></span></div>',
   R1: col('스티어가 바라본 운', '정해진 명,', '움직이는 ‘운’', '타고난 바탕(命) 위에서, 움직이는 흐름(運)의 방향은 스스로 고를 수 있습니다.', '命과 運 · ‘움직이다’의 뜻 · 명리학')
@@ -1772,7 +1772,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     const tok = ++rmTok;
     if (RM.matches){ L.nums.forEach(n => drawNum(n, n.f(n.to))); return; }
     const by = g => L.parts.filter(p => p.g === g);
-    by('h').forEach((p, i) => { p.box.style.overflow = 'hidden'; anim(p.im, [{transform:'translateY(105%)'}, {transform:'none'}], {duration:720, delay:60 + i*90, easing:EZ}); });
+    by('h').forEach((p, i) => { if (!p.im) return; p.box.style.overflow = 'hidden'; anim(p.im, [{transform:'translateY(105%)'}, {transform:'none'}], {duration:720, delay:60 + i*90, easing:EZ}); });
     by('d').forEach((p, i) => anim(p.box, [{opacity:0, transform:'translateY(16px)'}, {opacity:1, transform:'none'}], {duration:560, delay:300 + i*80, easing:EZ}));
     const vs = by('v'); let t0 = 420;
     vs.forEach((p, i) => anim(p.box, [{opacity:0, transform:`translate(${(dir*46).toFixed(0)}px, 38px) rotate(${(dir*2.4).toFixed(1)}deg)`}, {opacity:1, transform:'none'}],
