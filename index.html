@@ -16,6 +16,7 @@ window.steerTrack = (name, params) => { try { gtag('event', name, params || {});
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Barlow+Condensed:wght@600&display=swap">
+<link rel="stylesheet" href="assets/fonts/pretendard/pretendard.css">
 <style>
 /* Layout: simulator chrome (version switch + frame toggle) above an iPad bezel; the 1366×1024 stage
    inside is scaled to fit. The stage is a fixed visual world (white → sky water); only the chrome follows the theme. */
@@ -414,6 +415,68 @@ body.bare .bar>*{pointer-events:auto}
 #rsx .htm .qh{font:700 72px/86px 'Noto Sans KR',var(--font-ui);letter-spacing:-2.16px;color:#0A0A0A}
 #rsx .htm .qp{font:400 18px/29px 'Noto Sans KR',var(--font-ui);text-align:center;color:#0A0A0A}
 #rsx .htm .qcta{display:flex;align-items:center;justify-content:center;background:#0A0A0A;color:#fff;border-radius:28px;font:600 16px/1 'Noto Sans KR',var(--font-ui)}
+/* ===== 2127:12688 · Pretendard + photo pages + R3E/R4/R5/R6 ===== */
+#rsx .htm .eb,#rsx .htm .h2,#rsx .htm .it,#rsx .htm .tgline span,#rsx .htm .ridesc,#rsx .htm .brch .bd,#rsx .htm .qh,#rsx .htm .qp,#rsx .htm .qcta,#rsx .htm .r4k .cw,#rsx .htm .dg5 span,#rsx .rs-tg,#rsx .rs-tg-h,#rsx .rs-tg-p,#rsx .rs-tg-c b,#rsx .rs-tg-c p,#rsx .rs-tg-s{font-family:'Pretendard','Noto Sans KR',var(--font-ui)!important}
+#rsx .htm .it.nt{font-family:'Noto Sans KR',var(--font-ui)!important}
+#rsx .htm .eb{font-weight:600;font-size:15px;line-height:21px;letter-spacing:0}
+#rsx .htm .h2{font-size:48px;line-height:57.6px;letter-spacing:-1.44px}
+#rsx .htm .it{font-size:18px;line-height:29px;letter-spacing:0}
+#rsx .htm .ridesc{line-height:29px;letter-spacing:0}
+#rsx .htm .brch .bd{line-height:36px;letter-spacing:0}
+#rsx .rs-tg-p{font-size:16px;line-height:28px;white-space:pre-line}
+#rsx .rs-tg-c b{font-size:15px;line-height:22px;color:#0A0A0A}
+#rsx .rs-tg-c p{font-size:16px;line-height:28px}
+#rsx .rs-tg-s{font-size:12px;line-height:20px;padding-top:16px;border-top:1px solid #D6D6D6}
+#rsx .rs-tg-s p{margin:0}
+#rsx .rs-tg-s b{display:block;font-weight:700;color:#0A0A0A;margin-bottom:2px}
+/* photo pages */
+#rsx .rs-page.htm.phb{background:#0A0A0A}
+#rsx .htm .bgph{pointer-events:none}
+#rsx .htm .bgph>img{display:block;width:100%;height:100%;object-fit:cover}
+#rsx .rs-page.phb .rs-tg{background:transparent}
+#rsx .rs-page.wt .h2,#rsx .rs-page.wt .it,#rsx .rs-page.wt .tgline span{color:#fff}
+#rsx .rs-page.wt .tgline svg{stroke:#fff}
+#rsx .rs-page.wt .rs-tg,#rsx .rs-page.wt .rs-tg-h,#rsx .rs-page.wt .rs-tg-c b,#rsx .rs-page.wt .rs-tg-s b{color:#fff}
+#rsx .rs-page.wt .rs-tg-h svg{stroke:#fff}
+#rsx .rs-page.wt .rs-tg-s{color:rgba(255,255,255,.72)}
+#rsChromeH.ph .xnv{background:transparent}
+#rsChromeH .arr{box-shadow:0 4px 16px rgba(0,0,0,.12)}
+#rsChromeH .arr.prv{box-shadow:inset 0 0 0 1px #fff,0 4px 16px rgba(0,0,0,.12)}
+#rsChromeH .arr.nxt .g2{display:none;position:absolute;left:-20px;top:-20px;pointer-events:none}
+#rsChromeH.r2 .arr.nxt{background:transparent;box-shadow:none;overflow:visible}
+#rsChromeH.r2 .arr.nxt>svg:first-child{display:none}
+#rsChromeH.r2 .arr.nxt .g2{display:block}
+#rsChromeH.q .arr.nxt{display:none}
+/* R3 · E */
+#rsx .htm .r3l b{display:block;font:700 18px/27px 'Noto Sans KR',var(--font-ui);color:#0A0A0A}
+#rsx .htm .r3l span{display:block;font:400 14px/21px 'Noto Sans KR',var(--font-ui);color:rgba(10,10,10,.6);margin-top:1px}
+#rsx .htm .gr3>svg{position:absolute;left:0;top:0;overflow:visible}
+#rsx .htm .gr3 .gd{transform-box:fill-box;transform-origin:center}
+#rsx .htm .gr3 .lb{position:absolute;white-space:nowrap;color:#fff;font:700 18px/27px 'Noto Sans KR',var(--font-ui)}
+#rsx .htm .gr3 .lb.big{font-size:22px;line-height:33px}
+#rsx .htm .gr3 .dt{position:absolute;white-space:nowrap;color:#fff;font:400 14px/21px 'Noto Sans KR',var(--font-ui)}
+/* R4 · accordion */
+#rsx .htm .r4w{display:flex;flex-direction:column;gap:21px}
+#rsx .htm .r4k{position:relative;flex:none;height:151px;border-radius:20px;overflow:hidden;color:#fff;transition:height .8s cubic-bezier(.22,.8,.2,1)}
+#rsx .htm .r4k.big{height:493px}
+#rsx .htm .r4k>img{position:absolute;left:0;top:50%;width:633px;height:493px;max-width:none;object-fit:cover;transform:translateY(-50%);-webkit-user-drag:none}
+#rsx .htm .r4k>i{position:absolute;inset:0;background:linear-gradient(248deg,rgba(135,230,255,.52),rgba(135,230,255,0) 70%),linear-gradient(180deg,rgba(0,0,0,0) 55%,rgba(0,0,0,.62)),linear-gradient(rgba(0,0,0,.2),rgba(0,0,0,.2))}
+#rsx .htm .r4k .cw{position:absolute;left:28px;bottom:28px}
+#rsx .htm .r4k strong{display:block;font-weight:700;font-size:22px;line-height:30px;margin-bottom:17px}
+#rsx .htm .r4k small{display:block;font-weight:400;font-size:14px;line-height:20px}
+/* R5 · photo + gathering diagram */
+#rsx .htm .ch5{display:inline-flex;align-items:center;height:34px;padding:0 14px 0 28px;border-radius:999px;background:#fff;color:#0A0A0A;font:500 15px/18px 'Noto Sans KR',var(--font-ui);white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.12);transition:opacity .35s ease,translate .5s cubic-bezier(.22,.8,.2,1)}
+#rsx .htm .ch5>i{position:absolute;left:14px;top:13px;width:8px;height:8px;border-radius:50%;background:#87E6FF}
+#rsx .rs-page.tgo .ch-mm{opacity:0}
+#rsx .rs-page.phb.tgo .tgline{visibility:hidden}
+#rsx .rs-page.tgo .ch-bo{translate:53px -34px}
+#rsx .htm .dg5>svg{position:absolute;left:0;top:0;overflow:visible}
+#rsx .htm .dg5 .n5{position:absolute;top:0;width:148px;height:52px;border-radius:11px;background:#CEF5FF;color:#0A0A0A;font-weight:500;font-size:15px;line-height:52px;text-align:center}
+#rsx .htm .dg5 .r5{position:absolute;left:150px;top:105px;width:184px;height:52px;box-sizing:border-box;border-radius:11px;background:#fff;border:.92px solid #000;color:#0A0A0A;font-weight:700;font-size:15.6px;line-height:50px;text-align:center}
+/* R6 · photo */
+#rsx .htm .qh{font-size:72px;line-height:86.4px;letter-spacing:-2.16px;color:#fff;text-align:left}
+#rsx .htm .qp{font-size:18px;line-height:29px;color:#fff}
+#rsx .htm .qcta{font-weight:500;font-size:16px;border:1.5px solid #0A0A0A;box-sizing:border-box}
 /* R4 stacked cards (redesign) */
 #rsx .htm .r4c{border-radius:20px;overflow:hidden;color:#fff;background:linear-gradient(150deg,#94C5C5,#536B6E 55%,#242A31)}
 #rsx .htm .r4c.m{background:linear-gradient(140deg,#ABC9D7,#63757D 55%,#2F313B)}
@@ -1625,10 +1688,10 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   const DESK = ['R1','R2','R3','R4','R5','R6'], INT = ['I1','I2','I3','I4','I5','I6'];
   const ARROWS = [{x:8,y:499,w:64,h:64,act:-1,label:'이전',round:1},{x:1294,y:499,w:64,h:64,act:1,label:'다음',round:1}];
   const index = n => n.map((go,k) => ({x:529+52*k,y:953,w:48,h:44,go,label:(k+1)+'번째 장'}));
-  const TOG_L = {x:40,y:384,w:575,h:62}, TOG_R = {x:703,y:244,w:575,h:62};
+  const TOG_L = {x:40,y:384,w:575,h:62}, TOG_L2 = {x:40,y:414,w:575,h:62}, TOG_R = {x:703,y:244,w:575,h:62};
   const P = {
     land:{hits:[{x:40,y:262,w:633,h:658,go:'R1',label:'01 Desk Research 열기'},{x:693,y:262,w:633,h:658,go:'I1',label:'02 Interview 열기'}]},
-    R1:{tog:[TOG_L,'dR1']}, R2:{tog:[TOG_L,'dR2']}, R3:{tog:[TOG_L,'dR3']}, R4:{tog:[TOG_L,'dR4']}, R5:{tog:[TOG_L,'dR5']},
+    R1:{tog:[TOG_L,'dR1']}, R2:{tog:[TOG_L,'dR2']}, R3:{tog:[TOG_L2,'dR3']}, R4:{tog:[TOG_L2,'dR4']}, R5:{tog:[TOG_L2,'dR5']},
     R6:{hits:[{x:578,y:681,w:210,h:56,go:'I1',label:'인터뷰에서 확인하기'}]},
     I1:{tog:[TOG_R,'dI1']},
     I2:{hits:'ABCDEF'.split('').map((L,i) => ({x:600+246*(i%3),y:120+406*Math.floor(i/3),w:234,h:394,card:'g'+L,label:'그룹 '+L+' 대표 목소리'}))},
@@ -1673,12 +1736,12 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   }
   // ===== Figma-aligned HTML pages (R1–R6): real DOM content; 넘김 모션·더보기 토글·인덱스·내비게이션 유지 =====
   const CHEVD = '<svg width="14" height="9" viewBox="0 0 14 9" fill="none" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1 7 7l6-6"/></svg>';
-  const col = (eb, l1, l2, intro, tog, tx, ty, iw) => {
-    const x = tx || 40, iy = ty || 326, w = iw || 580;
+  const col = (eb, l1, l2, intro, tog, tx, ty, iw, gy, ic) => {
+    const x = tx || 40, iy = ty || 326, w = iw || 580, tgy = gy || 386;
     return '<div class="el" data-g="h" style="left:' + x + 'px;top:142px;width:600px;height:21px"><span class="eb">' + eb + '</span></div>'
       + '<div class="el" data-g="h" style="left:' + x + 'px;top:178px;width:620px;height:116px"><span class="h2">' + l1 + '<br>' + l2 + '</span></div>'
-      + '<p class="el it" data-g="d" style="left:' + x + 'px;top:' + iy + 'px;width:' + w + 'px;margin:0">' + intro + '</p>'
-      + '<div class="el tgline" data-g="d" style="left:' + x + 'px;top:386px;width:575px"><span>' + tog + '</span>' + CHEVD + '</div>';
+      + '<p class="el it' + (ic ? ' ' + ic : '') + '" data-g="d" style="left:' + x + 'px;top:' + iy + 'px;width:' + w + 'px;margin:0">' + intro + '</p>'
+      + '<div class="el tgline" data-g="d" style="left:' + x + 'px;top:' + tgy + 'px;width:575px"><span>' + tog + '</span>' + CHEVD + '</div>';
   };
   const HTM = {
   land: '<div class="el" data-g="h" style="left:40px;top:122px;width:280px;height:95px"><img src="assets/rs3-ri0-word.webp" alt="Research" style="width:270px;display:block"></div>'
@@ -1697,41 +1760,42 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     +   '<span class="in slb sky" style="left:28px;top:202px">AI 사주·운세 이용 경험</span>'
     +   '<i class="in sbar" style="left:28px;top:246px;width:361px;height:54px;background:#87E6FF"></i></div>'
     + '<span class="el ssrc" data-g="d" style="left:1026px;top:822px;width:300px">한국갤럽(2026.4.30)</span>',
-  R3: col('행동 · 트렌드', '읽는 운세에서,', '찾아가는 운세로', '운에 대한 관심이 온라인 콘텐츠를 넘어 장소 방문으로 이어지는 모습을 볼 수 있습니다.', '방문 사례 · 통계의 집계 범위')
-    + '<div class="el ph" data-g="v" style="left:693px;top:142px;width:633px;height:430px"><img src="assets/rs3-r3-mtn.webp" alt="관악산 연주대"></div>'
-    + '<div class="el vst" data-g="v" data-n="vst" style="left:693px;top:592px;width:633px;height:280px">'
-    +   '<span class="in vlb1" style="left:318px;top:51px">관악산 방문객 증가</span>'
-    +   '<span class="in vlb2" style="left:318px;top:84px">2026.4 · 전년 동월 대비</span>'
-    +   '<span class="in vdt" style="left:28px;top:140px">2025.4</span><i class="in vbar" style="left:114px;top:140px;width:177px;height:24px;background:#fff"></i><b class="in vnm" style="left:305px;top:140px">3,909명</b>'
-    +   '<span class="in vdt" style="left:28px;top:174px">2026.4</span><i class="in vbar" style="left:114px;top:174px;width:250px;height:24px;background:#0A0A0A"></i><b class="in vnm" style="left:378px;top:174px">5,521명</b>'
-    +   '<span class="in vsrc" style="left:28px;top:240px">서울등산관광센터 관악산점 방문객 집계</span></div>',
-  R4: col('인문학 · 행동', '행동에 따라', '달라질 수 있는 운', '순자는 주어진 조건 속 실천을, 와이즈먼은 우연한 기회를 만들고 알아차리는 행동을 강조합니다.', '순자 「천론」 · 와이즈먼의 기회 포착')
-    + '<div class="el r4c" data-g="v" style="left:703px;top:120px;width:623px;height:390px"><span class="cap" style="left:22px;top:20px">사진 · 고전 서책 · 「순자」 펼친 면</span><div class="cw"><strong>상황을 바꾸지 못해도<br>태도는 선택할 수 있다</strong><small>고전 사상 · 순자 「천론」</small></div></div>'
-    + '<div class="el r4c m" data-g="v" style="left:703px;top:530px;width:623px;height:390px"><span class="cap" style="left:22px;top:20px">사진 · 책 사진 (직접 촬영)</span><div class="cw"><strong>행동으로<br>기회를 늘릴 수 있다</strong><small>현대 심리학 · Richard Wiseman</small></div></div>',
-  R5: col('공간 경험', '같은 장소도', '무엇을 하느냐에 따라 다른 경험', '장소의 의미를 이해하려면 공간의 특성뿐 아니라, 그곳에서 한 행동과 함께한 관계를 함께 살펴봐야 합니다.', '장소의 의미를 만드는 경험 · 연구 배경')
-    + '<div class="el ph" data-g="v" style="left:751px;top:142px;width:575px;height:408px"><img src="assets/rs3-r5-place.webp" alt="한강과 다리가 보이는 장소 사진"></div>'
-    + '<span class="el xpl" data-g="k" style="left:791px;top:295px;height:34px">● 보기</span>'
-    + '<span class="el xpl" data-g="k" style="left:1145px;top:358px;height:34px">● 걷기</span>'
-    + '<span class="el xpl" data-g="k" style="left:861px;top:392px;height:34px">● 머무르기</span>'
-    + '<span class="el xpl" data-g="k" style="left:1123px;top:453px;height:34px">● 기록하기</span>'
-    + '<div class="el dgm2" data-g="v" style="left:751px;top:573px;width:575px;height:274px">'
-    +   '<svg class="in" style="left:0;top:0" width="575" height="274" viewBox="0 0 575 274" fill="none" aria-hidden="true"><g stroke="#0A0A0A" stroke-width="1.5" stroke-dasharray="4 4"><path d="M119 121 287 174"/><path d="M287 121v53"/><path d="M455 121 287 174"/></g></svg>'
-    +   '<span class="ndc" style="left:45px;top:69px">장소</span>'
-    +   '<span class="ndc" style="left:213px;top:69px">의례 · 행동</span>'
-    +   '<span class="ndc" style="left:382px;top:69px">함께한 사람</span>'
-    +   '<span class="ndr">장소 애착</span></div>',
-  R6: '<div class="el" data-g="h" style="left:0;top:284px;width:1366px;height:21px;text-align:center"><span class="eb">우리의 질문</span></div>'
-    + '<div class="el" data-g="h" style="left:0;top:316px;width:1366px;height:180px;text-align:center"><span class="qh">운세가 새로운 경험의<br>계기가 될 수 있을까?</span></div>'
+  R3: '<div class="el bgph" aria-hidden="true" style="left:0;top:0;width:1366px;height:1024px"><img src="assets/rs4-r3-bg.webp" alt=""></div>'
+    + col('행동 · 트렌드', '읽는 운세에서,', '찾아가는 운세로', '운에 대한 관심이 온라인 콘텐츠를 넘어 장소 방문으로 이어지는 모습을 볼 수 있습니다.', '방문 사례 · 통계의 집계 범위', 0, 0, 575, 416)
+    + '<div class="el" data-n="r3n" style="left:769px;top:250px;width:425px;height:173px"></div>'
+    + '<div class="el r3l" data-g="d" style="left:860px;top:422px;width:334px;text-align:right"><b>서울등산관광센터 관악산점 방문객 증가</b><span>2026년 4월 · 전년 동월 대비</span></div>'
+    + '<div class="el gr3" data-gr="1" role="img" aria-label="방문객 2025년 4월 3,909명에서 2026년 4월 5,521명으로 증가" style="left:754px;top:503px;width:510px;height:290px">'
+    +   '<svg class="ga" width="510" height="290" viewBox="0 0 510 290" fill="none" aria-hidden="true"><defs><linearGradient id="r3gd" x1="35" y1="42" x2="35" y2="274" gradientUnits="userSpaceOnUse"><stop stop-color="#87E6FF" stop-opacity=".8"/><stop offset="1" stop-color="#87E6FF" stop-opacity="0"/></linearGradient></defs><path d="M35 218C180 218 290 42 465 42V274H35V218Z" fill="url(#r3gd)"/><path d="M35 218V274M465 42V274" stroke="#fff" stroke-opacity=".45" stroke-dasharray="4 6"/></svg>'
+    +   '<svg class="gl" width="510" height="290" viewBox="0 0 510 290" fill="none" aria-hidden="true"><path class="gln" d="M35 218C180 218 290 42 465 42" stroke="#fff" stroke-width="3"/><circle class="gd g0" cx="35" cy="218" r="5" fill="#fff"/><circle class="gd g1" cx="465" cy="42" r="9" fill="#87E6FF" stroke="#fff" stroke-width="2"/></svg>'
+    +   '<span class="lb l0" style="left:35px;top:177px">3,909명</span><span class="lb big l1" style="left:345px;top:5px">5,521명</span>'
+    +   '<span class="dt" style="left:13px;top:294px">2025.4</span><span class="dt" style="left:375px;top:294px">2026.4</span></div>',
+  R4: col('인문학 · 행동', '행동에 따라', '달라질 수 있는 운', '순자는 주어진 조건 속 실천을, 와이즈먼은 우연한 기회를<br>만들고 알아차리는 행동을 강조합니다.', '순자 「천론」 · 와이즈먼의 기회 포착', 0, 0, 575, 416)
+    + '<div class="el r4w" data-g="v" style="left:693px;top:179px;width:633px;height:665px">'
+    +   '<div class="r4k big"><img src="assets/rs4-r4-sky.webp" alt="구름이 흐르는 하늘"><i></i><div class="cw"><strong>상황을 바꾸지 못해도<br>태도는 선택할 수 있다</strong><small>고전 사상 · 순자 「천론」</small></div></div>'
+    +   '<div class="r4k"><img src="assets/rs4-r4-river.webp" alt="나무가 늘어선 강가 산책길"><i></i><div class="cw"><strong>행동으로<br>기회를 늘릴 수 있다</strong><small>현대 심리학 · Richard Wiseman</small></div></div></div>',
+  R5: '<div class="el bgph" aria-hidden="true" style="left:0;top:0;width:1366px;height:1024px"><img src="assets/rs4-r5-bg.webp" alt=""></div>'
+    + col('공간 경험', '같은 장소도', '무엇을 하느냐에 따라 다른 경험', '장소의 의미를 이해하려면 공간의 특성뿐 아니라,<br>그곳에서 한 행동과 함께한 관계를 함께 살펴봐야 합니다.', '장소의 의미를 만드는 경험 · 연구 배경', 0, 0, 575, 416, 'nt')
+    + '<div class="el dg5" data-g5="1" role="img" aria-label="장소, 의례·행동, 함께한 사람이 모여 장소 애착이 됩니다" style="left:808px;top:236px;width:485px;height:157px">'
+    +   '<svg width="485" height="157" viewBox="0 0 485 157" fill="none" aria-hidden="true"><g stroke="#0A0A0A" stroke-width="1.38"><path class="dl" d="M74 52 242 105"/><path class="dl" d="M242 52v53"/><path class="dl" d="M411 52 242 105"/></g></svg>'
+    +   '<span class="n5" style="left:0">장소</span><span class="n5" style="left:168px">의례 · 행동</span><span class="n5" style="left:337px">함께한 사람</span><span class="r5">장소 애착</span></div>'
+    + '<span class="el ch5 ch-bo" data-g="k" style="left:679px;top:522px"><i></i>보기</span>'
+    + '<span class="el ch5" data-g="k" style="left:1056px;top:585px"><i></i>걷기</span>'
+    + '<span class="el ch5 ch-mm" data-g="k" style="left:149px;top:697px"><i></i>머무르기</span>'
+    + '<span class="el ch5" data-g="k" style="left:895px;top:775px"><i></i>기록하기</span>',
+  R6: '<div class="el bgph" aria-hidden="true" style="left:0;top:0;width:1366px;height:1024px"><img src="assets/rs4-r6-bg.webp" alt=""></div>'
+    + '<div class="el" data-g="h" style="left:0;top:284px;width:1366px;height:21px;text-align:center"><span class="eb">우리의 질문</span></div>'
+    + '<div class="el" data-g="h" style="left:397px;top:319px;width:572px;height:174px"><span class="qh">운세가 새로운 경험의<br>계기가 될 수 있을까?</span></div>'
     + '<p class="el qp" data-g="d" style="left:323px;top:516px;width:720px;margin:0">운세에 대한 관심과 실제 방문 사이에 무엇이 작용하는지는,<br>사람들의 경험을 통해 확인할 필요가 있었습니다.</p>'
-    + '<span class="el qcta" data-g="v" style="left:578px;top:681px;width:210px;height:56px">인터뷰에서 확인하기&nbsp;&nbsp;→</span>'
+    + '<span class="el qcta" data-g="v" style="left:578px;top:681px;width:210px;height:56px">인터뷰에서 확인하기 →</span>'
   };
   const NUMH = {
     R2:[{host:'s27', x:249, y:116, w:80, s:.55, c:'#FFFFFF', to:27, f:v => Math.round(v) + '%'},
         {host:'s27', x:405, y:238, w:148, s:.95, c:'#87E6FF', to:46, f:v => Math.round(v) + '%'}],
-    R3:[{host:'vst', x:28, y:32, w:236, s:.97, c:'#0A0A0A', to:41.2, f:v => '+' + v.toFixed(1) + '%'}]
+    R3:[{host:'r3n', x:0, y:4, w:425, s:1.746, c:'#0A0A0A', to:41.2, f:v => '+' + v.toFixed(1) + '%'}]
   };
+  const PHB = new Set(['R3','R5','R6']);
   function buildHtm(pg, id){
-    pg.classList.add('htm');
+    pg.classList.add('htm'); if (PHB.has(id)) pg.classList.add('phb'); if (id === 'R3' || id === 'R6') pg.classList.add('wt');
     pg.innerHTML = HTM[id];
     const parts = [...pg.querySelectorAll('[data-g]')].map(el => ({g:el.dataset.g, box:el, im:el.dataset.g === 'h' ? el.firstElementChild : el}));
     const nums = (NUMH[id] || []).map(d => {
@@ -1780,7 +1844,29 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     by('k').forEach((p, i) => anim(p.box, [{opacity:0, transform:'translateY(-46px) scale(1.5) rotate(-12deg)', filter:'drop-shadow(0 30px 18px rgba(10,10,10,.25))'},
       {opacity:1, transform:'translateY(4px) scale(.93) rotate(2.4deg)', filter:'drop-shadow(0 3px 3px rgba(10,10,10,.2))', offset:.42},
       {opacity:1, transform:'translateY(-2px) scale(1.035) rotate(-.9deg)', filter:'drop-shadow(0 6px 6px rgba(10,10,10,.12))', offset:.66},
-      {opacity:1, transform:'none', filter:'drop-shadow(0 0 0 rgba(10,10,10,0))'}], {duration:640, delay:t0 + vs.length*95 + 260 + i*130, easing:EZS}));
+      {opacity:1, transform:'none', filter:'drop-shadow(0 0 0 rgba(10,10,10,0))'}], {duration:640, delay:t0 + vs.length*95 + 260 + i*200, easing:EZS}));
+    // R3 · 증가하는 그래프: 선이 그려지고 면적이 왼쪽부터 차오른 뒤, 끝점과 수치가 뜬다
+    const gr = pg.querySelector('[data-gr]');
+    if (gr){
+      const ln = gr.querySelector('.gln'), Lt = ln.getTotalLength(), G0 = 760, GD = 1300, GE = 'cubic-bezier(.45,0,.2,1)';
+      ln.style.strokeDasharray = Lt;
+      anim(ln, [{strokeDashoffset:Lt}, {strokeDashoffset:0}], {duration:GD, delay:G0, easing:GE});
+      anim(gr.querySelector('.ga'), [{clipPath:'inset(0 100% 0 0)'}, {clipPath:'inset(0 0 0 0)'}], {duration:GD, delay:G0, easing:GE});
+      anim(gr.querySelector('.g0'), [{opacity:0, transform:'scale(.2)'}, {opacity:1, transform:'none'}], {duration:360, delay:G0 - 120, easing:EZS});
+      anim(gr.querySelector('.l0'), [{opacity:0, transform:'translateY(8px)'}, {opacity:1, transform:'none'}], {duration:420, delay:G0, easing:EZ});
+      gr.querySelectorAll('.dt').forEach((d, i) => anim(d, [{opacity:0}, {opacity:1}], {duration:420, delay:G0 + i*GD*.85, easing:EZ}));
+      anim(gr.querySelector('.g1'), [{opacity:0, transform:'scale(.2)'}, {opacity:1, transform:'scale(1.25)', offset:.6}, {opacity:1, transform:'none'}], {duration:520, delay:G0 + GD - 80, easing:EZS});
+      anim(gr.querySelector('.l1'), [{opacity:0, transform:'translateY(10px)'}, {opacity:1, transform:'none'}], {duration:480, delay:G0 + GD + 60, easing:EZ});
+    }
+    // R5 · 박스 3개가 모여 장소 애착이 생긴다
+    const dg = pg.querySelector('[data-g5]');
+    if (dg){
+      const D0 = 520;
+      dg.querySelectorAll('.n5').forEach((n, i) => anim(n, [{opacity:0, transform:'translate(' + [-84, 0, 84][i] + 'px, ' + [-18, -34, -18][i] + 'px)'}, {opacity:1, transform:'none'}], {duration:760, delay:D0 + i*70, easing:EZ}));
+      dg.querySelectorAll('.dl').forEach(p => { const l = p.getTotalLength(); p.style.strokeDasharray = l;
+        anim(p, [{strokeDashoffset:l}, {strokeDashoffset:0}], {duration:460, delay:D0 + 760, easing:'cubic-bezier(.4,0,.2,1)'}); });
+      anim(dg.querySelector('.r5'), [{opacity:0, transform:'scale(.6)'}, {opacity:1, transform:'scale(1.06)', offset:.65}, {opacity:1, transform:'none'}], {duration:620, delay:D0 + 1160, easing:EZS});
+    }
     // numbers count up once their tile has landed
     L.nums.forEach(n => drawNum(n, n.f(0)));
     const s0 = performance.now() + t0 + 380, D = 1300;
@@ -1800,7 +1886,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     + '<button type="button" class="rs-hit" style="left:875px;top:12px;width:108px;height:64px" aria-label="Research 처음으로"></button></div>'
     + '<div class="ci">' + ['00','01','02','03','04','Q'].map((t, i) => '<button type="button" data-k="' + i + '" aria-label="리서치 ' + t + '">' + t + '</button>').join('') + '</div>'
     + '<button type="button" class="arr prv" aria-label="이전 챕터"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.5 3 5.5 9l6 6"/></svg></button>'
-    + '<button type="button" class="arr nxt" aria-label="다음 챕터"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 3 12.5 9l-6 6"/></svg></button>';
+    + '<button type="button" class="arr nxt" aria-label="다음 챕터"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 3 12.5 9l-6 6"/></svg><svg class="g2" width="88" height="96" viewBox="0 0 88 96" fill="none" aria-hidden="true"><g filter="url(#f2112_1671)"><rect x="20" y="20" width="56" height="56" rx="28" fill="#0A0A0A"/><path d="M44 39L53 48L44 57" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></g><defs><filter id="f2112_1671" x="0" y="0" width="96" height="96" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset/><feGaussianBlur stdDeviation="10"/><feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0"/><feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/><feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/></filter></defs></svg></button>';
   CHV.after(CHH);
   const CHI = [...CHH.querySelectorAll('.ci button')];
   CHI.forEach((b, k) => b.addEventListener('click', () => show(DESK[k])));
@@ -1819,12 +1905,21 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     return true;
   }
   function chromeOn(id){
-    if (HTM[id]){ CHV.style.visibility = 'hidden'; CHH.style.display = 'block'; CHH.classList.remove('dk'); CHH.classList.toggle('landing', id === 'land');
+    if (HTM[id]){ CHV.style.visibility = 'hidden'; CHH.style.display = 'block'; CHH.classList.remove('dk'); CHH.classList.toggle('landing', id === 'land'); CHH.classList.toggle('ph', PHB.has(id)); CHH.classList.toggle('r2', id === 'R2'); CHH.classList.toggle('q', id === 'R6');
       CHI.forEach((b, k) => b.classList.toggle('cur', DESK[k] === id)); return; }
     CHH.style.display = 'none';
     if (chrome(id)) { CHV.style.visibility = 'visible'; return; }
     const im = $('rs-' + id) && $('rs-' + id).querySelector(':scope > img'); CHV.style.visibility = 'hidden';
     if (im) im.addEventListener('load', () => { if (cur === id && chrome(id)) CHV.style.visibility = 'visible'; }, {once:true}); }
+  // R4 · 두 카드가 4초마다 493px ↔ 151px로 교대하는 아코디언
+  let r4T = 0;
+  function r4Run(id){
+    clearInterval(r4T); r4T = 0;
+    const w = $('rs-R4') && $('rs-R4').querySelector('.r4w'); if (!w) return;
+    const ks = [...w.children]; ks[0].classList.add('big'); ks[1].classList.remove('big');
+    if (id !== 'R4' || RM.matches) return;
+    r4T = setInterval(() => { if (cur !== 'R4') { clearInterval(r4T); r4T = 0; return; } ks.forEach(k => k.classList.toggle('big')); }, 4000);
+  }
   function rsMotion(prevId, id){
     const dir = prevId == null ? 1 : (ORDER.indexOf(id) >= ORDER.indexOf(prevId) ? 1 : -1);
     const pg = $('rs-' + id), out = prevId != null && prevId !== id ? $('rs-' + prevId) : null;
@@ -1847,11 +1942,12 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     }
     chromeOn(id);
     enter(id, dir);
+    r4Run(id);
     if (window.steerTrack) steerTrack('research_page', {page_id:id});
   }
   // ---- Desk Research 더보기: opens in place, under the line, like a Notion toggle (interview pages keep their drawers) ----
-  const TG = {"R1":{"b":"명리학은 태어난 때로 정해지는 사주를 命으로, 시간에 따라 바뀌는 흐름을 運으로 나누어 읽습니다. 運에는 ‘옮기다·움직이다’라는 뜻도 있습니다. Steer는 이 글자에서, 주어진 바탕 위에서 오늘의 방향은 스스로 고른다는 태도를 가져왔습니다.","c":[["命 · 명 · 목숨 / 명령","태어난 때로 정해지는 사주 원국. 바꿀 수 없는 나의 바탕."],["運 · 운 · 옮기다 / 움직이다","대운·세운처럼 시간에 따라 바뀌는 흐름. Steer는 여기서 ‘움직임’을 읽었다."]],"s":""},"R2":{"b":"신뢰 여부와 이용 경험은 서로 다른 조사 문항입니다. 두 비율의 차이를 동일 집단의 전환율로 볼 수는 없습니다.","c":[],"s":"출처 · 한국갤럽(2026.4.30) · 표본과 문항은 원문 확인 필요"},"R3":{"b":"tvN 유퀴즈 방송에서 관악산이 ‘기운을 받는 장소’로 언급된 뒤, ‘기 받으러’ 찾는 방문 사례가 보도됐습니다.","c":[["통계는 무엇을 집계했나요?","서울등산관광센터 관악산점 방문객의 증가율입니다. 관악산 전체 입산객이나 ‘개운 목적’ 방문자 수는 아닙니다."]],"s":"출처 · 서울신문(2026.5.21), 서울관광재단 집계 인용"},"R4":{"b":"운을 고정된 결과로만 이해하지 않고, 주어진 조건 속에서 사람이 할 수 있는 행동을 살펴보기 위해 두 관점을 함께 참고했습니다.","c":[["순자 「천론」 · 자연과 인간의 역할","자연의 질서는 사람의 바람과 별개로 이어진다고 보며, 하늘의 일과 사람이 해야 할 일을 구분합니다. 주어진 조건에 대한 인간의 대응과 실천에 초점을 둡니다."],["와이즈먼 · 우연한 기회의 확대","스스로 운이 좋다고 여기는 사람들의 행동과 습관을 살폈습니다. 네 가지 원리 중 하나는 우연한 기회를 만들고, 알아차리고, 활용하는 것입니다."]],"s":"출처 · 순자 「천론」 / Chinese Text Project · Richard Wiseman, The Luck Factor(2003)"},"R5":{"b":"이 연구는 종교적 장소에서 장소 애착이 형성되는 방식을 다룹니다. 공간의 특성뿐 아니라 의례, 사물, 이야기, 방문을 통해 장소의 의미를 배우고 공유하는 과정에 주목합니다.","c":[["일상 경험에 참고한 관점","장소의 속성과 함께, 그곳에서 하는 행동과 사람 사이의 관계를 살펴봤습니다. 화면의 활동은 일상에 적용해 본 예시이며, 산책이나 기록의 효과를 검증한 결과는 아닙니다."]],"s":"출처 · Mazumdar & Mazumdar(2004), Religion and place attachment: A study of sacred places, Journal of Environmental Psychology, 24(3), 385–397."}};
-  const TGL = {R1:'命과 運 · ‘움직이다’의 뜻 · 명리학', R2:'한국갤럽 2026 · 20대의 신뢰와 AI 이용 경험', R3:'방문 사례 · 통계의 집계 범위', R4:'순자 「천론」 · 와이즈먼의 기회 포착', R5:'장소의 의미를 만드는 경험 · 연구 배경'};
+  const TG = {"R1":{"b":"","c":[["命과 運을 구분해 읽기","명리학에서는 태어난 때로 정해지는 사주 원국을 命으로, 대운·세운처럼 시간에 따라 달라지는 흐름을 運으로 읽습니다."],["‘움직임’에서 가져온 브랜드의 태도","運에는 ‘나르다·옮기다’라는 뜻도 있습니다. Steer는 이 뜻에서, 주어진 조건 속에서도 오늘의 방향과 행동을 스스로 선택한다는 태도를 가져왔습니다."]],"sh":"참고 · 해석 범위","s":"字義 참고 · 일본한자능력검정협회, 한자페디아 「運」\n‘스스로 방향을 고른다’는 명리학의 정의가 아닌 Steer의 브랜드 해석입니다."},"R2":{"b":"","c":[["믿음과 이용은 같은 태도가 아닙니다","믿는다는 응답보다 AI로 운세를 이용해 본 경험이 높았습니다. 운세는 강한 믿음이 없어도 재미·호기심·자기 탐색의 콘텐츠로 접할 수 있음을 시사합니다."],["수치는 이렇게 읽었습니다","점·사주 신뢰와 AI 운세 이용 경험은 서로 다른 문항입니다. 두 비율만으로 개인별 신뢰와 이용 경험의 겹침이나 이용 동기까지 확인할 수는 없습니다."]],"sh":"출처 · 조사 범위","s":"한국갤럽 조사 · 2026.3.13–26\n전국(제주 제외) 만 19세 이상 1,507명\n화면의 두 비율은 전체 표본 중 20대 응답 결과입니다.\n수치·해석 재인용: 크리스천투데이, 「AI 사주풀이·운세 경험」"},"R3":{"b":"tvN 유퀴즈 방송에서 관악산이 ‘기운을 받는 장소’로 언급된 뒤,\n‘기 받으러’ 찾는 방문 사례가 보도됐습니다.","c":[["통계는 무엇을 집계했나요?","서울등산관광센터 관악산점 방문객의 증가율입니다. 관악산 전체 입산객이나 ‘개운 목적’ 방문자 수는 아닙니다."]],"s":"출처 · 서울신문(2026.5.21), 서울관광재단 집계 인용"},"R4":{"b":"서로 다른 맥락의 두 관점에서,\n‘오늘 내가 선택할 수 있는 일’을 살펴봤습니다.","c":[["순자 「천론」 · 자연과 인간의 역할","자연의 질서는 사람의 바람과 별개로 이어진다고 보며, 하늘의 일과 사람이 해야 할 일을 구분합니다. 주어진 조건에 대한 인간의 대응과 실천에 초점을 둡니다."],["와이즈먼 · 우연한 기회의 확대","와이즈먼은 스스로 운이 좋다고 여기는 사람들의 행동과 습관을 살폈습니다. 네 가지 원리 중 하나는 우연한 기회를 만들고, 알아차리고, 활용하는 것입니다."]],"s":"출처 · 순자 「천론」 / Chinese Text Project\nRichard Wiseman, The Luck Factor (2003) · 저자 연구 소개"},"R5":{"b":"","c":[["연구가 살펴본 관계","이 연구는 종교적 장소에서 장소 애착이 형성되는 방식을 다룹니다. 공간의 특성뿐 아니라 의례, 사물, 이야기, 방문을 통해 장소의 의미를 배우고 공유하는 과정에 주목합니다."],["일상 경험에 참고한 관점","이 관점에서 장소의 속성과 함께, 그곳에서 하는 행동과 사람 사이의 관계를 살펴봤습니다. 오른쪽 활동은 일상에 적용해 본 예시이며, 산책이나 기록의 효과를 검증한 결과는 아닙니다."]],"s":"출처 · Mazumdar & Mazumdar (2004)\nReligion and place attachment: A study of sacred places\nJournal of Environmental Psychology, 24(3), 385–397."}};
+  const TGL = {R1:'命과 運 · ‘움직이다’의 뜻 · 명리학', R2:'수치 해석 · 조사 문항 · 출처', R3:'방문 사례 · 통계의 집계 범위', R4:'순자 「천론」 · 와이즈먼의 기회 포착', R5:'장소의 의미를 만드는 경험 · 연구 배경'};
   function tgBuild(id, r){
     const d = TG[id], el = document.createElement('div'); el.className = 'rs-tg';
     Object.assign(el.style, {left:r.x + 'px', top:(r.y + 2) + 'px', width:r.w + 'px'}); if (r.x < 100) el.classList.add('L');
@@ -1859,11 +1955,13 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     h.innerHTML = '<span></span><svg width="14" height="9" viewBox="0 0 14 9" fill="none" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 8 7 2l6 6"/></svg>';
     h.querySelector('span').textContent = TGL[id]; h.setAttribute('aria-label', TGL[id] + ' 접기');
     const b = document.createElement('div'); b.className = 'rs-tg-b';
-    const p = document.createElement('p'); p.className = 'rs-tg-p'; p.textContent = d.b; b.appendChild(p);
+    if (d.b){ const p = document.createElement('p'); p.className = 'rs-tg-p'; p.textContent = d.b; b.appendChild(p); }
     d.c.forEach(([lab, txt]) => { const c = document.createElement('div'); c.className = 'rs-tg-c';
       const l = document.createElement('b'); l.textContent = lab; c.appendChild(l);
       txt.split('\n').forEach(line => { const q = document.createElement('p'); q.textContent = line; c.appendChild(q); }); b.appendChild(c); });
-    if (d.s){ const s = document.createElement('p'); s.className = 'rs-tg-s'; s.textContent = d.s; b.appendChild(s); }
+    if (d.s){ const s = document.createElement('div'); s.className = 'rs-tg-s';
+      if (d.sh){ const h = document.createElement('b'); h.textContent = d.sh; s.appendChild(h); }
+      d.s.split('\n').forEach(line => { const q = document.createElement('p'); q.textContent = line; s.appendChild(q); }); b.appendChild(s); }
     el.appendChild(h); el.appendChild(b);
     ['pointerdown','pointerup'].forEach(t => el.addEventListener(t, e => e.stopPropagation()));
     return el;
@@ -1871,7 +1969,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   function tgOpen(pg, id, r){
     if (pg._tg) { tgClose(pg); return; }
     if (window.steerTrack) steerTrack('research_more_open', {page_id:id});
-    const el = tgBuild(id, r); pg.appendChild(el); pg._tg = el;
+    const el = tgBuild(id, r); pg.appendChild(el); pg._tg = el; pg.classList.add('tgo');
     const full = Math.min(el.scrollHeight + 2, 936 - r.y); el.style.height = full + 'px';
     el.querySelector('.rs-tg-h').addEventListener('click', () => tgClose(pg));
     el.querySelector('.rs-tg-h').focus({preventScroll:true});
@@ -1884,11 +1982,11 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   }
   function tgClose(pg, now){
     const el = pg._tg; if (!el) return; pg._tg = null;
-    if (now || RM.matches){ el.remove(); return; }
+    if (now || RM.matches){ el.remove(); pg.classList.remove('tgo'); return; }
     el.classList.add('shut');
     [...el.querySelectorAll('.rs-tg-b > *')].forEach(c => c.animate([{opacity:1}, {opacity:0}], {duration:200, fill:'forwards'}));
     const a = el.animate([{height:el.offsetHeight + 'px'}, {height:'58px'}], {duration:420, easing:'cubic-bezier(.4,0,.2,1)', fill:'forwards'});
-    a.onfinish = () => el.remove();
+    a.onfinish = () => { el.remove(); if (!pg._tg) pg.classList.remove('tgo'); };
   }
   for (const id of ['land', ...DESK, ...INT]) {
     const pg = document.createElement('section'); pg.className = 'rs-page'; pg.id = 'rs-' + id; pg.setAttribute('aria-hidden', 'true');
