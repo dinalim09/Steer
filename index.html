@@ -484,6 +484,28 @@ body.bare .bar>*{pointer-events:auto}
 #rsx .htm .qh{font-size:72px;line-height:86.4px;letter-spacing:-2.16px;color:#fff;text-align:left}
 #rsx .htm .qp{font-size:18px;line-height:29px;color:#fff}
 #rsx .htm .qcta{font-weight:500;font-size:16px;border:1.5px solid #0A0A0A;box-sizing:border-box}
+/* ===== Interview I1·I2 (Figma 2181:1817 / 2227:1885 / 2292:12615 / 2297:3594) ===== */
+#rsx .htm .i1d{font:400 16px/27px 'Pretendard','Noto Sans KR',var(--font-ui);color:#0A0A0A;margin:0}
+#rsx .htm .i1t>img{display:block}
+#rsx .htm .i1c{border-radius:12px;overflow:hidden}
+#rsx .htm .i1c>img{position:absolute;left:0;top:0;width:378px;height:328px;display:block}
+#rsx .htm .i1l{font:700 20px/28px 'Pretendard','Noto Sans KR',var(--font-ui);color:#0A0A0A;white-space:nowrap}
+#rsx .htm .i2h{font:700 48px/58px 'Noto Sans KR',var(--font-ui);color:#0A0A0A;white-space:nowrap}
+#rsx .htm .i2d{font:400 18px/28px 'Noto Sans KR',var(--font-ui);color:#0A0A0A;margin:0}
+#rsx .htm .i2c{width:251px;height:367px;cursor:pointer;-webkit-tap-highlight-color:transparent;outline:none}
+#rsx .htm .i2c .rt{position:absolute;inset:0;transform-origin:0 0;perspective:1400px}
+#rsx .htm .i2c .fl{position:absolute;inset:0;transform-style:preserve-3d;-webkit-transform-style:preserve-3d;transition:transform .7s cubic-bezier(.3,.7,.2,1)}
+#rsx .htm .i2c.on .fl{transform:rotateY(180deg)}
+#rsx .htm .i2c .fc{position:absolute;inset:0;border-radius:15px;background:var(--c);backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden}
+#rsx .htm .i2c .bk{transform:rotateY(180deg)}
+#rsx .htm .i2c .tt{position:absolute;left:19px;top:21px;width:164px;margin:0;font:700 20px/24px 'Pretendard','Noto Sans KR',var(--font-ui);color:#171717}
+#rsx .htm .i2c .no{position:absolute;left:19px;top:299px;display:block}
+#rsx .htm .i2c .ab{position:absolute;left:193px;top:18px;width:40px;height:40px;display:block}
+#rsx .htm .i2c .qm{position:absolute;left:19px;top:64px;display:block}
+#rsx .htm .i2c .qb{position:absolute;left:19px;top:97px;width:214px}
+#rsx .htm .i2c .qb p{margin:0;font:400 16px/21.6px 'Pretendard','Noto Sans KR',var(--font-ui);color:#141414}
+#rsx .htm .i2c .qb span{display:inline-block;margin-top:14px;padding:6px 11px;border:1px solid #0A0A0A;border-radius:20px;font:500 13px/18px 'Pretendard','Noto Sans KR',var(--font-ui);color:#141414;white-space:nowrap}
+#rsx .htm .i2c:focus-visible .fc{box-shadow:0 0 0 3px #0A0A0A}
 /* R4 stacked cards (redesign) */
 #rsx .htm .r4c{border-radius:20px;overflow:hidden;color:#fff;background:linear-gradient(150deg,#94C5C5,#536B6E 55%,#242A31)}
 #rsx .htm .r4c.m{background:linear-gradient(140deg,#ABC9D7,#63757D 55%,#2F313B)}
@@ -1695,13 +1717,13 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   const DESK = ['R1','R2','R3','R4','R5','R6'], INT = ['I1','I2','I3','I4','I5','I6'];
   const ARROWS = [{x:8,y:499,w:64,h:64,act:-1,label:'이전',round:1},{x:1294,y:499,w:64,h:64,act:1,label:'다음',round:1}];
   const index = n => n.map((go,k) => ({x:529+52*k,y:953,w:48,h:44,go,label:(k+1)+'번째 장'}));
-  const TOG_L = {x:40,y:384,w:575,h:62}, TOG_L2 = {x:40,y:414,w:575,h:62}, TOG_R = {x:703,y:244,w:575,h:62};
+  const TOG_L = {x:40,y:384,w:575,h:62}, TOG_L2 = {x:40,y:414,w:575,h:62}, TOG_R = {x:703,y:244,w:575,h:62}, TOG_R2 = {x:703,y:262,w:575,h:62};
   const P = {
     land:{hits:[{x:40,y:262,w:633,h:658,go:'R1',label:'01 Desk Research 열기'},{x:693,y:262,w:633,h:658,go:'I1',label:'02 Interview 열기'}]},
     R1:{tog:[TOG_L,'dR1']}, R2:{tog:[TOG_L,'dR2']}, R3:{tog:[TOG_L2,'dR3']}, R4:{tog:[TOG_L2,'dR4']}, R5:{tog:[TOG_L2,'dR5']},
     R6:{hits:[{x:578,y:681,w:210,h:56,go:'I1',label:'인터뷰에서 확인하기'}]},
-    I1:{tog:[TOG_R,'dI1']},
-    I2:{hits:'ABCDEF'.split('').map((L,i) => ({x:600+246*(i%3),y:120+406*Math.floor(i/3),w:234,h:394,card:'g'+L,label:'그룹 '+L+' 대표 목소리'}))},
+    I1:{tog:[TOG_R2,'dI1']},
+    I2:{},
     I3:{hits:['a','b','c','d'].map((s,i) => ({x:96+297*i,y:316,w:285,h:500,sheet:['dI3'+s],label:'발견 0'+(i+1)+' 더보기'}))},
     I4:{tog:[TOG_R,'dI4x'],hits:[{x:40,y:350,w:428,h:350,sheet:['dI4x'],label:'연결 관점 더보기'},{x:468,y:350,w:429,h:350,sheet:['dI4n1','dI4n2'],label:'제동 더보기'},{x:897,y:350,w:429,h:350,sheet:['dI4f1','dI4f2'],label:'발견 더보기'}]},
     I5:{tog:[TOG_L,'dI5']}, I6:{}
@@ -1793,9 +1815,46 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     + '<div class="el" data-g="h" style="left:0;top:284px;width:1366px;height:21px;text-align:center"><span class="eb">우리의 질문</span></div>'
     + '<div class="el" data-g="h" style="left:397px;top:319px;width:572px;height:174px"><span class="qh">운세가 새로운 경험의<br>계기가 될 수 있을까?</span></div>'
     + '<p class="el qp" data-g="d" style="left:323px;top:516px;width:720px;margin:0">운세에 대한 관심과 실제 방문 사이에 무엇이 작용하는지는,<br>사람들의 경험을 통해 확인할 필요가 있었습니다.</p>'
-    + '<span class="el qcta" data-g="v" style="left:578px;top:681px;width:210px;height:56px">인터뷰에서 확인하기 →</span>'
+    + '<span class="el qcta" data-g="v" style="left:578px;top:681px;width:210px;height:56px">인터뷰에서 확인하기 →</span>',
+  I1: '<div class="el" data-g="h" style="left:40px;top:142px;width:600px;height:21px"><span class="eb">인터뷰 개요</span></div>'
+    + '<div class="el" data-g="h" style="left:40px;top:178px;width:640px;height:116px"><span class="h2">가벼운 조언은 실천해도,<br>장소 방문은 망설였습니다</span></div>'
+    + '<p class="el it" data-g="d" style="left:703px;top:184px;width:575px;margin:0">운세를 일상에 적용하는 방식과 신뢰의 근거를 살피고,<br>직접 장소를 찾아갈 때 느끼는 부담을 물었습니다.</p>'
+    + '<div class="el tgline" data-g="d" style="left:703px;top:264px;width:575px"><span>반복된 경험 · 질문 범위 · 분석 방법</span>' + CHEVD + '</div>'
+    + '<div class="el i1t" data-g="d" style="left:96px;top:416px;width:147px;height:23px"><img src="assets/i1-t-user.webp" alt="User Interview" width="147" height="23"></div>'
+    + '<div class="el i1t" data-g="d" style="left:494px;top:415px;width:170px;height:27px"><img src="assets/i1-t-expert.webp" alt="Expert Interview" width="170" height="27"></div>'
+    + '<div class="el i1t" data-g="d" style="left:892px;top:415px;width:168px;height:27px"><img src="assets/i1-t-affinity.webp" alt="Affinity Diagram" width="168" height="27"></div>'
+    + '<p class="el i1d" data-g="d" style="left:96px;top:451px;width:383px">관심도별 운세 이용·신뢰·실천 경험 탐색</p>'
+    + '<p class="el i1d" data-g="d" style="left:494px;top:451px;width:383px">용신·행동을 바탕으로 일상 실천 기준 검토</p>'
+    + '<p class="el i1d" data-g="d" style="left:892px;top:451px;width:383px">사용자 경험과 전문가 의견을 주제별로 묶어 서비스 설계 기준 도출</p>'
+    + '<div class="el i1c" data-g="v" data-n="i1a" role="img" aria-label="일반 참여자 7명 · 고관심 4, 중관심 1, 저·무관심 2" style="left:96px;top:531px;width:378px;height:328px"><img src="assets/i1-c-user.webp" alt=""><span class="in i1l" style="left:83px;top:46px">일반 참여자</span></div>'
+    + '<div class="el i1c" data-g="v" data-n="i1b" role="img" aria-label="명리·풍수 전문가 자문 3명 · 명리학, 명리 상담·강의, 풍수" style="left:494px;top:531px;width:378px;height:328px"><img src="assets/i1-c-expert.webp" alt=""><span class="in i1l" style="left:83px;top:46px">명리·풍수 전문가 자문</span></div>'
+    + '<div class="el i1c" data-g="v" data-n="i1c" role="img" aria-label="인터뷰 발언 189개 · 37개 소그룹, 6개 대그룹" style="left:892px;top:531px;width:378px;height:328px"><img src="assets/i1-c-affinity.webp" alt=""><span class="in i1l" style="left:128px;top:46px;color:#fff">인터뷰 발언</span></div>',
+  I2: '<div class="el" data-g="h" style="left:40px;top:142px;width:600px;height:21px"><span class="eb">사용자 인터뷰</span></div>'
+    + '<div class="el" data-g="h" style="left:40px;top:178px;width:900px;height:58px"><span class="i2h">운세는 가볍게 봐도, 움직이려면 이유가 필요</span></div>'
+    + '<p class="el i2d" data-g="d" style="left:40px;top:251px;width:1286px">189개 인터뷰 인용문을 6개 주제로 묶었습니다. 카드를 선택하면 각 주제의 대표 인용문을 볼 수 있습니다.</p>'
+    + '<div class="el i2c" data-g="v" data-card="gA" role="button" tabindex="0" aria-pressed="false" aria-label="주제 A · 운세는 일상의 가벼운 콘텐츠 · 대표 인용문 보기" style="left:134.1px;top:377.5px;z-index:1;--c:#C2FF0A"><div class="rt" style="transform:rotate(4deg)"><div class="fl">'
+    +   '<div class="fc fr"><p class="tt">운세는 일상의<br>가벼운 콘텐츠</p><svg class="no" aria-hidden="true" width="55" height="45" viewBox="0 0 55 45" fill="none"><path d="M22.3204 44.6395C10.3544 44.6395 0.000429709 34.2855 0.000429709 22.3195C0.000429709 10.3535 10.3544 -0.000471115 22.3204 -0.000471115C34.2864 -0.000471115 44.7024 10.3535 44.7024 22.3195C44.7024 34.2855 34.2864 44.6395 22.3204 44.6395ZM22.3204 38.9355C31.4344 38.9355 38.6884 31.5575 38.6884 22.3195C38.6884 13.0815 31.4344 5.70353 22.3204 5.70353C13.2684 5.70353 5.95243 13.0815 5.95243 22.3195C5.95243 31.5575 13.2684 38.9355 22.3204 38.9355ZM48.4839 44.0195V6.13753H43.7719V0.619528H54.2499V44.0195H48.4839Z" fill="#171717"/></svg><svg class="ab" aria-hidden="true" width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="20" fill="#0A0A0A"/><path d="M20 12.5V27.5M12.5 20H27.5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div>'
+    +   '<div class="fc bk" aria-hidden="true"><svg class="qm" aria-hidden="true" width="18" height="17" viewBox="0 0 18 17" fill="none"><path d="M10.1053 16.0263V8.50634C10.1053 4.55834 11.0453 2.44334 13.8183 -0.000657976L17.2493 2.77234C15.5573 4.32334 15.1343 5.31034 14.9463 8.17734H17.2493V16.0263H10.1053ZM0.00026574 16.0263V8.50634C0.00026574 4.55834 0.940266 2.44334 3.71327 -0.000657976L7.14427 2.77234C5.45227 4.27634 5.02927 5.31034 4.84127 8.17734H7.14427V16.0263H0.00026574Z" fill="#141414"/></svg><div class="qb"><p>오늘 이래서 운이 좋았구나 하면서… 결과적으로 참고하는 거죠. 맹신하지는 않는데 그냥 재미로.</p><span style="font-size:12px">고관심 C 참여자</span></div><svg class="ab" aria-hidden="true" width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="20" fill="#0A0A0A"/><path d="M12.5 20H27.5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div></div></div></div>'
+    + '<div class="el i2c" data-g="v" data-card="gB" role="button" tabindex="0" aria-pressed="false" aria-label="주제 B · 근거를 제시하면 신뢰가 가지만 딱 잘라 말하면 부담을 느낀다 · 대표 인용문 보기" style="left:303.3px;top:431.7px;z-index:2;--c:#FF8778"><div class="rt" style="transform:rotate(2.4deg)"><div class="fl">'
+    +   '<div class="fc fr"><p class="tt">근거를 제시하면<br>신뢰가 가지만<br>딱 잘라 말하면<br>부담을 느낀다</p><svg class="no" aria-hidden="true" width="72" height="45" viewBox="0 0 72 45" fill="none"><path d="M22.0209 44.0419C10.2197 44.0419 0 33.8222 0 22.021C0 10.2196 10.2197 0 22.0209 0C33.8222 0 44.0419 10.2196 44.0419 22.021C44.0419 33.8222 33.8222 44.0419 22.0209 44.0419ZM22.0209 36.7421C30.1723 36.7421 36.438 30.3549 36.438 22.021C36.438 13.6871 30.1723 7.29976 22.0209 7.29976C13.8696 7.29976 7.60391 13.6871 7.60391 22.021C7.60391 30.3549 13.8696 36.7421 22.0209 36.7421ZM49.9558 43.3119L60.8446 18.7969C61.8179 16.6069 62.3654 14.8429 62.3654 12.4096C62.3654 9.18556 60.2971 6.9956 57.1947 6.9956C54.1532 6.9956 52.0849 9.12471 52.0849 12.2271H44.9677C44.9677 5.47482 50.3208 0.243326 57.1947 0.243326C64.1295 0.243326 69.4827 5.59648 69.4827 12.5921C69.4827 15.9986 68.5094 18.9186 67.2319 21.8384L60.9055 36.3163H70.6385V43.3119H49.9558Z" fill="#171717"/></svg><svg class="ab" aria-hidden="true" width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="20" fill="#0A0A0A"/><path d="M20 12.5V27.5M12.5 20H27.5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div>'
+    +   '<div class="fc bk" aria-hidden="true"><svg class="qm" aria-hidden="true" width="18" height="17" viewBox="0 0 18 17" fill="none"><path d="M10.1053 16.0263V8.50634C10.1053 4.55834 11.0453 2.44334 13.8183 -0.000657976L17.2493 2.77234C15.5573 4.32334 15.1343 5.31034 14.9463 8.17734H17.2493V16.0263H10.1053ZM0.00026574 16.0263V8.50634C0.00026574 4.55834 0.940266 2.44334 3.71327 -0.000657976L7.14427 2.77234C5.45227 4.27634 5.02927 5.31034 4.84127 8.17734H7.14427V16.0263H0.00026574Z" fill="#141414"/></svg><div class="qb"><p>단정적으로 정해진 것 같이 말할 때가 별로예요. &quot;이렇게 될 확률이 높아요&quot; 이런 표현이면은 그냥 부담 없이 받아들일 수 있어요.</p><span style="font-size:12px">무관심 A 참여자</span></div><svg class="ab" aria-hidden="true" width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="20" fill="#0A0A0A"/><path d="M12.5 20H27.5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div></div></div></div>'
+    + '<div class="el i2c" data-g="v" data-card="gC" role="button" tabindex="0" aria-pressed="false" aria-label="주제 C · 쉽게 할 수 있는 건 따라 해본다 · 대표 인용문 보기" style="left:472.6px;top:377.5px;z-index:3;--c:#FFEB50"><div class="rt" style="transform:rotate(0.8deg)"><div class="fl">'
+    +   '<div class="fc fr"><p class="tt">쉽게 할 수 있는 건<br>따라 해본다</p><svg class="no" aria-hidden="true" width="70" height="45" viewBox="0 0 70 45" fill="none"><path d="M22.0209 44.0419C10.2197 44.0419 0 33.8222 0 22.021C0 10.2196 10.2197 0 22.0209 0C33.8222 0 44.0419 10.2196 44.0419 22.021C44.0419 33.8222 33.8222 44.0419 22.0209 44.0419ZM22.0209 36.7421C30.1723 36.7421 36.438 30.3549 36.438 22.021C36.438 13.6871 30.1723 7.29976 22.0209 7.29976C13.8696 7.29976 7.60391 13.6871 7.60391 22.021C7.60391 30.3549 13.8696 36.7421 22.0209 36.7421ZM43.4825 43.3119V36.3163H53.1547C57.8387 36.3163 61.4886 32.7881 61.4886 28.0432C61.4886 23.4809 57.8387 19.8919 53.1547 19.8919H47.5582V12.8962H52.9114C54.4321 12.8962 55.5271 11.8621 55.5271 10.3413C55.5271 8.82053 54.4321 7.72557 52.9114 7.72557H47.5582V0.729974H53.033C58.2037 0.729974 62.6444 4.92733 62.6444 9.73299C62.6444 11.4363 62.0969 13.0179 61.1844 14.4171C65.9293 17.2153 69.0925 22.0817 69.0925 28.0432C69.0925 36.6813 62.1578 43.3119 53.1547 43.3119H43.4825Z" fill="#171717"/></svg><svg class="ab" aria-hidden="true" width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="20" fill="#0A0A0A"/><path d="M20 12.5V27.5M12.5 20H27.5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div>'
+    +   '<div class="fc bk" aria-hidden="true"><svg class="qm" aria-hidden="true" width="18" height="17" viewBox="0 0 18 17" fill="none"><path d="M10.1053 16.0263V8.50634C10.1053 4.55834 11.0453 2.44334 13.8183 -0.000657976L17.2493 2.77234C15.5573 4.32334 15.1343 5.31034 14.9463 8.17734H17.2493V16.0263H10.1053ZM0.00026574 16.0263V8.50634C0.00026574 4.55834 0.940266 2.44334 3.71327 -0.000657976L7.14427 2.77234C5.45227 4.27634 5.02927 5.31034 4.84127 8.17734H7.14427V16.0263H0.00026574Z" fill="#141414"/></svg><div class="qb"><p>오늘의 색깔이 남색이 나오면 남색 옷을 입거나 악세서리를 하라 그러면 하고… 이런 거는 좀 중요한 날에는 따라 하는</p><span>고관심 B 참여자</span></div><svg class="ab" aria-hidden="true" width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="20" fill="#0A0A0A"/><path d="M12.5 20H27.5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div></div></div></div>'
+    + '<div class="el i2c" data-g="v" data-card="gD" role="button" tabindex="0" aria-pressed="false" aria-label="주제 D · 시간 내서 찾아가기는 망설여진다 · 대표 인용문 보기" style="left:641.9px;top:431.7px;z-index:4;--c:#A9B1FF"><div class="rt" style="transform:rotate(-0.8deg)"><div class="fl">'
+    +   '<div class="fc fr"><p class="tt">시간 내서 찾아가기는 망설여진다</p><svg class="no" aria-hidden="true" width="75" height="45" viewBox="0 0 75 45" fill="none"><path d="M21.4271 42.8544C9.93983 42.8544 0 32.9146 0 21.4272C0 9.93984 9.93983 0 21.4271 0C32.9145 0 42.9138 9.93984 42.9138 21.4272C42.9138 32.9146 32.9145 42.8544 21.4271 42.8544ZM21.4271 37.3786C30.1766 37.3786 37.1404 30.2957 37.1404 21.4272C37.1404 12.5587 30.1766 5.47584 21.4271 5.47584C12.7373 5.47584 5.71391 12.5587 5.71391 21.4272C5.71391 30.2957 12.7373 37.3786 21.4271 37.3786ZM43.9579 32.3194L57.5284 0.5952H63.9566L52.5883 27.0221H63.7185V14.9395H69.1943V27.0221H73.0036V32.3194H69.1943V42.2592H63.7185V32.3194H43.9579Z" fill="#0A0A0A"/></svg><svg class="ab" aria-hidden="true" width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="20" fill="#0A0A0A"/><path d="M20 12.5V27.5M12.5 20H27.5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div>'
+    +   '<div class="fc bk" aria-hidden="true"><svg class="qm" aria-hidden="true" width="18" height="17" viewBox="0 0 18 17" fill="none"><path d="M10.1053 16.0263V8.50634C10.1053 4.55834 11.0453 2.44334 13.8183 -0.000657976L17.2493 2.77234C15.5573 4.32334 15.1343 5.31034 14.9463 8.17734H17.2493V16.0263H10.1053ZM0.00026574 16.0263V8.50634C0.00026574 4.55834 0.940266 2.44334 3.71327 -0.000657976L7.14427 2.77234C5.45227 4.27634 5.02927 5.31034 4.84127 8.17734H7.14427V16.0263H0.00026574Z" fill="#141414"/></svg><div class="qb"><p>그중에서 좀 쉬운 것들만 따라 하는데 장소를 찾아가는 거는 좀… 어려운 약간 좀 귀찮은 축이긴 해서</p><span>고관심 B 참여자</span></div><svg class="ab" aria-hidden="true" width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="20" fill="#0A0A0A"/><path d="M12.5 20H27.5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div></div></div></div>'
+    + '<div class="el i2c" data-g="v" data-card="gE" role="button" tabindex="0" aria-pressed="false" aria-label="주제 E · 가서 할 게 있으면 한 번 가본다 · 대표 인용문 보기" style="left:811.1px;top:377.5px;z-index:5;--c:#87E6FF"><div class="rt" style="transform:rotate(-2.4deg)"><div class="fl">'
+    +   '<div class="fc fr"><p class="tt">가서 할 게 있으면<br>한 번 가본다</p><svg class="no" aria-hidden="true" width="75" height="45" viewBox="0 0 75 45" fill="none"><path d="M22.32 44.64C10.354 44.64 0 34.286 0 22.32C0 10.354 10.354 0 22.32 0C34.286 0 44.702 10.354 44.702 22.32C44.702 34.286 34.286 44.64 22.32 44.64ZM22.32 38.936C31.434 38.936 38.688 31.558 38.688 22.32C38.688 13.082 31.434 5.704 22.32 5.704C13.268 5.704 5.952 13.082 5.952 22.32C5.952 31.558 13.268 38.936 22.32 38.936Z" fill="#171717"/><path d="M48 44.25V38.6875H57.375C63.25 38.6875 67.75 34.125 67.75 28.125C67.75 22.1875 63.25 17.625 57.375 17.625H52.1875V0.5H67.6875V6.0625H58V12.5C66.9375 12.75 73.8125 19.625 73.8125 28.375C73.8125 37.3125 66.625 44.25 57.375 44.25H48Z" fill="#171717"/></svg><svg class="ab" aria-hidden="true" width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="20" fill="#0A0A0A"/><path d="M20 12.5V27.5M12.5 20H27.5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div>'
+    +   '<div class="fc bk" aria-hidden="true"><svg class="qm" aria-hidden="true" width="18" height="17" viewBox="0 0 18 17" fill="none"><path d="M10.1053 16.0263V8.50634C10.1053 4.55834 11.0453 2.44334 13.8183 -0.000657976L17.2493 2.77234C15.5573 4.32334 15.1343 5.31034 14.9463 8.17734H17.2493V16.0263H10.1053ZM0.00026574 16.0263V8.50634C0.00026574 4.55834 0.940266 2.44334 3.71327 -0.000657976L7.14427 2.77234C5.45227 4.27634 5.02927 5.31034 4.84127 8.17734H7.14427V16.0263H0.00026574Z" fill="#141414"/></svg><div class="qb"><p>아침 일찍 일어나서 찬 새벽 공기 좀 마셔보고, 해 보면 기분 좋고, 친구들이랑 가면 재밌고, 그리고 내려와서 감자탕 먹고 싶어서 갔어요.</p><span>무관심 A 참여자</span></div><svg class="ab" aria-hidden="true" width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="20" fill="#0A0A0A"/><path d="M12.5 20H27.5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div></div></div></div>'
+    + '<div class="el i2c" data-g="v" data-card="gF" role="button" tabindex="0" aria-pressed="false" aria-label="주제 F · 딱 정해주기보다는 내가 골라보고 싶다 · 대표 인용문 보기" style="left:980.4px;top:431.7px;z-index:6;--c:#C2FF0A"><div class="rt" style="transform:rotate(-4deg)"><div class="fl">'
+    +   '<div class="fc fr"><p class="tt">딱 정해주기보다는<br>내가 골라보고 싶다</p><svg class="no" aria-hidden="true" width="78" height="45" viewBox="0 0 78 45" fill="none"><path d="M22.32 44.64C10.354 44.64 0 34.286 0 22.32C0 10.354 10.354 0 22.32 0C34.286 0 44.702 10.354 44.702 22.32C44.702 34.286 34.286 44.64 22.32 44.64ZM22.32 38.936C31.434 38.936 38.688 31.558 38.688 22.32C38.688 13.082 31.434 5.704 22.32 5.704C13.268 5.704 5.952 13.082 5.952 22.32C5.952 31.558 13.268 38.936 22.32 38.936Z" fill="#171717"/><path d="M62 44.3125C54.1875 44.3125 48 38.125 48 30.25C48 27.875 48.6875 24.875 50 21.8125L59.5625 0H65.6875L57.9375 17.8125C59.0625 17.25 60.4375 16.9375 62 16.9375C69.8125 16.9375 76 22.875 76 30.4375C76 38.125 69.8125 44.3125 62 44.3125ZM62 38.9375C66.625 38.9375 70.375 35.125 70.375 30.4375C70.375 25.875 66.625 22.25 62 22.25C57.375 22.25 53.625 25.875 53.625 30.4375C53.625 35.125 57.375 38.9375 62 38.9375Z" fill="#171717"/></svg><svg class="ab" aria-hidden="true" width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="20" fill="#0A0A0A"/><path d="M20 12.5V27.5M12.5 20H27.5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div>'
+    +   '<div class="fc bk" aria-hidden="true"><svg class="qm" aria-hidden="true" width="18" height="17" viewBox="0 0 18 17" fill="none"><path d="M10.1053 16.0263V8.50634C10.1053 4.55834 11.0453 2.44334 13.8183 -0.000657976L17.2493 2.77234C15.5573 4.32334 15.1343 5.31034 14.9463 8.17734H17.2493V16.0263H10.1053ZM0.00026574 16.0263V8.50634C0.00026574 4.55834 0.940266 2.44334 3.71327 -0.000657976L7.14427 2.77234C5.45227 4.27634 5.02927 5.31034 4.84127 8.17734H7.14427V16.0263H0.00026574Z" fill="#141414"/></svg><div class="qb"><p>뭔가 선택지가 여러 개면 좋을 것 같아요. 뭔가 딱 한 군데로만 가라고 하기보다…</p><span>중관심 A 참여자</span></div><svg class="ab" aria-hidden="true" width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="20" fill="#0A0A0A"/><path d="M12.5 20H27.5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div></div></div></div>'
   };
   const NUMH = {
+    I1:[{host:'i1a', x:23, y:22, w:25, s:.707, c:'#0A0A0A', to:7, f:v => '' + Math.round(v)},
+        {host:'i1b', x:23, y:22, w:31, s:.707, c:'#0A0A0A', to:3, f:v => '' + Math.round(v)},
+        {host:'i1c', x:23, y:22, w:84, s:.707, c:'#FFFFFF', to:189, f:v => '' + Math.round(v)}],
     R2:[{host:'s27', x:249, y:116, w:80, s:.55, c:'#FFFFFF', to:27, f:v => Math.round(v) + '%'},
         {host:'s27', x:405, y:238, w:148, s:.95, c:'#87E6FF', to:46, f:v => Math.round(v) + '%'}],
     R3:[{host:'r3n', x:0, y:4, w:425, s:1.746, c:'#0A0A0A', to:41.2, f:v => '+' + v.toFixed(1) + '%'}]
@@ -1896,7 +1955,8 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     + '<button type="button" class="arr nxt" aria-label="다음 챕터"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 3 12.5 9l-6 6"/></svg><svg class="g2" width="88" height="96" viewBox="0 0 88 96" fill="none" aria-hidden="true"><g filter="url(#f2112_1671)"><rect x="20" y="20" width="56" height="56" rx="28" fill="#0A0A0A"/><path d="M44 39L53 48L44 57" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></g><defs><filter id="f2112_1671" x="0" y="0" width="96" height="96" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset/><feGaussianBlur stdDeviation="10"/><feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0"/><feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/><feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/></filter></defs></svg></button>';
   CHV.after(CHH);
   const CHI = [...CHH.querySelectorAll('.ci button')];
-  CHI.forEach((b, k) => b.addEventListener('click', () => show(DESK[k])));
+  CHI.forEach((b, k) => b.addEventListener('click', () => show((deckOf(cur) || DESK)[k])));
+  const CHL = {D:['00','01','02','03','04','Q'], I:['I1','I2','I3','I4','I5','I6']};
   CHH.querySelector('.prv').addEventListener('click', () => step(-1));
   CHH.querySelector('.nxt').addEventListener('click', () => step(1));
   CHH.querySelector('.xnv .rs-hit').addEventListener('click', () => show('land'));
@@ -1913,7 +1973,8 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   }
   function chromeOn(id){
     if (HTM[id]){ CHV.style.visibility = 'hidden'; CHH.style.display = 'block'; CHH.classList.remove('dk'); CHH.classList.toggle('landing', id === 'land'); CHH.classList.toggle('ph', PHB.has(id)); CHH.classList.toggle('r2', id === 'R2'); CHH.classList.toggle('q', id === 'R6');
-      CHI.forEach((b, k) => b.classList.toggle('cur', DESK[k] === id)); return; }
+      const dk = deckOf(id) || DESK, lb = CHL[dk === INT ? 'I' : 'D'];
+      CHI.forEach((b, k) => { b.classList.toggle('cur', dk[k] === id); if (b.textContent !== lb[k]) { b.textContent = lb[k]; b.setAttribute('aria-label', (dk === INT ? '인터뷰 ' : '리서치 ') + lb[k]); } }); return; }
     CHH.style.display = 'none';
     if (chrome(id)) { CHV.style.visibility = 'visible'; return; }
     const im = $('rs-' + id) && $('rs-' + id).querySelector(':scope > img'); CHV.style.visibility = 'hidden';
@@ -1933,6 +1994,15 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     if (id === 'R6'){ const p = v.play(); if (p && p.catch) p.catch(() => {}); }
     else { v.pause(); }
   }
+  // I2 · 주제 카드 앞면 ↔ 뒷면(대표 인용문). 펼친 카드는 맨 앞으로 올라온다
+  let i2Z = 10;
+  function i2Flip(c){
+    const on = !c.classList.contains('on'); c.classList.toggle('on', on); c.setAttribute('aria-pressed', on ? 'true' : 'false');
+    c.querySelector('.fr').setAttribute('aria-hidden', on ? 'true' : 'false'); c.querySelector('.bk').setAttribute('aria-hidden', on ? 'false' : 'true');
+    if (on){ c.style.zIndex = ++i2Z; if (window.steerTrack) steerTrack('research_card_open', {page_id:'I2', card:c.dataset.card}); }
+  }
+  function i2Reset(){ const pg = $('rs-I2'); if (!pg) return; pg.querySelectorAll('.i2c.on').forEach(i2Flip);
+    pg.querySelectorAll('.i2c').forEach((c, k) => { c.style.zIndex = k + 1; }); i2Z = 10; }
   function rsMotion(prevId, id){
     const dir = prevId == null ? 1 : (ORDER.indexOf(id) >= ORDER.indexOf(prevId) ? 1 : -1);
     const pg = $('rs-' + id), out = prevId != null && prevId !== id ? $('rs-' + prevId) : null;
@@ -1957,11 +2027,12 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     enter(id, dir);
     r4Run(id);
     r6Vid(id);
+    if (prevId === 'I2') i2Reset();
     if (window.steerTrack) steerTrack('research_page', {page_id:id});
   }
   // ---- Desk Research 더보기: opens in place, under the line, like a Notion toggle (interview pages keep their drawers) ----
-  const TG = {"R1":{"b":"","c":[["命과 運을 구분해 읽기","명리학에서는 태어난 때로 정해지는 사주 원국을 命으로, 대운·세운처럼 시간에 따라 달라지는 흐름을 運으로 읽습니다."],["‘움직임’에서 가져온 브랜드의 태도","運에는 ‘나르다·옮기다’라는 뜻도 있습니다. Steer는 이 뜻에서, 주어진 조건 속에서도 오늘의 방향과 행동을 스스로 선택한다는 태도를 가져왔습니다."]],"sh":"참고 · 해석 범위","s":"字義 참고 · 일본한자능력검정협회, 한자페디아 「運」\n‘스스로 방향을 고른다’는 명리학의 정의가 아닌 Steer의 브랜드 해석입니다."},"R2":{"b":"","c":[["믿음과 이용은 같은 태도가 아닙니다","믿는다는 응답보다 AI로 운세를 이용해 본 경험이 높았습니다. 운세는 강한 믿음이 없어도 재미·호기심·자기 탐색의 콘텐츠로 접할 수 있음을 시사합니다."],["수치는 이렇게 읽었습니다","점·사주 신뢰와 AI 운세 이용 경험은 서로 다른 문항입니다. 두 비율만으로 개인별 신뢰와 이용 경험의 겹침이나 이용 동기까지 확인할 수는 없습니다."]],"sh":"출처 · 조사 범위","s":"한국갤럽 조사 · 2026.3.13–26\n전국(제주 제외) 만 19세 이상 1,507명\n화면의 두 비율은 전체 표본 중 20대 응답 결과입니다.\n수치·해석 재인용: 크리스천투데이, 「AI 사주풀이·운세 경험」"},"R3":{"b":"tvN 유퀴즈 방송에서 관악산이 ‘기운을 받는 장소’로 언급된 뒤,\n‘기 받으러’ 찾는 방문 사례가 보도됐습니다.","c":[["통계는 무엇을 집계했나요?","서울등산관광센터 관악산점 방문객의 증가율입니다. 관악산 전체 입산객이나 ‘개운 목적’ 방문자 수는 아닙니다."]],"s":"출처 · 서울신문(2026.5.21), 서울관광재단 집계 인용"},"R4":{"b":"서로 다른 맥락의 두 관점에서,\n‘오늘 내가 선택할 수 있는 일’을 살펴봤습니다.","c":[["순자 「천론」 · 자연과 인간의 역할","자연의 질서는 사람의 바람과 별개로 이어진다고 보며, 하늘의 일과 사람이 해야 할 일을 구분합니다. 주어진 조건에 대한 인간의 대응과 실천에 초점을 둡니다."],["와이즈먼 · 우연한 기회의 확대","와이즈먼은 스스로 운이 좋다고 여기는 사람들의 행동과 습관을 살폈습니다. 네 가지 원리 중 하나는 우연한 기회를 만들고, 알아차리고, 활용하는 것입니다."]],"s":"출처 · 순자 「천론」 / Chinese Text Project\nRichard Wiseman, The Luck Factor (2003) · 저자 연구 소개"},"R5":{"b":"","c":[["연구가 살펴본 관계","이 연구는 종교적 장소에서 장소 애착이 형성되는 방식을 다룹니다. 공간의 특성뿐 아니라 의례, 사물, 이야기, 방문을 통해 장소의 의미를 배우고 공유하는 과정에 주목합니다."],["일상 경험에 참고한 관점","이 관점에서 장소의 속성과 함께, 그곳에서 하는 행동과 사람 사이의 관계를 살펴봤습니다. 오른쪽 활동은 일상에 적용해 본 예시이며, 산책이나 기록의 효과를 검증한 결과는 아닙니다."]],"s":"출처 · Mazumdar & Mazumdar (2004)\nReligion and place attachment: A study of sacred places\nJournal of Environmental Psychology, 24(3), 385–397."}};
-  const TGL = {R1:'命과 運 · ‘움직이다’의 뜻 · 명리학', R2:'수치 해석 · 조사 문항 · 출처', R3:'방문 사례 · 통계의 집계 범위', R4:'순자 「천론」 · 와이즈먼의 기회 포착', R5:'장소의 의미를 만드는 경험 · 연구 배경'};
+  const TG = {"R1":{"b":"","c":[["命과 運을 구분해 읽기","명리학에서는 태어난 때로 정해지는 사주 원국을 命으로, 대운·세운처럼 시간에 따라 달라지는 흐름을 運으로 읽습니다."],["‘움직임’에서 가져온 브랜드의 태도","運에는 ‘나르다·옮기다’라는 뜻도 있습니다. Steer는 이 뜻에서, 주어진 조건 속에서도 오늘의 방향과 행동을 스스로 선택한다는 태도를 가져왔습니다."]],"sh":"참고 · 해석 범위","s":"字義 참고 · 일본한자능력검정협회, 한자페디아 「運」\n‘스스로 방향을 고른다’는 명리학의 정의가 아닌 Steer의 브랜드 해석입니다."},"R2":{"b":"","c":[["믿음과 이용은 같은 태도가 아닙니다","믿는다는 응답보다 AI로 운세를 이용해 본 경험이 높았습니다. 운세는 강한 믿음이 없어도 재미·호기심·자기 탐색의 콘텐츠로 접할 수 있음을 시사합니다."],["수치는 이렇게 읽었습니다","점·사주 신뢰와 AI 운세 이용 경험은 서로 다른 문항입니다. 두 비율만으로 개인별 신뢰와 이용 경험의 겹침이나 이용 동기까지 확인할 수는 없습니다."]],"sh":"출처 · 조사 범위","s":"한국갤럽 조사 · 2026.3.13–26\n전국(제주 제외) 만 19세 이상 1,507명\n화면의 두 비율은 전체 표본 중 20대 응답 결과입니다.\n수치·해석 재인용: 크리스천투데이, 「AI 사주풀이·운세 경험」"},"R3":{"b":"tvN 유퀴즈 방송에서 관악산이 ‘기운을 받는 장소’로 언급된 뒤,\n‘기 받으러’ 찾는 방문 사례가 보도됐습니다.","c":[["통계는 무엇을 집계했나요?","서울등산관광센터 관악산점 방문객의 증가율입니다. 관악산 전체 입산객이나 ‘개운 목적’ 방문자 수는 아닙니다."]],"s":"출처 · 서울신문(2026.5.21), 서울관광재단 집계 인용"},"R4":{"b":"서로 다른 맥락의 두 관점에서,\n‘오늘 내가 선택할 수 있는 일’을 살펴봤습니다.","c":[["순자 「천론」 · 자연과 인간의 역할","자연의 질서는 사람의 바람과 별개로 이어진다고 보며, 하늘의 일과 사람이 해야 할 일을 구분합니다. 주어진 조건에 대한 인간의 대응과 실천에 초점을 둡니다."],["와이즈먼 · 우연한 기회의 확대","와이즈먼은 스스로 운이 좋다고 여기는 사람들의 행동과 습관을 살폈습니다. 네 가지 원리 중 하나는 우연한 기회를 만들고, 알아차리고, 활용하는 것입니다."]],"s":"출처 · 순자 「천론」 / Chinese Text Project\nRichard Wiseman, The Luck Factor (2003) · 저자 연구 소개"},"R5":{"b":"","c":[["연구가 살펴본 관계","이 연구는 종교적 장소에서 장소 애착이 형성되는 방식을 다룹니다. 공간의 특성뿐 아니라 의례, 사물, 이야기, 방문을 통해 장소의 의미를 배우고 공유하는 과정에 주목합니다."],["일상 경험에 참고한 관점","이 관점에서 장소의 속성과 함께, 그곳에서 하는 행동과 사람 사이의 관계를 살펴봤습니다. 오른쪽 활동은 일상에 적용해 본 예시이며, 산책이나 기록의 효과를 검증한 결과는 아닙니다."]],"s":"출처 · Mazumdar & Mazumdar (2004)\nReligion and place attachment: A study of sacred places\nJournal of Environmental Psychology, 24(3), 385–397."},"I1":{"b":"","c":[["일상에 적용하는 조언과, 방문의 부담","운세를 일상적으로 확인하고 구체적인 분석이 신뢰의 계기가 됐다는 경험이 나왔습니다. 색·소지품을 바꾸는 조언은 적용했지만, 장소 이동에는 거리와 시간의 부담이 언급됐습니다."],["전문가에게는 개운의 기준을 물었습니다","개인에게 필요한 기운을 판단하는 용신의 기준, 장소에서 하는 행동의 의미, 가까운 일상권에서 실천하는 방향을 검토했습니다. 단순히 없는 오행을 채우는 방식은 경계했습니다."],["사용자 경험과 전문가 의견을 함께 분석했습니다","참여자 7인(고관심 4·중관심 1·저관심 2)과 명리·풍수 전문가 3인의 인터뷰에서 발언 189개를 정리했습니다. 이를 37개 소그룹, 6개 대그룹으로 묶어 서비스 설계 기준을 도출했습니다."]],"sh":"자료 · 해석 범위","s":"Steer 사용자 인터뷰·전문가 인터뷰·팀 어피니티 보드\n사용자 경험과 전문가 의견을 바탕으로 한 탐색적 분석입니다.\n분석한 발언 수는 응답자 비율이나 요구의 순위를 뜻하지 않습니다."}};
+  const TGL = {R1:'命과 運 · ‘움직이다’의 뜻 · 명리학', R2:'수치 해석 · 조사 문항 · 출처', R3:'방문 사례 · 통계의 집계 범위', R4:'순자 「천론」 · 와이즈먼의 기회 포착', R5:'장소의 의미를 만드는 경험 · 연구 배경', I1:'반복된 경험 · 질문 범위 · 분석 방법'};
   function tgBuild(id, r){
     const d = TG[id], el = document.createElement('div'); el.className = 'rs-tg';
     Object.assign(el.style, {left:r.x + 'px', top:(r.y + 2) + 'px', width:r.w + 'px'}); if (r.x < 100) el.classList.add('L');
@@ -2009,12 +2080,16 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     if (!HTM[id]) pg.appendChild(btn({x:878,y:16,w:110,h:56,label:'Research 처음으로'}, () => show('land')));
     const deck = deckOf(id), def = P[id] || {};
     if (deck && !HTM[id]) { ARROWS.forEach(h => pg.appendChild(btn(h, () => step(h.act)))); index(deck).forEach(h => pg.appendChild(btn(h, () => show(h.go)))); }
-    if (def.tog) pg.appendChild(btn({...def.tog[0], label:'더보기 펼치기'}, () => (DESK.includes(id) && TG[id]) ? tgOpen(pg, id, def.tog[0]) : openSheet([def.tog[1]])));
+    if (def.tog) pg.appendChild(btn({...def.tog[0], label:'더보기 펼치기'}, () => TG[id] ? tgOpen(pg, id, def.tog[0]) : openSheet([def.tog[1]])));
     (def.hits || []).forEach(h => pg.appendChild(btn(h, () => { if (h.go) show(h.go); else if (h.sheet) openSheet(h.sheet); else if (h.card) openCard(h.card); })));
     pagesEl.appendChild(pg);
   }
+  $('rs-I2') && $('rs-I2').querySelectorAll('.i2c').forEach(c => {
+    c.addEventListener('click', () => i2Flip(c));
+    c.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); i2Flip(c); } });
+  });
   // warm the drawer images so they open instantly
-  ['dR1','dR2','dR3','dR4','dR5','dI1','dI3a','dI3b','dI3c','dI3d','dI4x','dI4n1','dI4n2','dI4f1','dI4f2','dI5','gA','gB','gC','gD','gE','gF'].forEach(k => { const i = new Image(); i.src = SRC(k); });
+  ['dR1','dR2','dR3','dR4','dR5','dI3a','dI3b','dI3c','dI3d','dI4x','dI4n1','dI4n2','dI4f1','dI4f2','dI5'].forEach(k => { const i = new Image(); i.src = SRC(k); });
 
   let cur = null;
   function show(id){
