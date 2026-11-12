@@ -506,6 +506,46 @@ body.bare .bar>*{pointer-events:auto}
 #rsx .htm .i2c .qb p{margin:0;font:400 16px/21.6px 'Pretendard','Noto Sans KR',var(--font-ui);color:#141414}
 #rsx .htm .i2c .qb span{display:inline-block;margin-top:14px;padding:6px 11px;border:1px solid #0A0A0A;border-radius:20px;font:500 13px/18px 'Pretendard','Noto Sans KR',var(--font-ui);color:#141414;white-space:nowrap}
 #rsx .htm .i2c:focus-visible .fc{box-shadow:0 0 0 3px #0A0A0A}
+/* ===== Interview I4 · 세 가지 설계 결정 카드 스택 (Figma 2316:14391 / 2326:3853 / 2326:4124) ===== */
+#rsx .htm .i4eb{font:400 15px/21px 'Pretendard','Noto Sans KR',var(--font-ui);color:#35D1FB}
+#rsx .htm .i4h{font:700 46px/62px 'Pretendard','Noto Sans KR',var(--font-ui);color:#0A0A0A;white-space:nowrap}
+#rsx .htm .i4d{font:400 18px/29px 'Pretendard','Noto Sans KR',var(--font-ui);color:#0A0A0A;margin:0;white-space:nowrap}
+#rsx .htm .i4k{position:absolute;overflow:hidden;border-radius:60px;box-sizing:border-box;cursor:pointer;-webkit-tap-highlight-color:transparent;outline:none;
+  transition:left .9s cubic-bezier(.65,0,.25,1),top .9s cubic-bezier(.65,0,.25,1),width .9s cubic-bezier(.65,0,.25,1),height .9s cubic-bezier(.65,0,.25,1)}
+#rsx .htm .i4st{isolation:isolate}
+#rsx .htm .i4st>.i4k{pointer-events:auto}
+#rsx .htm .i4k[data-s="F"]{left:0;top:449px;width:1366px;height:768px;z-index:3;cursor:default}
+#rsx .htm .i4k[data-s="M"]{left:129px;top:376px;width:1126px;height:521px;z-index:2}
+#rsx .htm .i4k[data-s="B"]{left:247px;top:316px;width:872px;height:451px;z-index:1}
+#rsx .htm .i4k.km{background:#87E6FF}
+#rsx .htm .i4k.ks{background:#0A0A0A;color:#fff}
+#rsx .htm .i4k.kr{background:#fff;border:1px solid #0A0A0A}
+#rsx .htm .i4k:focus-visible{box-shadow:0 0 0 3px #35D1FB}
+#rsx .htm .i4k .ga{position:absolute;left:150px;width:481px;height:524px}
+#rsx .htm .i4k.km .ga{top:-18px}
+#rsx .htm .i4k.ks .ga,#rsx .htm .i4k.kr .ga{top:-42px}
+#rsx .htm .i4k .ga>*{position:absolute}
+#rsx .htm .i4k .ga,#rsx .htm .i4k .cp{transition:opacity .45s ease .5s}
+#rsx .htm .i4k:not([data-s="F"]) .ga,#rsx .htm .i4k:not([data-s="F"]) .cp{opacity:0;transition:opacity .2s ease}
+#rsx .htm .i4k .cp{position:absolute;left:764px;top:186px;width:520px}
+#rsx .htm .i4k .cp b{display:block;font:700 36px/43px 'Noto Sans KR',var(--font-ui);white-space:nowrap}
+#rsx .htm .i4k.km .cp b{font-family:'Pretendard','Noto Sans KR',var(--font-ui)}
+#rsx .htm .i4k .cp p{margin:12px 0 0;font:400 18px/30px 'Noto Sans KR',var(--font-ui);white-space:nowrap}
+#rsx .htm .i4k.km .cp p{font-family:'Pretendard','Noto Sans KR',var(--font-ui)}
+#rsx .htm .i4k .lb{position:absolute;top:360px;height:30px;font:700 17px/30px 'Noto Sans KR',var(--font-ui);text-align:center}
+#rsx .htm .i4k.ks .lb{color:#fff}
+/* Mission · 시간 선택 */
+#rsx .htm .i4k .orb{left:0;top:0;width:481px;height:524px;transform-origin:240px 247px}
+#rsx .htm .i4k .ob{position:absolute;transform-box:fill-box}
+#rsx .htm .i4k .o30{left:173px;top:293px;width:123px;height:123px;border-radius:50%;background:#fff;transition:background-color .45s ease}
+#rsx .htm .i4k .o30>svg{position:absolute;left:18px;top:42px;width:87px;height:39px}
+#rsx .htm .i4k .o30>svg path{fill:#0A0A0A;transition:fill .45s ease}
+#rsx .htm .i4k .o30.sel{background:#131313}
+#rsx .htm .i4k .o30.sel>svg path{fill:#fff}
+#rsx .htm .i4k .o30 .rg{position:absolute;left:-8.7px;top:-8.7px;width:140.4px;height:140.4px;box-sizing:border-box;border:3.4px solid #C2FF0A;border-radius:50%;opacity:0;transform:scale(.7);transition:opacity .35s ease,transform .5s cubic-bezier(.3,1.5,.5,1)}
+#rsx .htm .i4k .o30 .bd{position:absolute;left:92px;top:-7px;width:44px;height:44px;border-radius:50%;background:#C2FF0A;display:grid;place-items:center;opacity:0;transform:scale(0);transition:opacity .2s ease,transform .45s cubic-bezier(.3,1.7,.5,1)}
+#rsx .htm .i4k .o30.sel .rg{opacity:1;transform:none}
+#rsx .htm .i4k .o30.sel .bd{opacity:1;transform:none;transition-delay:.18s}
 /* R4 stacked cards (redesign) */
 #rsx .htm .r4c{border-radius:20px;overflow:hidden;color:#fff;background:linear-gradient(150deg,#94C5C5,#536B6E 55%,#242A31)}
 #rsx .htm .r4c.m{background:linear-gradient(140deg,#ABC9D7,#63757D 55%,#2F313B)}
@@ -1725,7 +1765,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     I1:{tog:[TOG_R2,'dI1']},
     I2:{},
     I3:{hits:['a','b','c','d'].map((s,i) => ({x:96+297*i,y:316,w:285,h:500,sheet:['dI3'+s],label:'발견 0'+(i+1)+' 더보기'}))},
-    I4:{tog:[TOG_R,'dI4x'],hits:[{x:40,y:350,w:428,h:350,sheet:['dI4x'],label:'연결 관점 더보기'},{x:468,y:350,w:429,h:350,sheet:['dI4n1','dI4n2'],label:'제동 더보기'},{x:897,y:350,w:429,h:350,sheet:['dI4f1','dI4f2'],label:'발견 더보기'}]},
+    I4:{},
     I5:{tog:[TOG_L,'dI5']}, I6:{}
   };
   const STACK_KEEP = {dI4n1:500, dI4f1:470}, STACK_CUT = 88;
@@ -1849,7 +1889,11 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     +   '<div class="fc bk" aria-hidden="true"><svg class="qm" aria-hidden="true" width="18" height="17" viewBox="0 0 18 17" fill="none"><path d="M10.1053 16.0263V8.50634C10.1053 4.55834 11.0453 2.44334 13.8183 -0.000657976L17.2493 2.77234C15.5573 4.32334 15.1343 5.31034 14.9463 8.17734H17.2493V16.0263H10.1053ZM0.00026574 16.0263V8.50634C0.00026574 4.55834 0.940266 2.44334 3.71327 -0.000657976L7.14427 2.77234C5.45227 4.27634 5.02927 5.31034 4.84127 8.17734H7.14427V16.0263H0.00026574Z" fill="#141414"/></svg><div class="qb"><p>아침 일찍 일어나서 찬 새벽 공기 좀 마셔보고, 해 보면 기분 좋고, 친구들이랑 가면 재밌고, 그리고 내려와서 감자탕 먹고 싶어서 갔어요.</p><span>무관심 A 참여자</span></div><svg class="ab" aria-hidden="true" width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="20" fill="#0A0A0A"/><path d="M12.5 20H27.5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div></div></div></div>'
     + '<div class="el i2c" data-g="b" data-card="gF" role="button" tabindex="0" aria-pressed="false" aria-label="주제 F · 딱 정해주기보다는 내가 골라보고 싶다 · 대표 인용문 보기" style="left:980.4px;top:431.7px;z-index:6;--c:#C2FF0A"><div class="rt" style="transform:rotate(-4deg)"><div class="fl">'
     +   '<div class="fc fr"><p class="tt">딱 정해주기보다는<br>내가 골라보고 싶다</p><svg class="no" aria-hidden="true" width="78" height="45" viewBox="0 0 78 45" fill="none"><path d="M22.32 44.64C10.354 44.64 0 34.286 0 22.32C0 10.354 10.354 0 22.32 0C34.286 0 44.702 10.354 44.702 22.32C44.702 34.286 34.286 44.64 22.32 44.64ZM22.32 38.936C31.434 38.936 38.688 31.558 38.688 22.32C38.688 13.082 31.434 5.704 22.32 5.704C13.268 5.704 5.952 13.082 5.952 22.32C5.952 31.558 13.268 38.936 22.32 38.936Z" fill="#171717"/><path d="M62 44.3125C54.1875 44.3125 48 38.125 48 30.25C48 27.875 48.6875 24.875 50 21.8125L59.5625 0H65.6875L57.9375 17.8125C59.0625 17.25 60.4375 16.9375 62 16.9375C69.8125 16.9375 76 22.875 76 30.4375C76 38.125 69.8125 44.3125 62 44.3125ZM62 38.9375C66.625 38.9375 70.375 35.125 70.375 30.4375C70.375 25.875 66.625 22.25 62 22.25C57.375 22.25 53.625 25.875 53.625 30.4375C53.625 35.125 57.375 38.9375 62 38.9375Z" fill="#171717"/></svg><svg class="ab" aria-hidden="true" width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="20" fill="#0A0A0A"/><path d="M20 12.5V27.5M12.5 20H27.5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div>'
-    +   '<div class="fc bk" aria-hidden="true"><svg class="qm" aria-hidden="true" width="18" height="17" viewBox="0 0 18 17" fill="none"><path d="M10.1053 16.0263V8.50634C10.1053 4.55834 11.0453 2.44334 13.8183 -0.000657976L17.2493 2.77234C15.5573 4.32334 15.1343 5.31034 14.9463 8.17734H17.2493V16.0263H10.1053ZM0.00026574 16.0263V8.50634C0.00026574 4.55834 0.940266 2.44334 3.71327 -0.000657976L7.14427 2.77234C5.45227 4.27634 5.02927 5.31034 4.84127 8.17734H7.14427V16.0263H0.00026574Z" fill="#141414"/></svg><div class="qb"><p>뭔가 선택지가 여러 개면 좋을 것 같아요. 뭔가 딱 한 군데로만 가라고 하기보다…</p><span>중관심 A 참여자</span></div><svg class="ab" aria-hidden="true" width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="20" fill="#0A0A0A"/><path d="M12.5 20H27.5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div></div></div></div>'
+    +   '<div class="fc bk" aria-hidden="true"><svg class="qm" aria-hidden="true" width="18" height="17" viewBox="0 0 18 17" fill="none"><path d="M10.1053 16.0263V8.50634C10.1053 4.55834 11.0453 2.44334 13.8183 -0.000657976L17.2493 2.77234C15.5573 4.32334 15.1343 5.31034 14.9463 8.17734H17.2493V16.0263H10.1053ZM0.00026574 16.0263V8.50634C0.00026574 4.55834 0.940266 2.44334 3.71327 -0.000657976L7.14427 2.77234C5.45227 4.27634 5.02927 5.31034 4.84127 8.17734H7.14427V16.0263H0.00026574Z" fill="#141414"/></svg><div class="qb"><p>뭔가 선택지가 여러 개면 좋을 것 같아요. 뭔가 딱 한 군데로만 가라고 하기보다…</p><span>중관심 A 참여자</span></div><svg class="ab" aria-hidden="true" width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="20" fill="#0A0A0A"/><path d="M12.5 20H27.5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div></div></div></div>',
+  I4: '<div class="el" data-g="h" style="left:40px;top:142px;width:600px;height:21px"><span class="i4eb">인터뷰 → 서비스 설계</span></div>'
+    + '<div class="el" data-g="h" style="left:40px;top:178px;width:1000px;height:62px"><span class="i4h">작은 실천을 시작하기 쉽도록 설계</span></div>'
+    + '<p class="el i4d" data-g="d" style="left:40px;top:251px">사용자의 실천 부담과 전문가의 추천 기준을, 미션 조합·스팟 추천·추천 이유 등에 반영했습니다.</p>'
+    + '<div class="el i4st" data-g="v" style="left:0;top:0;width:1366px;height:1024px;pointer-events:none"><div class="i4k kr" data-k="R" data-s="B" role="button" tabindex="0" aria-label="추천 이유 카드 보기"><div class="ga"><svg class="" aria-hidden="true"  style="left:38px;top:145px" width="405" height="240" viewBox="0 0 405 240" fill="none"><path d="M105 203C150.84 203 188 165.84 188 120C188 74.1604 150.84 37 105 37C59.1604 37 22 74.1604 22 120C22 165.84 59.1604 203 105 203Z" fill="white" stroke="#0A0A0A" stroke-width="1.5"/><path d="M300 203C345.84 203 383 165.84 383 120C383 74.1604 345.84 37 300 37C254.16 37 217 74.1604 217 120C217 165.84 254.16 203 300 203Z" fill="white" stroke="#0A0A0A" stroke-width="1.5"/><path d="M267 91H329M267 116H317M267 141H307" stroke="#0A0A0A" stroke-width="3" stroke-linecap="round"/><path d="M333 180C345.15 180 355 170.15 355 158C355 145.85 345.15 136 333 136C320.85 136 311 145.85 311 158C311 170.15 320.85 180 333 180Z" fill="#87E6FF"/><path d="M325 158L331 164L343 151" stroke="#0A0A0A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M190 119H208.5L202.5 113L204 111.5L212.5 120L204 128.5L202.5 127L208.5 121H190V119Z" fill="#0A0A0A"/></svg><img src="assets/i4-water.webp" alt="" aria-hidden="true" style="left:83.4px;top:233px;width:120.2px;height:62px"><span class="lb" style="left:51px;width:184px">나의 용신</span><span class="lb" style="left:246px;width:184px">추천 활동</span></div><div class="cp"><b>추천 이유를 함께 설명</b><p>나의 용신과 추천 활동이 어떻게 이어지는지<br>설명해, 추천 이유를 이해할 수 있게 합니다.</p></div></div><div class="i4k ks" data-k="S" data-s="M" role="button" tabindex="0" aria-label="장소와 할 일 카드 보기"><div class="ga"><svg class="" aria-hidden="true"  style="left:38px;top:145px" width="405" height="240" viewBox="0 0 405 240" fill="none"><path d="M159 120H246" stroke="#87E6FF" stroke-width="3" stroke-dasharray="4 7"/><path d="M105 203C150.84 203 188 165.84 188 120C188 74.1604 150.84 37 105 37C59.1604 37 22 74.1604 22 120C22 165.84 59.1604 203 105 203Z" fill="white" stroke="#0A0A0A" stroke-width="1.5"/><path d="M300 203C345.84 203 383 165.84 383 120C383 74.1604 345.84 37 300 37C254.16 37 217 74.1604 217 120C217 165.84 254.16 203 300 203Z" fill="white" stroke="#0A0A0A" stroke-width="1.5"/><path d="M105 73C81 73 65 91 65 111C65 141 105 168 105 168C105 168 145 141 145 111C145 91 129 73 105 73Z" fill="#87E6FF" stroke="#0A0A0A" stroke-width="2"/><path d="M105 120C111.627 120 117 114.627 117 108C117 101.373 111.627 96 105 96C98.3726 96 93 101.373 93 108C93 114.627 98.3726 120 105 120Z" fill="white" stroke="#0A0A0A" stroke-width="2"/><path d="M293.565 128.657C300.072 125.623 300.617 113.019 294.782 100.506C288.947 87.9921 278.941 80.3076 272.434 83.3419C265.927 86.3762 265.383 98.9801 271.218 111.494C277.053 124.007 287.058 131.692 293.565 128.657Z" fill="#0A0A0A"/><path d="M326.565 158.657C333.072 155.623 333.617 143.019 327.782 130.506C321.947 117.992 311.941 110.308 305.434 113.342C298.927 116.376 298.383 128.98 304.218 141.494C310.053 154.007 320.058 161.692 326.565 158.657Z" fill="#0A0A0A"/><path d="M319 72C329.493 72 338 63.4934 338 53C338 42.5066 329.493 34 319 34C308.507 34 300 42.5066 300 53C300 63.4934 308.507 72 319 72Z" fill="#C2FF0A"/><path d="M311 53L317 59L328 47" stroke="#0A0A0A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="lb" style="left:83px;width:120px">장소</span><span class="lb" style="left:278px;width:120px">할 일</span></div><div class="cp"><b>장소와 할 일을 함께 제안</b><p>용신에 맞는 장소와 그곳에서 할 활동을<br>함께 제안해, 도착 후의 경험까지 안내합니다.</p></div></div><div class="i4k km" data-k="M" data-s="F" role="button" tabindex="0" aria-label="미션 조합 카드 보기"><div class="ga"><svg class="ob" aria-hidden="true"  style="left:85.5px;top:126.5px" width="306" height="239" viewBox="0 0 306 239" fill="none"><path d="M304.208 184.972C263.249 227.26 130.033 255.65 69.4859 222.172C8.93848 188.693 -5.80432 140.953 4.88052 96.9022C17.3462 44.0417 65.428 1.75329 118.852 1.75329C188.304 -0.0087216 248.851 29.9456 273.783 82.8061M282.687 49.3277L273.783 82.8061L252.413 73.996" stroke="white" stroke-opacity="0.9" stroke-width="3.36316" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="orb"><span class="ob o3h" style="left:249px;top:101px"><svg class="" aria-hidden="true" width="103" height="103" viewBox="0 0 103 103" fill="none"><circle cx="51.1916" cy="51.1916" r="51.1916" fill="white"/><path d="M34.3514 65.2227V61.2451H41.055C45.2113 61.2451 48.4738 58.0274 48.4738 53.8711C48.4738 49.7595 45.2113 46.5418 41.055 46.5418H37.301V42.5643H41.0104C42.3511 42.5643 43.3343 41.5811 43.3343 40.2403C43.3343 38.8996 42.3511 37.9164 40.9657 37.9164H37.301V33.9389H41.055C44.4963 33.9389 47.4012 36.7097 47.4012 39.9275C47.4012 41.2682 46.8202 42.4749 45.9711 43.4134C49.9933 45.2457 52.7641 49.0892 52.7641 53.8711C52.7641 60.2619 47.6693 65.2227 41.055 65.2227H34.3514ZM53.4614 65.2227V33.9389H57.5283V38.989C58.1092 38.8102 58.7796 38.6761 59.45 38.6761C62.8018 38.6761 65.3939 41.3129 65.3939 44.7094V65.2227H61.4164L61.327 44.5754C61.327 43.5028 60.5226 42.6537 59.45 42.6537C58.3774 42.6537 57.5283 43.5028 57.5283 44.5754V65.2227H53.4614Z" fill="black"/></svg></span><span class="ob o1h" style="left:51px;top:174px"><svg class="" aria-hidden="true" width="103" height="103" viewBox="0 0 103 103" fill="none"><circle cx="51.1916" cy="51.1916" r="51.1916" fill="white"/><path d="M43.3907 65.2227V37.9164H39.9942V33.9389H47.547V65.2227H43.3907ZM49.8528 65.2227V33.9389H53.9197V38.989C54.5006 38.8102 55.171 38.6761 55.8414 38.6761C59.1932 38.6761 61.7853 41.3129 61.7853 44.7094V65.2227H57.8078L57.7184 44.5754C57.7184 43.5028 56.914 42.6537 55.8414 42.6537C54.7688 42.6537 53.9197 43.5028 53.9197 44.5754V65.2227H49.8528Z" fill="black"/></svg></span><span class="ob o30" style="left:173px;top:293px"><i class="rg"></i><svg class="" aria-hidden="true" width="87" height="39" viewBox="0 0 87 39" fill="none"><path d="M-0.000408173 38.0781V33.3051H8.04399C13.0315 33.3051 16.9465 29.4438 16.9465 24.4563C16.9465 19.5224 13.0315 15.6611 8.04399 15.6611H3.53913V10.8881H7.99036C9.59924 10.8881 10.7791 9.70822 10.7791 8.09935C10.7791 6.49047 9.59924 5.31062 7.93673 5.31062H3.53913V0.537613H8.04399C12.1734 0.537613 15.6593 3.86263 15.6593 7.72394C15.6593 9.33282 14.9622 10.7808 13.9432 11.907C18.7698 14.1058 22.0949 18.7179 22.0949 24.4563C22.0949 32.1253 15.9811 38.0781 8.04399 38.0781H-0.000408173ZM40.7641 38.6144C30.4137 38.6144 21.4576 29.6583 21.4576 19.3079C21.4576 8.95741 30.4137 0.00132055 40.7641 0.00132055C51.1146 0.00132055 60.1243 8.95741 60.1243 19.3079C60.1243 29.6583 51.1146 38.6144 40.7641 38.6144ZM40.7641 33.6805C48.6477 33.6805 54.9223 27.2986 54.9223 19.3079C54.9223 11.3171 48.6477 4.93522 40.7641 4.93522C32.9343 4.93522 26.606 11.3171 26.606 19.3079C26.606 27.2986 32.9343 33.6805 40.7641 33.6805ZM69.7478 6.22232C71.5176 6.22232 73.1801 6.86587 74.4136 7.99209C75.6471 6.86587 77.2559 6.22232 79.0793 6.22232C83.1015 6.22232 86.212 9.38645 86.212 13.4623V38.0781H81.3854L81.3318 13.3014C81.3318 12.0143 80.3664 10.9953 79.0793 10.9953C77.8459 10.9953 76.8805 12.0143 76.8805 13.3014V38.0781H72.0003V25.6898L71.9466 13.3014C71.9466 12.0143 70.9813 10.9953 69.7478 10.9953C68.4607 10.9953 67.4954 12.0143 67.4954 13.3014V38.0781H62.6151V13.4623C62.6151 9.38645 65.7256 6.22232 69.7478 6.22232Z" fill="white"/></svg><i class="bd"><svg class="" aria-hidden="true" width="19" height="15" viewBox="0 0 19 15" fill="none"><path d="M1.49316 8.45993L6.47012 13.4369L17.4194 1.49219" stroke="#141B34" stroke-width="2.98618" stroke-linecap="round" stroke-linejoin="round"/></svg></i></span></div></div><div class="cp"><b>오늘 할 수 있는 미션을 조합</b><p>용신과 일진을 바탕으로, 가능한 시간과<br>원하는 활동에 맞춰 미션을 조합합니다.</p></div></div></div>'
   };
   const NUMH = {
     I1:[{host:'i1a', x:23, y:22, w:25, s:.707, c:'#0A0A0A', to:7, f:v => '' + Math.round(v)},
@@ -2019,6 +2063,38 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   }
   function i2Reset(){ const pg = $('rs-I2'); if (!pg) return; pg.querySelectorAll('.i2c.on').forEach(c => i2Face(c, false));
     pg.querySelectorAll('.i2c').forEach((c, k) => { c.style.zIndex = k + 1; }); i2Z = 10; i2Sel = null; }
+  // I4 · 미션 → 스팟 → 이유 카드가 차례로 앞으로 나온다(첫 전환 5초, 이후 4.2초 간격, 이동 0.9초). 직접 고르면 자동 전환을 멈춘다
+  const I4S = {M:{M:'F', S:'M', R:'B'}, S:{S:'F', M:'M', R:'B'}, R:{R:'F', M:'M', S:'B'}}, I4N = {M:'S', S:'R', R:'M'};
+  let i4T = 0, i4Cur = 'M', i4Run0 = 0;
+  const i4Cards = () => { const pg = $('rs-I4'); return pg ? [...pg.querySelectorAll('.i4k')] : []; };
+  function i4Set(k, user){
+    const cs = i4Cards(); if (!cs.length) return; i4Cur = k;
+    cs.forEach(c => { const sl = I4S[k][c.dataset.k]; c.dataset.s = sl; c.setAttribute('aria-pressed', sl === 'F' ? 'true' : 'false');
+      c.querySelector('.cp').setAttribute('aria-hidden', sl === 'F' ? 'false' : 'true'); });
+    if (k === 'M') i4Mission(user ? 520 : 620);
+    CHH.classList.toggle('r2', cur === 'I4' && k === 'S');
+  }
+  // Mission · 흰 30m이 1h·3h와 함께 순환 화살표를 따라 돌다가 멈추며 선택된다
+  function i4Mission(delay){
+    const pg = $('rs-I4'); if (!pg) return; const orb = pg.querySelector('.orb'), o30 = pg.querySelector('.o30');
+    o30.classList.remove('sel'); clearTimeout(i4Run0);
+    if (RM.matches){ o30.classList.add('sel'); return; }
+    const kids = [...orb.querySelectorAll(':scope > span')], E = 'cubic-bezier(.25,.1,.2,1)', D = 1500;
+    orb.getAnimations().forEach(a => a.cancel()); kids.forEach(c => c.getAnimations().forEach(a => a.cancel()));
+    orb.animate([{transform:'rotate(-240deg)'}, {transform:'rotate(0deg)'}], {duration:D, delay, easing:E, fill:'backwards'});
+    kids.forEach(c => c.animate([{transform:'rotate(240deg)'}, {transform:'rotate(0deg)'}], {duration:D, delay, easing:E, fill:'backwards'}));
+    i4Run0 = setTimeout(() => o30.classList.add('sel'), delay + D - 120);
+  }
+  function i4Stop(){ clearTimeout(i4T); clearInterval(i4T); i4T = 0; }
+  function i4Enter(id){
+    i4Stop(); clearTimeout(i4Run0);
+    const cs = i4Cards(); if (!cs.length) return;
+    if (id !== 'I4'){ CHH.classList.remove('r2'); cs.forEach(c => c.style.transition = 'none'); i4Set('M'); cs[0].offsetWidth; cs.forEach(c => c.style.transition = ''); $('rs-I4').querySelector('.o30').classList.remove('sel'); return; }
+    i4Set('M'); i4Mission(1100);
+    if (RM.matches) return;
+    const tick = () => { if (cur !== 'I4') { i4Stop(); return; } i4Set(I4N[i4Cur]); };
+    i4T = setTimeout(() => { tick(); i4T = setInterval(tick, 4200); }, 5000);
+  }
   function rsMotion(prevId, id){
     const dir = prevId == null ? 1 : (ORDER.indexOf(id) >= ORDER.indexOf(prevId) ? 1 : -1);
     const pg = $('rs-' + id), out = prevId != null && prevId !== id ? $('rs-' + prevId) : null;
@@ -2044,6 +2120,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     r4Run(id);
     r6Vid(id);
     if (prevId === 'I2') i2Reset();
+    if (id === 'I4' || prevId === 'I4') i4Enter(id);
     if (window.steerTrack) steerTrack('research_page', {page_id:id});
   }
   // ---- Desk Research 더보기: opens in place, under the line, like a Notion toggle (interview pages keep their drawers) ----
@@ -2103,6 +2180,11 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   $('rs-I2') && $('rs-I2').querySelectorAll('.i2c').forEach(c => {
     c.addEventListener('click', () => i2Flip(c));
     c.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); i2Flip(c); } });
+  });
+  i4Cards().forEach(c => {
+    const pick = () => { if (c.dataset.s === 'F') return; i4Stop(); i4Set(c.dataset.k, true); };
+    c.addEventListener('click', pick);
+    c.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
   });
   // warm the drawer images so they open instantly
   ['dR1','dR2','dR3','dR4','dR5','dI3a','dI3b','dI3c','dI3d','dI4x','dI4n1','dI4n2','dI4f1','dI4f2','dI5'].forEach(k => { const i = new Image(); i.src = SRC(k); });
