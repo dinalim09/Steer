@@ -1789,7 +1789,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     + '<span class="el ch5" data-g="k" style="left:1056px;top:585px"><i></i>걷기</span>'
     + '<span class="el ch5 ch-mm" data-g="k" style="left:149px;top:697px"><i></i>머무르기</span>'
     + '<span class="el ch5" data-g="k" style="left:895px;top:775px"><i></i>기록하기</span>',
-  R6: '<div class="el bgph" aria-hidden="true" style="left:0;top:0;width:1366px;height:1024px"><img src="assets/rs4-r6-bg.webp" alt=""></div>'
+  R6: '<div class="el bgph" aria-hidden="true" style="left:0;top:0;width:1366px;height:1024px"><video muted playsinline webkit-playsinline disablepictureinpicture disableremoteplayback controlslist="nodownload nofullscreen noremoteplayback" loop autoplay preload="auto" src="assets/r6-bg.mp4" style="position:absolute;left:-57px;top:-331px;width:1472px;height:1953px;object-fit:cover"></video><i style="position:absolute;inset:0;background:rgba(0,0,0,.2)"></i></div>'
     + '<div class="el" data-g="h" style="left:0;top:284px;width:1366px;height:21px;text-align:center"><span class="eb">우리의 질문</span></div>'
     + '<div class="el" data-g="h" style="left:397px;top:319px;width:572px;height:174px"><span class="qh">운세가 새로운 경험의<br>계기가 될 수 있을까?</span></div>'
     + '<p class="el qp" data-g="d" style="left:323px;top:516px;width:720px;margin:0">운세에 대한 관심과 실제 방문 사이에 무엇이 작용하는지는,<br>사람들의 경험을 통해 확인할 필요가 있었습니다.</p>'
@@ -1927,6 +1927,12 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     if (id !== 'R4' || RM.matches) return;
     r4T = setInterval(() => { if (cur !== 'R4') { clearInterval(r4T); r4T = 0; return; } ks.forEach(k => k.classList.toggle('big')); }, 2000);
   }
+  // R6 · 배경 영상: R6에서만 재생, 벗어나면 일시정지
+  function r6Vid(id){
+    const pg = $('rs-R6'), v = pg && pg.querySelector('video'); if (!v) return;
+    if (id === 'R6'){ const p = v.play(); if (p && p.catch) p.catch(() => {}); }
+    else { v.pause(); }
+  }
   function rsMotion(prevId, id){
     const dir = prevId == null ? 1 : (ORDER.indexOf(id) >= ORDER.indexOf(prevId) ? 1 : -1);
     const pg = $('rs-' + id), out = prevId != null && prevId !== id ? $('rs-' + prevId) : null;
@@ -1950,6 +1956,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     chromeOn(id);
     enter(id, dir);
     r4Run(id);
+    r6Vid(id);
     if (window.steerTrack) steerTrack('research_page', {page_id:id});
   }
   // ---- Desk Research 더보기: opens in place, under the line, like a Notion toggle (interview pages keep their drawers) ----
