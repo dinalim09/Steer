@@ -1994,15 +1994,23 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     if (id === 'R6'){ const p = v.play(); if (p && p.catch) p.catch(() => {}); }
     else { v.pause(); }
   }
-  // I2 · 주제 카드 앞면 ↔ 뒷면(대표 인용문). 펼친 카드는 맨 앞으로 올라온다
-  let i2Z = 10;
-  function i2Flip(c){
-    const on = !c.classList.contains('on'); c.classList.toggle('on', on); c.setAttribute('aria-pressed', on ? 'true' : 'false');
+  // I2 · 첫 클릭: 맨 앞으로 선택(앞면 유지) → 두 번째 클릭: 뒷면 플립 → 다시 클릭: 앞면 복귀
+  //      다른 카드 선택 시 이전 카드는 앞면으로 돌아간다
+  let i2Z = 10, i2Sel = null;
+  function i2Face(c, on){
+    c.classList.toggle('on', on); c.setAttribute('aria-pressed', on ? 'true' : 'false');
     c.querySelector('.fr').setAttribute('aria-hidden', on ? 'true' : 'false'); c.querySelector('.bk').setAttribute('aria-hidden', on ? 'false' : 'true');
-    if (on){ c.style.zIndex = ++i2Z; if (window.steerTrack) steerTrack('research_card_open', {page_id:'I2', card:c.dataset.card}); }
+    if (on && window.steerTrack) steerTrack('research_card_open', {page_id:'I2', card:c.dataset.card});
   }
-  function i2Reset(){ const pg = $('rs-I2'); if (!pg) return; pg.querySelectorAll('.i2c.on').forEach(i2Flip);
-    pg.querySelectorAll('.i2c').forEach((c, k) => { c.style.zIndex = k + 1; }); i2Z = 10; }
+  function i2Flip(c){
+    if (i2Sel !== c){
+      if (i2Sel && i2Sel.classList.contains('on')) i2Face(i2Sel, false);
+      i2Sel = c; c.style.zIndex = ++i2Z; return;
+    }
+    i2Face(c, !c.classList.contains('on'));
+  }
+  function i2Reset(){ const pg = $('rs-I2'); if (!pg) return; pg.querySelectorAll('.i2c.on').forEach(c => i2Face(c, false));
+    pg.querySelectorAll('.i2c').forEach((c, k) => { c.style.zIndex = k + 1; }); i2Z = 10; i2Sel = null; }
   function rsMotion(prevId, id){
     const dir = prevId == null ? 1 : (ORDER.indexOf(id) >= ORDER.indexOf(prevId) ? 1 : -1);
     const pg = $('rs-' + id), out = prevId != null && prevId !== id ? $('rs-' + prevId) : null;
