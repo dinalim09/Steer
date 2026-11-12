@@ -457,12 +457,13 @@ body.bare .bar>*{pointer-events:auto}
 #rsx .htm .gr3 .lb.big{font-size:22px;line-height:33px}
 #rsx .htm .gr3 .dt{position:absolute;white-space:nowrap;color:#fff;font:400 14px/21px 'Noto Sans KR',var(--font-ui)}
 /* R4 · accordion */
-#rsx .htm .r4w{display:flex;flex-direction:column;gap:21px}
-#rsx .htm .r4k{position:relative;flex:none;height:151px;border-radius:20px;overflow:hidden;color:#fff;transition:height .8s cubic-bezier(.22,.8,.2,1)}
-#rsx .htm .r4k.big{height:493px}
-#rsx .htm .r4k>img{position:absolute;left:0;top:50%;width:633px;height:493px;max-width:none;object-fit:cover;transform:translateY(-50%);-webkit-user-drag:none}
+#rsx .htm .r4w{display:flex;flex-direction:column;gap:20px}
+#rsx .htm .r4k{position:relative;flex:none;height:111px;border-radius:60px;overflow:hidden;color:#fff;transition:height .8s cubic-bezier(.22,.8,.2,1)}
+#rsx .htm .r4k.big{height:544px}
+#rsx .htm .r4k>img{position:absolute;left:0;top:50%;width:633px;height:544px;max-width:none;object-fit:cover;transform:translateY(-50%);-webkit-user-drag:none}
 #rsx .htm .r4k>i{position:absolute;inset:0;background:linear-gradient(248deg,rgba(135,230,255,.52),rgba(135,230,255,0) 70%),linear-gradient(180deg,rgba(0,0,0,0) 55%,rgba(0,0,0,.62)),linear-gradient(rgba(0,0,0,.2),rgba(0,0,0,.2))}
-#rsx .htm .r4k .cw{position:absolute;left:28px;bottom:28px}
+#rsx .htm .r4k .cw{position:absolute;left:28px;top:34px;transition:opacity .3s ease}
+#rsx .htm .r4k:not(.big) .cw{opacity:0}
 #rsx .htm .r4k strong{display:block;font-weight:700;font-size:22px;line-height:30px;margin-bottom:17px}
 #rsx .htm .r4k small{display:block;font-weight:400;font-size:14px;line-height:20px}
 /* R5 · photo + gathering diagram */
@@ -1771,7 +1772,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     +   '<span class="lb l0" style="left:35px;top:177px">3,909명</span><span class="lb big l1" style="left:345px;top:5px">5,521명</span>'
     +   '<span class="dt" style="left:13px;top:294px">2025.4</span><span class="dt" style="left:375px;top:294px">2026.4</span></div>',
   R4: col('인문학 · 행동', '행동에 따라', '달라질 수 있는 운', '순자는 주어진 조건 속 실천을, 와이즈먼은 우연한 기회를<br>만들고 알아차리는 행동을 강조합니다.', '순자 「천론」 · 와이즈먼의 기회 포착', 0, 0, 575, 416)
-    + '<div class="el r4w" data-g="v" style="left:693px;top:179px;width:633px;height:665px">'
+    + '<div class="el r4w" data-g="v" style="left:693px;top:179px;width:633px;height:675px">'
     +   '<div class="r4k big"><img src="assets/rs4-r4-sky.webp" alt="구름이 흐르는 하늘"><i></i><div class="cw"><strong>상황을 바꾸지 못해도<br>태도는 선택할 수 있다</strong><small>고전 사상 · 순자 「천론」</small></div></div>'
     +   '<div class="r4k"><img src="assets/rs4-r4-river.webp" alt="나무가 늘어선 강가 산책길"><i></i><div class="cw"><strong>행동으로<br>기회를 늘릴 수 있다</strong><small>현대 심리학 · Richard Wiseman</small></div></div></div>',
   R5: '<div class="el bgph" aria-hidden="true" style="left:0;top:0;width:1366px;height:1024px"><img src="assets/rs4-r5-bg.webp" alt=""></div>'
@@ -1912,7 +1913,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     if (chrome(id)) { CHV.style.visibility = 'visible'; return; }
     const im = $('rs-' + id) && $('rs-' + id).querySelector(':scope > img'); CHV.style.visibility = 'hidden';
     if (im) im.addEventListener('load', () => { if (cur === id && chrome(id)) CHV.style.visibility = 'visible'; }, {once:true}); }
-  // R4 · 두 카드가 2초마다 493px ↔ 151px로 교대하는 아코디언(전환 0.8초)
+  // R4 · 두 카드가 2초마다 544px ↔ 111px로 교대하는 아코디언(전환 0.8초)
   let r4T = 0;
   function r4Run(id){
     clearInterval(r4T); r4T = 0;
