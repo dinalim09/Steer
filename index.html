@@ -492,9 +492,14 @@ body.bare .bar>*{pointer-events:auto}
 #rsx .ie-c[aria-current="true"]{cursor:default}
 #rsx .ie-c img{display:block;width:359.2px;height:437.6px;pointer-events:none;-webkit-user-drag:none}
 #rsx .ie-c:focus-visible{outline:3px solid #35D1FB;outline-offset:4px;border-radius:24px}
-#rsx .ie-pg{position:absolute;left:583px;top:949px;width:200px;margin:0;font:500 15px/22px 'Pretendard',var(--font-ui);color:#6E6E73;text-align:center;font-variant-numeric:tabular-nums}
+/* 캐러셀 도트: 가장 아래 카드(정면 카드 하단 y877.6) 아래 20px(y898)에 8px 도트, 활성 22×8 · 간격 12. 하단 I1–I6 인덱스(y960)와 분리 */
+#rsx .ie-dots{position:absolute;left:0;right:0;top:888px;height:28px;display:flex;justify-content:center;align-items:center}
+#rsx .ie-dot{position:relative;height:28px;padding:0 6px;margin:0;border:0;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent;display:flex;align-items:center}
+#rsx .ie-dot i{display:block;width:8px;height:8px;border-radius:4px;background:#C4CDD0;transition:width .3s cubic-bezier(.3,.7,.2,1),background-color .3s}
+#rsx .ie-dot[aria-selected="true"] i{width:22px;background:#0A0A0A}
+#rsx .ie-dot:focus-visible{outline:2px solid #35D1FB;outline-offset:2px;border-radius:8px}
+@media (prefers-reduced-motion: reduce){#rsx .ie-dot i{transition:none}}
 #rsChromeH.ie .xnv{background:transparent}
-#rsChromeH.ie .ci{display:none}
 #rsChromeH .arr{box-shadow:0 4px 16px rgba(0,0,0,.12)}
 #rsChromeH .arr.prv{box-shadow:inset 0 0 0 1px #fff,0 4px 16px rgba(0,0,0,.12)}
 #rsChromeH .arr.nxt .g2{display:none;position:absolute;left:-20px;top:-20px;pointer-events:none}
@@ -2029,7 +2034,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     R3:[{host:'r3n', x:0, y:4, w:425, s:1.746, c:'#0A0A0A', to:41.2, f:v => '+' + v.toFixed(1) + '%'}]
   };
   // 전문가 자문 캐러셀(Figma 2388:4307 · 4365 · 4423): 정면 카드 원본 3장에 CSS perspective·rotateY만 적용
-  HTM.I3 = '<div class="ie" role="group" aria-roledescription="carousel" aria-label="전문가 자문"><p class="ie-eb" data-g="d">전문가 자문</p><h2 class="ie-h" data-g="d">자문을 통해 세운 큐레이션 기준</h2><div class="ie-top" data-g="d"><div class="ie-bub"><span>개운의 기준은 항상 ‘용신’이에요</span></div><svg class="ie-tl" width="31" height="26" viewBox="0 0 31 26" fill="none" aria-hidden="true"><path d="M13.655 24.1194C14.5189 25.4661 16.4869 25.4661 17.3509 24.1194L30.6546 3.38093C31.5919 1.91971 30.5427 0 28.8066 0H2.19922C0.46318 0 -0.586086 1.91971 0.351287 3.38093L13.655 24.1194Z" fill="#0A0A0A"/></svg><p class="ie-nm" aria-live="polite">홍성민 교수 · 명리학</p></div><div class="ie-st"><button type="button" class="ie-c" data-i="0" aria-label="홍성민 교수 · 명리학 · 개운의 기준은, 나에게 필요한 용신"><img alt="" decoding="async" draggable="false" src="assets/ie-card-hong.webp"></button><button type="button" class="ie-c" data-i="1" aria-label="초명 · 명리 상담가 · 같은 장소도, 행동에 따라 달라지는 기운"><img alt="" decoding="async" draggable="false" src="assets/ie-card-chomyung.webp"></button><button type="button" class="ie-c" data-i="2" aria-label="김두규 교수 · 풍수지리 · 먼 곳의 기운을 찾기보다, 가까운 일상에서 자주"><img alt="" decoding="async" draggable="false" src="assets/ie-card-kim.webp"></button></div><p class="ie-pg" aria-live="polite">01 / 03</p><span class="ie-ms" aria-hidden="true"></span></div>';
+  HTM.I3 = '<div class="ie" role="group" aria-roledescription="carousel" aria-label="전문가 자문"><p class="ie-eb" data-g="d">전문가 자문</p><h2 class="ie-h" data-g="d">자문을 통해 세운 큐레이션 기준</h2><div class="ie-top" data-g="d"><div class="ie-bub"><span>개운의 기준은 항상 ‘용신’이에요</span></div><svg class="ie-tl" width="31" height="26" viewBox="0 0 31 26" fill="none" aria-hidden="true"><path d="M13.655 24.1194C14.5189 25.4661 16.4869 25.4661 17.3509 24.1194L30.6546 3.38093C31.5919 1.91971 30.5427 0 28.8066 0H2.19922C0.46318 0 -0.586086 1.91971 0.351287 3.38093L13.655 24.1194Z" fill="#0A0A0A"/></svg><p class="ie-nm" aria-live="polite">홍성민 교수 · 명리학</p></div><div class="ie-st"><button type="button" class="ie-c" data-i="0" aria-label="홍성민 교수 · 명리학 · 개운의 기준은, 나에게 필요한 용신"><img alt="" decoding="async" draggable="false" src="assets/ie-card-hong.webp"></button><button type="button" class="ie-c" data-i="1" aria-label="초명 · 명리 상담가 · 같은 장소도, 행동에 따라 달라지는 기운"><img alt="" decoding="async" draggable="false" src="assets/ie-card-chomyung.webp"></button><button type="button" class="ie-c" data-i="2" aria-label="김두규 교수 · 풍수지리 · 먼 곳의 기운을 찾기보다, 가까운 일상에서 자주"><img alt="" decoding="async" draggable="false" src="assets/ie-card-kim.webp"></button></div><div class="ie-dots" role="tablist" aria-label="전문가 선택"><button type="button" class="ie-dot" role="tab" data-i="0" aria-label="홍성민 교수"><i></i></button><button type="button" class="ie-dot" role="tab" data-i="1" aria-label="초명"><i></i></button><button type="button" class="ie-dot" role="tab" data-i="2" aria-label="김두규 교수"><i></i></button></div><span class="ie-ms" aria-hidden="true"></span></div>';
   P.I3 = {};   // 기존 I3 이미지 화면의 더보기 영역은 쓰지 않는다 (#IE 주소는 I3로 연결)
   const PHB = new Set(['R3','R5','R6','I6']);
   function buildHtm(pg, id){
@@ -2396,11 +2401,11 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     : {t:'translateX(' + (o < 0 ? -1 : 1)*(Math.abs(o) > 1 ? 560 : 371) + 'px) translateY(-6px) rotateY(' + (o < 0 ? 1 : -1)*(Math.abs(o) > 1 ? 72 : 54.19) + 'deg) scale(' + (Math.abs(o) > 1 ? .62 : .795) + ')', o:Math.abs(o) > 1 ? 0 : .8, z:Math.abs(o) > 1 ? 1 : 2};
   const ieRoot = $('rs-I3') && $('rs-I3').querySelector('.ie');
   const ie = ieRoot ? {cards:[...ieRoot.querySelectorAll('.ie-c')], bub:ieRoot.querySelector('.ie-bub'), q:ieRoot.querySelector('.ie-bub span'), nm:ieRoot.querySelector('.ie-nm'),
-    pg:ieRoot.querySelector('.ie-pg'), ms:ieRoot.querySelector('.ie-ms'), a:0, off:[0, 1, -1]} : null;
+    dots:[...ieRoot.querySelectorAll('.ie-dot')], ms:ieRoot.querySelector('.ie-ms'), a:0, off:[0, 1, -1]} : null;
   const ieRel = (i, a) => ((i - a + 4) % 3) - 1;
   function ieText(a, animate){
     const d = IE_D[a], b0 = animate && !RM.matches ? ie.bub.getBoundingClientRect() : null;
-    ie.q.textContent = d.q; ie.nm.textContent = d.n; ie.pg.textContent = '0' + (a + 1) + ' / 03';
+    ie.q.textContent = d.q; ie.nm.textContent = d.n; ie.dots.forEach((b, i) => b.setAttribute('aria-selected', i === a ? 'true' : 'false'));
     // 말풍선 크기 전환(FLIP): 새 문구로 바뀐 자연 크기를 재고, 이전 크기에서 그 크기로만 보간한 뒤 고정값을 남기지 않는다
     ie.bub.getAnimations().forEach(x => x.cancel());
     let grow = 0;   // 말풍선이 커지는 동안에는 새 문구를 숨겼다가, 다 커진 뒤 나타나게 해 전환 중 잘린 글자가 보이지 않게 한다
@@ -2410,7 +2415,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
       if (b1.width > b0.width + .5 || b1.height > b0.height + .5) grow = 300; }
     ie.cards.forEach((c, i) => { c.setAttribute('aria-current', i === a ? 'true' : 'false'); c.tabIndex = i === a ? -1 : 0; });
     if (!animate || RM.matches) return;
-    [ie.q, ie.nm, ie.pg].forEach(el => { el.getAnimations().forEach(x => x.cancel()); el.animate([{opacity:0, transform:'translateY(6px)'}, {opacity:1, transform:'none'}], {duration:380, delay:el === ie.q ? grow : 0, easing:EZ, fill:'backwards'}); });
+    [ie.q, ie.nm].forEach(el => { el.getAnimations().forEach(x => x.cancel()); el.animate([{opacity:0, transform:'translateY(6px)'}, {opacity:1, transform:'none'}], {duration:380, delay:el === ie.q ? grow : 0, easing:EZ, fill:'backwards'}); });
   }
   function ieGo(a, dir){
     if (!ie) return; a = (a + 3) % 3; if (a === ie.a) return;
@@ -2439,13 +2444,14 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     ieSet(0);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => ieText(ie.a, false));   // 말풍선 폭은 폰트 로딩 뒤 다시 잰다
     let sw = null, swiped = false;
+    ie.dots.forEach((d, i) => d.addEventListener('click', e => { e.stopPropagation(); if (i !== ie.a) ieGo(i, ieRel(i, ie.a)); }));
     ie.cards.forEach((c, i) => c.addEventListener('click', e => { e.stopPropagation(); if (swiped) { swiped = false; return; } if (i !== ie.a) ieGo(i, ieRel(i, ie.a)); }));
     // 스와이프: 말풍선~카드 영역(y 300–890)의 가로 밀기는 캐러셀만 넘기고 Research 챕터는 넘기지 않는다
     const toY = e => { const R = ieRoot.getBoundingClientRect(); return (e.clientY - R.top)*1024/R.height; };
     ieRoot.addEventListener('pointerdown', e => { const y = toY(e); sw = (y > 300 && y < 890) ? {x:e.clientX, y:e.clientY, k:ieRoot.getBoundingClientRect().width/1366} : null; swiped = false; });
     ieRoot.addEventListener('pointerup', e => { if (!sw) return; const dx = (e.clientX - sw.x)/sw.k, dy = (e.clientY - sw.y)/sw.k; sw = null;
       if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)*1.2){ e.stopPropagation(); swiped = true; ieGo(ie.a + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1); setTimeout(() => { swiped = false; }, 0); }
-      else if (e.target.closest('.ie-c')) e.stopPropagation(); });
+      else if (e.target.closest('.ie-c, .ie-dot')) e.stopPropagation(); });
   }
   // warm the drawer images so they open instantly
   ['dR1','dR2','dR3','dR4','dR5','dI3a','dI3b','dI3c','dI3d','dI4x','dI4n1','dI4n2','dI4f1','dI4f2','dI5'].forEach(k => { const i = new Image(); i.src = SRC(k); });
