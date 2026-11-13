@@ -317,6 +317,23 @@ body.bare .bar>*{pointer-events:auto}
 #rsx .rs-page.on{opacity:1;visibility:visible;transition:opacity .28s cubic-bezier(.2,.7,.2,1),visibility 0s}
 #rsx .rs-page>img{position:absolute;inset:0;width:1366px;height:1024px;max-width:none;display:block;pointer-events:none;-webkit-user-drag:none}
 #rsx .rs-page{transform-origin:50% 160%}
+
+/* ===== Logic L0 · 폴더 메인 (Figma 2368:4060) ===== */
+#lgx{position:absolute;inset:0;z-index:72;background:#fff;opacity:0;visibility:hidden;overflow:hidden;transition:opacity .32s cubic-bezier(.2,.7,.2,1),visibility 0s linear .32s;touch-action:none}
+#lgx:not(.open),#lgx:not(.open) *{pointer-events:none!important}
+#lgx.open{opacity:1;visibility:visible;transition:opacity .32s cubic-bezier(.2,.7,.2,1),visibility 0s}
+#lgx .l0nv{position:absolute;left:0;top:0;width:1366px;height:88px;color:#0A0A0A}
+#lgx .l0nv svg{display:block}
+#lgx .l0hit{position:absolute;border:0;padding:0;margin:0;background:transparent;border-radius:12px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+#lgx .l0hit:focus-visible,#lgx .lf:focus-visible{outline:3px solid #87E6FF;outline-offset:4px}
+#lgx img{position:absolute;display:block;max-width:none;pointer-events:none;-webkit-user-drag:none;user-select:none}
+#lgx .l0t{left:41.06px;top:133.32px;width:176.98px;height:78.72px}
+#lgx .lf{position:absolute;border:0;padding:0;margin:0;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+#lgx .lf .bd,#lgx .lf .in,#lgx .lf .fr,#lgx .lf .in img{will-change:transform}
+#lgx .lf .bd{position:absolute;inset:0}
+#lgx .lf .in{position:absolute;inset:0}
+#lgx .lf svg{position:absolute;display:block;overflow:visible}
+#lgx .lf .fr{transform-origin:50% 100%}
 @font-face{font-family:PretT;src:url(assets/906b84a040f43e7eabce40bd4f440553.woff2) format('woff2');font-weight:400;font-display:swap}
 @font-face{font-family:PretT;src:url(assets/077d3ba48f9077cd11a3314c1e86c0bc.woff2) format('woff2');font-weight:500;font-display:swap}
 @font-face{font-family:PretT;src:url(assets/d3ae2c85afbca670c57edb7d94ff6951.woff2) format('woff2');font-weight:600;font-display:swap}
@@ -680,6 +697,7 @@ body.bare .bar>*{pointer-events:auto}
       <button type="button" id="rsNav" aria-label="Research 열기"></button>
       <button type="button" id="lgNav" aria-label="Service Logic으로 이동"></button>
       <button type="button" id="rsHome" aria-label="홈 화면으로"></button>
+      <div id="lgx" role="region" aria-label="Logic" aria-hidden="true"></div>
       <div id="rsx" role="region" aria-label="Research" aria-hidden="true">
         <div id="rsPages"></div>
         <div id="rsScrim"></div>
@@ -1674,8 +1692,9 @@ void main(){
     if (rs && rs.classList.contains('open')){ rs.classList.remove('open'); rs.setAttribute('aria-hidden', 'true'); ['rsScrim','rsSheet','rsCard'].forEach(id => { const e = $6(id); if (e) e.classList.remove('on'); }); }
     scrollT = 6144; lastWheel = 0; lock6 = 0;
   }
-  lgNav.addEventListener('click', goLG);
-  lgNav.addEventListener('pointerup', e => { if (e.pointerType !== 'mouse') goLG(); });
+  const goLogic = () => (window.steerL0 && version === 6) ? window.steerL0.open() : goLG();   // 상단 Logic → Logic 메인(L0)
+  lgNav.addEventListener('click', goLogic);
+  lgNav.addEventListener('pointerup', e => { if (e.pointerType !== 'mouse') goLogic(); });
   // Core Value: a tap (not a swipe) on one of the three photos sails to that value's page
   let tap7 = null;
   screen.addEventListener('pointerdown', e => { tap7 = {x:e.clientX, y:e.clientY, t:performance.now()}; }, true);
@@ -2386,6 +2405,140 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
 
   const h = (location.hash || '').slice(1).toUpperCase();
   if (h === 'RESEARCH') show('land'); else if (P[h]) show(h);
+})();
+</script>
+<script>
+// ===== Logic L0 · 폴더 메인 (Figma 2368:4060): 폴더 = 뒷면 · 내부 그래픽 · 앞면 · 앞면 글씨의 독립 레이어 =====
+(() => {
+  const root = document.getElementById('lgx'); if (!root) return;
+  const RM = matchMedia('(prefers-reduced-motion: reduce)'), HOV = matchMedia('(hover: hover) and (pointer: fine)');
+  const BACK = 'M0 32.815C0 18.23 7.29251 10.9375 21.8775 10.9375H89.6979C98.4489 10.9375 106.106 14.5838 112.669 21.8763L132.359 41.566H273.469C288.054 41.566 295.347 48.8585 295.347 63.4436V202.366C295.347 216.951 288.054 224.243 273.469 224.243H21.8775C7.29251 224.243 0 216.951 0 202.366V32.815Z';
+  const FRONT = 'M0 24.0653C0 8.02176 8.02176 0 24.0653 0H271.281C287.325 0 295.347 8.02176 295.347 24.0653V140.016C295.347 156.06 287.325 164.081 271.281 164.081H24.0653C8.02176 164.081 0 156.06 0 140.016V24.0653Z';
+  // 좌표는 Figma 프레임 기준 (x, y, w, h)
+  const F = [
+    {k:'translate', go:'기운을 행동으로', c:'#87E6FF', back:[44.8,376.41], front:[44.8,447.52], face:[65.59,467.21,252.67,126.89,'f1face'], cap:[44.8,633.48,295.35,68.75,'f1cap'],
+     label:'01 Translate · What should I do? · 기운을 행동으로 · 오행과 일상 경험의 연결',
+     in:[['earth',196.86,338.13,113.3,85.27],['wood',56.83,353.44,168.89,123.22],['fire',77.84,342.16,160.31,135.68],['metal',75,429.55,82.85,45.25],['water',161.14,395.18,142.98,84.06]]},
+    {k:'combine', go:'오늘의 미션 조합', c:'#C2FF0A', back:[372.96,479.24], front:[372.96,550.34], face:[393.6,570.03,252.83,126.89,'f2face'], cap:[372.96,736.3,295.35,68.75,'f2cap'],
+     label:'02 Combine · Make your day · 오늘의 미션 조합 · 머물기·나서기와 조건 선택',
+     in:[['helm',372.96,375.32,306.93,307.49]]},
+    {k:'explain', go:'미션 추천의 이유', c:'#0A0A0A', back:[701.12,372.04], front:[701.12,443.14], face:[721.92,462.83,252.67,126.89,'f3face'], cap:[701.12,629.1,295.35,68.75,'f3cap'],
+     label:'03 Explain · Why this one? · 미션 추천의 이유 · 추천 기준과 장소의 연결',
+     in:[['shotB',817.76,321.32,160.66,183.81],['shotA',721.16,307.9,186.55,210.91]]},
+    {k:'record', go:'기록과 나눔', c:'#87E6FF', back:[1029.28,481.43], front:[1029.28,552.53], face:[1051.16,572.22,251.59,126.89,'f4face'], cap:[1029.28,738.49,295.35,68.75,'f4cap'],
+     label:'04 Record · Keep the moment · 기록과 나눔 · 운세가 쌓이고 이어지는 과정',
+     in:[['back2',1021.18,434.28,217.68,246.05],['back1',1014.93,410.31,237.02,245.02],['card',1002.01,404.68,258.18,274.26],['profile',1061.01,424.55,250.94,223.15]]}
+  ];
+  const A = k => 'assets/lg0-' + k + '.webp';
+  const img = (k, x, y, w, h, ox, oy) => { const i = new Image(); i.alt = ''; i.decoding = 'async'; i.draggable = false; i.src = A(k);
+    Object.assign(i.style, {left:(x - ox) + 'px', top:(y - oy) + 'px', width:w + 'px', height:h + 'px'}); i.dataset.k = k; return i; };
+  const svg = (d, c, x, y, w, h, ox, oy, cls) => { const e = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); e.setAttribute('viewBox', '0 0 ' + w + ' ' + h); e.setAttribute('width', w); e.setAttribute('height', h); e.setAttribute('aria-hidden', 'true');
+    if (cls) e.setAttribute('class', cls); Object.assign(e.style, {left:(x - ox) + 'px', top:(y - oy) + 'px'}); e.innerHTML = '<path fill="' + c + '" d="' + d + '"/>'; return e; };
+
+  // 상단 내비게이션: Research 화면의 원본 내비 아트를 그대로 쓰고 밑줄만 Logic(1031, 49)으로
+  const nv = document.createElement('div'); nv.className = 'l0nv';
+  const art = document.querySelector('#rsChromeH .figma-nav-art');
+  if (art) { const a = art.cloneNode(true); const u = [...a.querySelectorAll('rect')].find(r => +r.getAttribute('y') === 64); if (u) { u.setAttribute('x', '1031'); u.setAttribute('width', '49'); } nv.appendChild(a); }
+  root.appendChild(nv);
+  const hit = (x, y, w, h, label, fn) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'l0hit'; b.setAttribute('aria-label', label);
+    Object.assign(b.style, {left:x + 'px', top:y + 'px', width:w + 'px', height:h + 'px'}); b.addEventListener('click', fn); root.appendChild(b); return b; };
+  const title = img('title', 41.06, 133.32, 176.98, 78.72, 0, 0); title.className = 'l0t'; title.alt = 'Logic'; root.appendChild(title);
+
+  const folders = F.map(f => {
+    const L = [[f.back[0], f.back[1], 295.35, 224.24], [f.front[0], f.front[1], 295.35, 164.08], f.face, f.cap, ...f.in.map(a => a.slice(1))];
+    const x0 = Math.min(...L.map(a => a[0])), y0 = Math.min(...L.map(a => a[1])), x1 = Math.max(...L.map(a => a[0] + a[2])), y1 = Math.max(...L.map(a => a[1] + a[3]));
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'lf'; b.dataset.k = f.k; b.setAttribute('aria-label', f.label);
+    Object.assign(b.style, {left:x0 + 'px', top:y0 + 'px', width:(x1 - x0) + 'px', height:(y1 - y0) + 'px'});
+    const bd = document.createElement('div'); bd.className = 'bd';
+    bd.appendChild(svg(BACK, f.c, f.back[0], f.back[1], 295.35, 224.24, x0, y0, 'bk'));
+    const inn = document.createElement('div'); inn.className = 'in'; f.in.forEach(a => inn.appendChild(img(a[0], a[1], a[2], a[3], a[4], x0, y0))); bd.appendChild(inn);
+    bd.appendChild(svg(FRONT, f.c, f.front[0], f.front[1], 295.35, 164.08, x0, y0, 'fr'));
+    bd.appendChild(img(f.face[4], f.face[0], f.face[1], f.face[2], f.face[3], x0, y0));
+    b.appendChild(bd);
+    const cap = img(f.cap[4], f.cap[0], f.cap[1], f.cap[2], f.cap[3], x0, y0); cap.className = 'cp'; b.appendChild(cap);
+    root.appendChild(b);
+    return {f, b, bd, inn, fr:bd.querySelector('.fr'), parts:[...inn.children], x0, y0};
+  });
+
+  // ---- motion ----
+  const E_OUT = 'cubic-bezier(.2,.7,.2,1)', E_IO = 'cubic-bezier(.45,0,.25,1)';
+  const kill = el => el.getAnimations().forEach(a => a.cancel());
+  const all = () => [title, ...folders.flatMap(o => [o.b, o.bd, o.inn, o.fr, ...o.parts])];
+  let timers = [];
+  const later = (fn, t) => timers.push(setTimeout(fn, t));
+  function reset(){ timers.forEach(clearTimeout); timers = []; all().forEach(kill); busy = false; }
+  // 진입: 타이틀 0–0.3s → 폴더 0.15/0.30/0.45/0.60s부터 0.5s씩 30px 상승 + 페이드 → 내부 그래픽 살짝 올라왔다 제자리
+  function enter(){
+    reset(); if (RM.matches) return;
+    title.animate([{opacity:0, transform:'translateY(16px)'}, {opacity:1, transform:'none'}], {duration:300, easing:E_OUT, fill:'backwards'});
+    folders.forEach((o, i) => {
+      const t0 = 150 + i*150;
+      o.b.animate([{opacity:0, transform:'translateY(30px)'}, {opacity:1, transform:'none'}], {duration:500, delay:t0, easing:E_OUT, fill:'backwards'});
+      o.inn.animate([{transform:'none'}, {transform:'translateY(-12px)', offset:.45}, {transform:'none'}], {duration:700, delay:t0 + 420, easing:E_IO});
+      if (o.f.k === 'translate') o.parts.forEach((p, j) => {   // 오행 스티커: 제자리에서 차례로 살짝 들썩
+        const r = j % 2 ? 4 : -4;
+        p.animate([{transform:'none'}, {transform:'translateY(-5px) rotate(' + r + 'deg)', offset:.4}, {transform:'translateY(1px) rotate(' + (-r*.25) + 'deg)', offset:.75}, {transform:'none'}],
+                  {duration:560, delay:t0 + 1000 + j*110, easing:E_IO});
+      });
+    });
+  }
+  // 폴더 열림(0.55s): 폴더 -10px · 내부 -26px 더 노출 · 앞면 아래축으로 살짝 벌어짐 · 폴더별 세부
+  const OPEN = 550;
+  function opened(o, on, dur, ease){
+    const opt = {duration:dur, easing:ease, fill:'forwards'};
+    const S = (el, closedT, openT) => el.animate([{transform:on ? closedT : openT}, {transform:on ? openT : closedT}], opt);
+    S(o.bd, 'none', 'translateY(-10px)');
+    S(o.inn, 'none', 'translateY(-26px)');
+    S(o.fr, 'perspective(900px) rotateX(0deg)', 'perspective(900px) rotateX(-14deg)');
+    const P = k => o.parts.find(p => p.dataset.k === k);
+    if (o.f.k === 'combine') S(P('helm'), 'none', 'translateY(-10px) rotate(18deg)');
+    if (o.f.k === 'explain'){ S(P('shotA'), 'none', 'translate(-12px,-4px) rotate(-4deg)'); S(P('shotB'), 'none', 'translate(14px,-8px) rotate(5deg)'); }
+    if (o.f.k === 'record'){ S(P('card'), 'none', 'translate(-4px,-16px)'); S(P('profile'), 'none', 'translateY(-8px)'); S(P('back1'), 'none', 'translate(-10px,-4px) rotate(-3deg)'); S(P('back2'), 'none', 'translate(10px,4px) rotate(3deg)'); }
+    if (o.f.k === 'translate') o.parts.forEach((p, j) => S(p, 'none', 'translateY(' + (-4 - j*2) + 'px) rotate(' + (j % 2 ? 3 : -3) + 'deg)'));
+  }
+  const parts = o => [o.bd, o.inn, o.fr, ...o.parts];
+  let busy = false, hov = null;
+  function pick(o){
+    if (busy) return; busy = true; hov = null;
+    if (window.steerTrack) steerTrack('logic_folder_open', {folder:o.f.k});
+    if (RM.matches){ go(o); busy = false; return; }
+    parts(o).forEach(kill); opened(o, true, OPEN, 'cubic-bezier(.3,.9,.3,1)');
+    later(() => go(o), OPEN + 60);
+  }
+  // 상세 화면(기운을 행동으로 · 오늘의 미션 조합 · 미션 추천의 이유 · 기록과 나눔)이 아직 없다: 열림 모션 뒤 폴더를 제자리로 돌린다
+  function go(o){
+    const ev = new CustomEvent('steer:logic-folder', {detail:{folder:o.f.k, title:o.f.go}, cancelable:true});
+    if (!root.dispatchEvent(ev)) return;
+    later(() => { parts(o).forEach(kill); if (!RM.matches) opened(o, false, 420, E_IO); busy = false; }, 260);
+  }
+  folders.forEach(o => {
+    o.b.addEventListener('click', () => pick(o));
+    o.b.addEventListener('pointerenter', e => { if (e.pointerType !== 'mouse' || !HOV.matches || busy || RM.matches) return; hov = o;
+      o.bd.animate([{transform:'none'}, {transform:'translateY(-5px)'}], {duration:260, easing:E_OUT, fill:'forwards'});
+      o.inn.animate([{transform:'none'}, {transform:'translateY(-9px)'}], {duration:260, easing:E_OUT, fill:'forwards'}); });
+    o.b.addEventListener('pointerleave', e => { if (e.pointerType !== 'mouse' || hov !== o || busy) return; hov = null;
+      o.bd.animate([{transform:'translateY(-5px)'}, {transform:'none'}], {duration:260, easing:E_OUT, fill:'forwards'});
+      o.inn.animate([{transform:'translateY(-9px)'}, {transform:'none'}], {duration:260, easing:E_OUT, fill:'forwards'}); });
+  });
+
+  // ---- open / close ----
+  let t0 = 0;
+  const isOpen = () => root.classList.contains('open');
+  function open(){
+    const now = performance.now(); if (isOpen() && now - t0 < 500) return; t0 = now;
+    const rs = document.getElementById('rsx');
+    if (rs && rs.classList.contains('open')){ rs.classList.remove('open'); rs.setAttribute('aria-hidden', 'true'); ['rsScrim','rsSheet','rsCard'].forEach(id => { const e = document.getElementById(id); if (e) e.classList.remove('on'); }); }
+    root.classList.add('open'); root.removeAttribute('aria-hidden'); enter();
+    if (window.steerTrack) steerTrack('logic_view', {page_id:'L0'});
+  }
+  function close(){ reset(); root.classList.remove('open'); root.setAttribute('aria-hidden', 'true'); }
+  hit(875, 12, 108, 64, 'Research 열기', () => { close(); const n = document.getElementById('rsNav'); if (n) n.click(); });
+  hit(1017, 16, 78, 56, 'Logic 메인 처음부터', () => { t0 = 0; open(); });
+  const home = document.getElementById('rsHome'); if (home) home.addEventListener('click', () => { if (isOpen()) close(); });
+  ['pointerdown','pointermove','pointerup','pointercancel','wheel','touchstart','touchmove','touchend'].forEach(t => root.addEventListener(t, e => e.stopPropagation(), {passive:true}));
+  document.addEventListener('keydown', e => { if (isOpen() && e.key === 'Escape') close(); });
+  window.steerL0 = {open, close};
+  if ((location.hash || '').slice(1).toUpperCase() === 'LOGIC') open();
 })();
 </script>
 <script>
