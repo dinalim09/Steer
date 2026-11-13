@@ -481,10 +481,10 @@ body.bare .bar>*{pointer-events:auto}
 #rsx .ie-eb{position:absolute;left:40px;top:142px;margin:0;font:600 15px/21px 'Pretendard',var(--font-ui);color:#35D1FB;white-space:nowrap}
 #rsx .ie-h{position:absolute;left:40px;top:182px;margin:0;font:700 44px/60px 'Pretendard',var(--font-ui);letter-spacing:0;white-space:nowrap}
 #rsx .ie-top{position:absolute;left:0;top:0;width:1366px;height:440px;pointer-events:none}
-#rsx .ie-bub{position:absolute;left:683.5px;top:318px;height:61px;transform:translateX(-50%);box-sizing:border-box;border-radius:99px;background:#0A0A0A;overflow:hidden;transition:width .45s cubic-bezier(.3,.7,.2,1)}
-#rsx .ie-bub span,#rsx .ie-ms{display:block;font:700 24px/29px 'Pretendard',var(--font-ui);letter-spacing:-.015em;white-space:nowrap}
-#rsx .ie-bub span{position:absolute;left:0;right:0;top:16px;text-align:center;color:#fff}
-#rsx .ie-ms{position:absolute;left:0;top:0;visibility:hidden;pointer-events:none}
+/* 말풍선: 폭·높이는 글자 내용이 정한다(JS 고정 폭 없음). 한 줄 61px, 길면 최대 2줄로 위로 커지고 아래 변(y379, .ie-top 440px 기준 bottom 61px)·꼬리는 고정 */
+#rsx .ie-bub{position:absolute;left:1px;right:0;bottom:61px;margin:0 auto;width:fit-content;width:-webkit-fit-content;max-width:760px;min-height:61px;box-sizing:border-box;padding:16px 32px;display:flex;justify-content:center;align-items:center;border-radius:99px;background:#0A0A0A;overflow:hidden}
+#rsx .ie-bub span{display:block;flex:none;max-width:696px;font:700 24px/29px 'Pretendard',var(--font-ui);letter-spacing:-.015em;color:#fff;text-align:center;white-space:normal;word-break:keep-all;overflow-wrap:break-word;text-wrap:balance}
+#rsx .ie-ms{display:none}
 #rsx .ie-tl{position:absolute;left:782px;top:366px;display:block}
 #rsx .ie-nm{position:absolute;left:163px;top:394px;width:1040px;margin:0;font:500 15px/23px 'Pretendard',var(--font-ui);color:#6E6E73;text-align:center}
 #rsx .ie-st{position:absolute;left:0;top:440px;width:1366px;height:440px;perspective:823px;perspective-origin:683px 218.8px;touch-action:pan-y}
@@ -500,7 +500,6 @@ body.bare .bar>*{pointer-events:auto}
 #rsx .ie-pg{position:absolute;left:583px;top:949px;width:200px;margin:0;font:500 15px/22px 'Pretendard',var(--font-ui);color:#6E6E73;text-align:center;font-variant-numeric:tabular-nums}
 #rsChromeH.ie .xnv{background:transparent}
 #rsChromeH.ie .ci{display:none}
-@media (prefers-reduced-motion: reduce){#rsx .ie-bub{transition:none}}
 #rsChromeH .arr{box-shadow:0 4px 16px rgba(0,0,0,.12)}
 #rsChromeH .arr.prv{box-shadow:inset 0 0 0 1px #fff,0 4px 16px rgba(0,0,0,.12)}
 #rsChromeH .arr.nxt .g2{display:none;position:absolute;left:-20px;top:-20px;pointer-events:none}
@@ -2406,12 +2405,18 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     pg:ieRoot.querySelector('.ie-pg'), ms:ieRoot.querySelector('.ie-ms'), a:0, off:[0, 1, -1]} : null;
   const ieRel = (i, a) => ((i - a + 4) % 3) - 1;
   function ieText(a, animate){
-    const d = IE_D[a]; ie.ms.textContent = d.q; const w = Math.ceil(ie.ms.getBoundingClientRect().width) + 64;
+    const d = IE_D[a], b0 = animate && !RM.matches ? ie.bub.getBoundingClientRect() : null;
     ie.q.textContent = d.q; ie.nm.textContent = d.n; ie.pg.textContent = '0' + (a + 1) + ' / 03';
-    ie.bub.style.width = w + 'px';
+    // 말풍선 크기 전환(FLIP): 새 문구로 바뀐 자연 크기를 재고, 이전 크기에서 그 크기로만 보간한 뒤 고정값을 남기지 않는다
+    ie.bub.getAnimations().forEach(x => x.cancel());
+    let grow = 0;   // 말풍선이 커지는 동안에는 새 문구를 숨겼다가, 다 커진 뒤 나타나게 해 전환 중 잘린 글자가 보이지 않게 한다
+    if (b0 && b0.width){ const b1 = ie.bub.getBoundingClientRect(), k = ieRoot.getBoundingClientRect().width/1366;
+      if (Math.abs(b1.width - b0.width) > .5 || Math.abs(b1.height - b0.height) > .5)
+        ie.bub.animate([{width:b0.width/k + 'px', height:b0.height/k + 'px'}, {width:b1.width/k + 'px', height:b1.height/k + 'px'}], {duration:320, easing:'cubic-bezier(.3,.7,.2,1)'});
+      if (b1.width > b0.width + .5 || b1.height > b0.height + .5) grow = 300; }
     ie.cards.forEach((c, i) => { c.setAttribute('aria-current', i === a ? 'true' : 'false'); c.tabIndex = i === a ? -1 : 0; });
     if (!animate || RM.matches) return;
-    [ie.q, ie.nm, ie.pg].forEach(el => { el.getAnimations().forEach(x => x.cancel()); el.animate([{opacity:0, transform:'translateY(6px)'}, {opacity:1, transform:'none'}], {duration:380, easing:EZ}); });
+    [ie.q, ie.nm, ie.pg].forEach(el => { el.getAnimations().forEach(x => x.cancel()); el.animate([{opacity:0, transform:'translateY(6px)'}, {opacity:1, transform:'none'}], {duration:380, delay:el === ie.q ? grow : 0, easing:EZ, fill:'backwards'}); });
   }
   function ieGo(a, dir){
     if (!ie) return; a = (a + 3) % 3; if (a === ie.a) return;
