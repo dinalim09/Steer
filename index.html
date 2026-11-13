@@ -288,7 +288,7 @@ a,button,[role=button],label,select,.pill,#screen:active,body.grabbing,body.grab
 #p14 .tally{position:absolute;left:40px;top:880px;display:none;gap:26px;align-items:flex-end;pointer-events:none}
 #p14 .tally div{display:flex;align-items:flex-end;gap:7px;font:600 20px/1 Pret6,var(--font-ui);color:#0A0A0A;font-variant-numeric:tabular-nums}
 #p14 .tally img{display:block;width:26px;height:auto}
-#p14 .clr{position:absolute;left:1265px;top:916px;width:82px;height:82px;display:flex;align-items:center;justify-content:center;padding:0;background:#0A0A0A;border:0;border-radius:50%;cursor:inherit;-webkit-tap-highlight-color:transparent}
+#p14 .clr{position:absolute;left:1244px;top:122px;width:82px;height:82px;display:flex;align-items:center;justify-content:center;padding:0;background:#0A0A0A;border:0;border-radius:50%;cursor:inherit;-webkit-tap-highlight-color:transparent}
 #p14 .clr svg{display:block;width:36px;height:36px}
 #p14 .clr:active{transform:scale(.94)}
 #p14 .clr:focus-visible{outline:2px solid #0A0A0A;outline-offset:3px}
@@ -1485,7 +1485,7 @@ void main(){
     im.src = B14.src[i]; im.alt = ''; im.style.width = w + 'px';
     const h = w*.42; im.style.left = Math.max(-30, Math.min(1396 - w, x - w/2)) + 'px'; im.style.top = Math.max(250, Math.min(860 - h, y - h/2)) + 'px';
     const r = rot ?? (Math.random()*24 - 12);
-    B14.board.appendChild(im);
+    im.dataset.r = r; B14.board.appendChild(im);
     if (quiet) im.style.transform = `rotate(${r}deg)`;
     else im.animate([{opacity:0, transform:`translateY(-70px) scale(1.5) rotate(${r - 14}deg)`, filter:'drop-shadow(0 46px 28px rgba(10,10,10,.28)) blur(2px)'},
                      {opacity:1, transform:`translateY(5px) scale(.93) rotate(${r + 2.4}deg)`, filter:'drop-shadow(0 3px 3px rgba(10,10,10,.22)) blur(0)', offset:.42},
@@ -1495,7 +1495,27 @@ void main(){
     B14.counts[i]++; B14.cnt[i].textContent = B14.counts[i];
     B14.tint.style.backgroundColor = `rgba(${RGB14[i].join(',')},.32)`;
   }
-  function clear14(){ B14.items.forEach(o => o.remove()); B14.items = []; B14.n = 0; B14.counts = [0, 0, 0, 0, 0]; B14.cnt.forEach(n => n.textContent = '0'); B14.tint.style.backgroundColor = 'transparent'; }
+  // 비우기: 붙어 있던 스티커가 휴지통 버튼으로 빨려 들어가며 사라진다 (가까운 것부터, 버튼은 삼킬 때마다 꿀렁)
+  function clear14(){
+    const its = B14.items; B14.items = []; B14.n = 0; B14.counts = [0, 0, 0, 0, 0]; B14.cnt.forEach(n => n.textContent = '0'); B14.tint.style.backgroundColor = 'transparent';
+    if (!its.length) return;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches){ its.forEach(o => o.remove()); return; }
+    const bx = 1244 + 41, by = 122 + 41;
+    const L = its.map(o => { const w = o.offsetWidth, h = o.offsetHeight, cx = parseFloat(o.style.left) + w/2, cy = parseFloat(o.style.top) + h/2; return {o, dx:bx - cx, dy:by - cy, d:Math.hypot(bx - cx, by - cy), r:+(o.dataset.r || 0)}; }).sort((a, b) => a.d - b.d);
+    let end = 0;
+    L.forEach((it, k) => {
+      const {o, dx, dy, r} = it, t0 = k*70, dur = 520 + Math.min(260, it.d*.18), spin = (dx < 0 ? -1 : 1)*(160 + Math.random()*120);
+      o.getAnimations().forEach(a => a.cancel()); o.style.transform = `rotate(${r}deg)`;
+      o.animate([{transform:`rotate(${r}deg)`, opacity:1},
+                 {transform:`translate(${-dx*.04}px,${-dy*.04 - 10}px) rotate(${r - 4}deg) scale(1.06)`, opacity:1, offset:.18},
+                 {transform:`translate(${dx*.55}px,${dy*.55}px) rotate(${r + spin*.35}deg) scale(.55)`, opacity:1, offset:.62},
+                 {transform:`translate(${dx}px,${dy}px) rotate(${r + spin}deg) scale(.03)`, opacity:0}],
+                {duration:dur, delay:t0, easing:'cubic-bezier(.5,0,.75,.35)', fill:'forwards'}).onfinish = () => o.remove();
+      const hit = t0 + dur*.94; end = Math.max(end, hit);
+      B14.clr.animate([{transform:'scale(1)'}, {transform:'scale(1.12)'}, {transform:'scale(1)'}], {duration:200, delay:hit, easing:'ease-out', composite:'add'});
+    });
+    B14.clr.animate([{transform:'scale(1)'}, {transform:'scale(.9)', offset:.35}, {transform:'scale(1.06)', offset:.7}, {transform:'scale(1)'}], {duration:420, delay:end + 120, easing:'cubic-bezier(.3,1.4,.5,1)'});
+  }
   [[300, 520, -7], [760, 470, 6], [1040, 690, -4]].forEach(([x, y, r]) => drop14(x, y, true, r));
   B14.clr.addEventListener('pointerdown', e => e.stopPropagation());
   B14.clr.addEventListener('click', e => { e.stopPropagation(); clear14(); });
