@@ -895,8 +895,23 @@ body.bare .bar>*{pointer-events:auto}
 #rsx .htm .in{position:absolute;margin:0}
 @media (prefers-reduced-motion:reduce){#rsx,#rsx.open,#rsx .rs-page,#rsx .rs-page.on,#rsSheet,#rsCard,#rsCard.on,#rsScrim,#rsScrim.on{transition:none}}
 </style>
+<style id="home9css">
+/* ===== 새 홈 · Figma 2399:9632 — ver 6 첫 화면 위를 덮는 층. #screen.h9일 때만 보이고, 기존 홈 층은 숨긴다(삭제하지 않음) ===== */
+#home9{position:absolute;left:0;top:0;width:1366px;height:1024px;background:#fff;overflow:hidden;pointer-events:none;will-change:transform}
+#home9[hidden]{display:none}
+#screen.h9 #seaVid,#screen.h9 #sea,#screen.h9 #duo,#screen.h9 #steerType,#screen.h9 #ocean,#screen.h9 #scene,#screen.h9 #drops,#screen.h9 #v5ui,#screen.h9 #pill{visibility:hidden}
+#home9 .h9wave{position:absolute;left:-320px;top:622px;width:2006px;height:1500px;will-change:transform;transform-origin:50% 90px}
+#home9 .h9wave svg{display:block;width:100%;height:100%}
+#h9type{position:absolute;left:271.6px;top:201.8px;width:824px;height:621px;overflow:visible;transform-origin:411.4px 310.7px;will-change:transform}
+#h9wheel{position:absolute;left:0;top:0;width:1366px;height:1024px}
+#home9 .h9pill{position:absolute;left:515px;top:886px;width:336px;height:45px;border-radius:300px;background:rgba(0,0,0,.25);overflow:hidden;
+  color:#fff;font:500 24px/45px "Pretendard","Apple SD Gothic Neo",system-ui,sans-serif;letter-spacing:.72px;text-align:center;white-space:nowrap}
+#home9 .h9pill i{position:absolute;left:0;top:0;bottom:0;width:0;background:rgba(255,255,255,.22)}
+#home9 .h9pill span{position:relative}
+</style>
 <div class="bar" role="toolbar" aria-label="시뮬레이터">
   <button type="button" class="tog" id="frameTog" aria-pressed="true">기기 프레임 끄기</button>
+  <button type="button" class="tog" id="homeTog" aria-pressed="false">기존 홈 보기</button>
 </div>
 
 <div id="room">
@@ -915,6 +930,13 @@ body.bare .bar>*{pointer-events:auto}
       <canvas class="layer" id="drops" width="1366" height="1024" aria-hidden="true"></canvas>
       <div id="v5ui" aria-live="polite"><span class="n" id="sailN">00</span><span class="l">키를 돌려 출항하기</span><span class="track"><i id="sailBar"></i></span></div>
       <div class="pill" id="pill" aria-live="polite"><i id="pillBar"></i><span>조타륜을 돌려 스크롤해보세요</span></div>
+      <div id="home9" aria-label="Steer Your Day! — 조타륜을 돌려 시작하기" hidden>
+        <div class="h9wave" id="h9waveF" aria-hidden="true"><svg viewBox="-320 0 2006 1500"><defs><linearGradient id="h9gF" x1="683" y1="1" x2="683" y2="572.5" gradientUnits="userSpaceOnUse"><stop stop-color="#7EE4FF"/><stop offset=".5" stop-color="#7EE4FF"/><stop offset="1" stop-color="#7EE4FF" stop-opacity=".3"/></linearGradient></defs><path d="M518.283 59.2122C269.895 41.5097 189.11 98.2161 0 65.8107C-110 47 -220 40 -320 60V1500H1686V-20C1560 -40 1450 -5 1366 1C1241.15 12.5733 1195.25 82.3576 951.059 98.2172C705.786 114.147 603.081 65.2558 518.283 59.2122Z" fill="url(#h9gF)"/></svg></div>
+        <div class="h9wave" id="h9waveB" style="opacity:.3" aria-hidden="true"><svg viewBox="-320 0 2006 1500"><defs><linearGradient id="h9gB" x1="683" y1="1" x2="683" y2="572.5" gradientUnits="userSpaceOnUse"><stop stop-color="#7EE4FF"/><stop offset=".5" stop-color="#7EE4FF"/><stop offset="1" stop-color="#7EE4FF" stop-opacity=".3"/></linearGradient></defs><path d="M847.717 59.2122C1096.1 41.5097 1176.89 98.2161 1366 65.8107C1476 47 1586 40 1686 60V1500H-320V-20C-194 -40 -84 -5 0 1C124.85 12.5733 170.75 82.3576 414.941 98.2172C660.214 114.147 762.919 65.2558 847.717 59.2122Z" fill="url(#h9gB)"/></svg></div>
+        <svg id="h9type" viewBox="-0.05 -0.72 824 621" role="img" aria-label="Steer Your Day!"><defs><filter id="h9warp" filterUnits="userSpaceOnUse" x="-500" y="-500" width="1824" height="1621" color-interpolation-filters="sRGB"><feTurbulence id="h9turb" type="fractalNoise" baseFrequency="0.007 0.014" numOctaves="2" seed="4" result="n"/><feDisplacementMap id="h9disp" in="SourceGraphic" in2="n" scale="0" xChannelSelector="R" yChannelSelector="G"/></filter></defs><path id="h9typePath" fill="#0A0A0A" stroke="#fff" stroke-width="12" stroke-linejoin="round" paint-order="stroke" d="M786.475 570.604C786.475 562.084 793.398 555.16 801.919 555.16C810.44 555.16 817.363 562.084 817.364 570.604C817.364 579.125 810.44 586.049 801.919 586.049C793.398 586.049 786.475 579.125 786.475 570.604ZM811.776 397.256C812.95 397.256 813.902 398.208 813.902 399.382L813.902 549.307C813.902 550.481 812.95 551.433 811.776 551.433L792.062 551.433C790.888 551.433 789.936 550.481 789.936 549.307L789.936 399.382C789.936 398.208 790.888 397.256 792.062 397.256L811.776 397.256ZM718.049 519.806C718.287 519.262 718.287 518.642 718.049 518.098L679.789 430.865C679.172 429.46 680.202 427.885 681.735 427.885L703.984 427.885C704.83 427.885 705.595 428.386 705.933 429.161L729.779 483.839C730.523 485.544 732.942 485.54 733.679 483.832L757.279 429.168C757.615 428.389 758.383 427.885 759.231 427.885L780.142 427.885C781.676 427.885 782.705 429.46 782.089 430.864L702.206 613.009C701.867 613.782 701.103 614.281 700.259 614.281L679.871 614.281C678.337 614.281 677.308 612.706 677.924 611.302L718.049 519.806ZM589.236 535.728C589.236 509.1 612.402 485.667 639.829 485.667C642.265 485.667 644.602 485.964 646.9 486.438C648.661 486.8 650.191 485.042 649.47 483.395L626.487 430.863C625.872 429.458 626.901 427.885 628.434 427.885L650.153 427.885C650.998 427.885 651.764 428.386 652.102 429.161L680.571 494.455C686.429 508.035 690.689 520.018 690.689 535.195C690.689 562.888 667.523 586.056 639.829 586.056C612.136 586.056 589.236 563.155 589.236 535.728ZM613.201 535.728C613.202 550.906 625.184 563.155 639.829 563.155C655.007 563.155 666.989 550.906 666.989 535.728C666.989 520.551 655.007 508.567 639.829 508.567C625.184 508.567 613.201 520.55 613.201 535.728ZM582.351 71.9873C582.351 52.2825 598.328 36.5713 618.032 36.5713L625.492 36.5713C626.667 36.5713 627.618 37.523 627.618 38.6972L627.618 57.6123C627.618 58.7865 626.667 59.7383 625.492 59.7383L619.63 59.7383C612.441 59.7383 606.582 65.5965 606.582 72.7861L606.582 190.22C606.582 191.394 605.63 192.346 604.456 192.346L584.477 192.346C583.303 192.346 582.351 191.394 582.351 190.22L582.351 71.9873ZM488.854 397.256C543.175 397.256 585.247 437.997 585.247 490.454C585.247 542.911 543.175 583.652 488.854 583.652L440.918 583.652C439.744 583.652 438.792 582.701 438.792 581.526L438.792 399.382C438.792 398.208 439.744 397.256 440.918 397.256L488.854 397.256ZM469.004 85.0293C469.004 57.3362 492.171 34.1699 519.864 34.1699C547.558 34.17 570.457 57.0702 570.457 84.497C570.457 111.125 547.291 134.558 519.598 134.558C517.33 134.558 515.062 134.262 512.793 133.791C511.033 133.425 509.503 135.183 510.224 136.831L533.207 189.363C533.822 190.767 532.793 192.341 531.259 192.341L509.54 192.341C508.694 192.341 507.929 191.84 507.591 191.065L479.123 125.77C473.265 112.19 469.004 100.207 469.004 85.0293ZM488.854 559.953C530.393 559.953 559.684 530.929 559.684 490.454C559.684 449.979 530.393 420.955 488.854 420.955L465.683 420.955C464.509 420.955 463.557 421.907 463.557 423.081L463.557 557.827C463.557 559.001 464.509 559.953 465.683 559.953L488.854 559.953ZM492.703 84.497C492.703 99.675 504.686 111.658 519.598 111.658C534.51 111.658 546.492 99.6751 546.492 84.497C546.492 69.3191 534.51 57.0703 519.598 57.0703C504.686 57.0704 492.703 69.3191 492.703 84.497ZM360.637 85.0293C360.637 57.3362 383.803 34.1699 411.496 34.1699C439.189 34.17 462.089 57.0702 462.089 84.4971C462.089 111.125 438.923 134.558 411.23 134.558C408.962 134.558 406.693 134.262 404.425 133.791C402.664 133.425 401.135 135.183 401.856 136.831L424.839 189.363C425.453 190.767 424.424 192.341 422.891 192.341L401.172 192.341C400.326 192.341 399.561 191.84 399.223 191.065L370.755 125.77C364.897 112.19 360.637 100.207 360.637 85.0293ZM384.335 84.4971C384.335 99.675 396.318 111.658 411.23 111.658C426.141 111.658 438.124 99.6751 438.124 84.4971C438.124 69.3191 426.141 57.0703 411.23 57.0703C396.318 57.0704 384.335 69.3191 384.335 84.4971ZM346.889 463.3C346.889 443.595 362.866 427.885 382.571 427.885L390.031 427.885C391.205 427.885 392.156 428.837 392.156 430.011L392.156 448.925C392.156 450.099 391.205 451.051 390.031 451.051L384.168 451.051C376.979 451.051 371.12 456.909 371.12 464.099L371.12 581.533C371.12 582.707 370.169 583.659 368.994 583.659L349.015 583.659C347.841 583.659 346.889 582.707 346.889 581.533L346.889 463.3ZM314.486 36.5654C315.66 36.5654 316.612 35.6136 316.612 34.4395L316.612 8.06828C316.612 6.89415 317.563 5.94237 318.737 5.94237L338.717 5.94237C339.891 5.94237 340.843 6.89415 340.843 8.06828L340.843 34.4395C340.843 35.6136 341.795 36.5654 342.969 36.5654L354.427 36.5654C355.601 36.5654 356.553 37.5172 356.553 38.6913L356.553 57.6055C356.553 58.7796 355.601 59.7314 354.427 59.7314L342.969 59.7314C341.795 59.7314 340.843 60.6832 340.843 61.8573L340.843 190.214C340.843 191.388 339.891 192.34 338.717 192.34L318.737 192.34C317.563 192.34 316.612 191.388 316.612 190.214L316.612 61.8573C316.612 60.6832 315.66 59.7314 314.486 59.7314L303.293 59.7314C302.119 59.7314 301.167 58.7797 301.167 57.6055L301.167 38.6913C301.167 37.5172 302.119 36.5654 303.293 36.5654L314.486 36.5654ZM283.764 427.885C284.936 427.885 285.887 428.834 285.89 430.006L286.152 550.64C286.152 557.297 291.211 562.356 297.602 562.356C303.992 562.356 308.785 557.297 308.785 550.64L308.785 430.011C308.785 428.837 309.737 427.885 310.911 427.885L330.891 427.885C332.065 427.885 333.017 428.837 333.017 430.011L333.017 549.841C333.017 570.344 317.573 586.055 297.602 586.056C277.364 586.056 261.92 570.344 261.92 549.841L261.92 430.011C261.92 428.837 262.872 427.885 264.046 427.885L283.764 427.885ZM233.247 168.641C258.278 168.641 277.716 148.936 277.716 124.172C277.716 98.3428 259.343 83.1648 232.982 79.7031C211.413 77.0403 194.904 63.7253 194.904 42.4228C194.904 21.1206 211.413 5.94237 232.715 5.94237L245.767 5.94237C246.941 5.94237 247.893 6.89415 247.893 8.06829L247.893 27.5157C247.893 28.6898 246.941 29.6416 245.767 29.6416L233.514 29.6416C226.058 29.6416 220.466 34.7013 220.466 42.1572C220.466 49.613 225.792 54.6719 235.378 56.2695C273.722 61.0627 303.279 85.0283 303.279 124.704C303.279 163.049 272.657 192.34 233.247 192.34L197.029 192.34C195.855 192.34 194.904 191.388 194.904 190.214L194.904 170.767C194.904 169.592 195.855 168.641 197.029 168.641L233.247 168.641ZM87.4729 505.646C87.4729 462.508 125.286 424.696 168.423 424.696C211.56 424.697 249.638 462.508 249.638 505.645C249.638 548.783 211.56 586.328 168.422 586.328C125.285 586.328 87.473 548.783 87.4729 505.646ZM111.704 505.646C111.704 537.333 137.001 562.895 168.422 562.896C199.843 562.895 225.141 537.333 225.141 505.645C225.141 473.692 199.844 448.129 168.423 448.129C137.002 448.129 111.704 473.692 111.704 505.646ZM50.7901 478.524C51.0274 477.981 51.0274 477.364 50.7901 476.821L17.3152 400.233C16.7013 398.829 17.7304 397.256 19.2632 397.256L41.5193 397.256C42.3633 397.256 43.1273 397.755 43.4663 398.528L62.7845 442.583C63.5301 444.283 65.9442 444.278 66.6822 442.574L85.7569 398.537C86.0937 397.759 86.8602 397.256 87.7077 397.256L109.425 397.256C110.957 397.256 111.986 398.829 111.372 400.233L31.7487 582.378C31.4103 583.152 30.6456 583.652 29.8008 583.652L8.07893 583.652C6.54607 583.652 5.51702 582.079 6.13105 580.675L50.7901 478.524Z"/></svg>
+        <canvas id="h9wheel" width="1366" height="1024" aria-hidden="true"></canvas>
+        <div class="h9pill" id="h9pill" aria-live="polite"><i id="h9bar"></i><span>조타륜을 돌려 스크롤해보세요</span></div>
+      </div>
       <div id="pages"><section class="pg" id="story" aria-label="Brand Story">
         <p class="lab">01 / BRAND STORY</p>
         <button type="button" class="again" id="again">↑ 다시 키 잡기</button>
@@ -1048,6 +1070,7 @@ body.bare .bar>*{pointer-events:auto}
     const of = (version >= 6 ? .55 + q*.225 : Q[q].ocean)*Math.min(window.devicePixelRatio || 1, 2);   // ver 6 draws only the wheel, so it can render at full resolution   // WebGL sea: soft at the horizon, so it renders below native resolution
     oceanC.width = Math.round(1366*scale*of); oceanC.height = Math.round(1024*scale*of);
     const df = .8*Math.min(window.devicePixelRatio || 1, 2); duoC.width = Math.round(1366*scale*df); duoC.height = Math.round(1024*scale*df);
+    H9.fit(scale, Math.min(window.devicePixelRatio || 1, 2));   // 새 홈 조타륜
   }
   addEventListener('resize', fit);
 
@@ -1063,11 +1086,11 @@ body.bare .bar>*{pointer-events:auto}
     screen.classList.toggle('v4', version >= 4);    // ver 4/5: the 3D wheel replaces the SVG helm
     screen.classList.toggle('v5', version >= 5);
     if (version >= 4) { bob = 0; scene.style.transform = ''; ax = ay = vax = vay = 0; }
-    if (version >= 5) { scrollS = scrollT = 0; sail = 0; sailing = arrived = false; target = prevTheta = theta; story.classList.remove('in'); lastPct = -1; reset6(); }
+    if (version >= 5) { scrollS = scrollT = 0; sail = 0; sailing = arrived = false; target = prevTheta = theta; story.classList.remove('in'); lastPct = -1; reset6(); H9.reset(); }
     else { oceanC.style.transform = dropC.style.transform = seaC.style.transform = ''; }
     if (version < 7) duoC.style.transform = '';
     screen.classList.toggle('v6', version === 6); screen.classList.toggle('v7', version >= 7); screen.classList.toggle('v8', version === 8);
-    if (version === 6) vid.play().catch(() => {}); else vid.pause();
+    if (version === 6 && !H9.on) vid.play().catch(() => {}); else vid.pause();
     fit();
     if (version < 2) { scene.style.transform = ''; ripples.length = 0; bob = 0; }
   }
@@ -1117,9 +1140,10 @@ body.bare .bar>*{pointer-events:auto}
   function planeAngle(p){ if (version >= 5) return Math.atan2(p.y - HUB5.y, p.x - HUB5.x)*180/Math.PI; const q = toPlane(p.x, p.y, ax, ay); return q ? Math.atan2(q.y, q.x)*180/Math.PI : Math.atan2(p.y-CY0, p.x-CX)*180/Math.PI; }
   const wrap = a => ((a + 540) % 360) - 180;
   screen.addEventListener('pointerdown', e => {
-    if (version === 6 && vid.paused && scrollS < 1020) vid.play().catch(() => {});   // autoplay blocked (e.g. low power mode): start on first touch
+    if (version === 6 && !H9.on && vid.paused && scrollS < 1020) vid.play().catch(() => {});   // autoplay blocked (e.g. low power mode): start on first touch
     if (e.target.closest && e.target.closest('button')) return;
     if (version >= 5 && (sailing || arrived || scrollS > 2)){ if (!sailing){ { const q = toStage(e); scrollDrag = {x: q.x, y: q.y, t0: scrollT}; } screen.setPointerCapture(e.pointerId); } return; }
+    if (version === 6 && H9.on){ if (H9.down(toStage(e))) screen.setPointerCapture(e.pointerId); lastInput = performance.now(); return; }   // 새 홈: 조타륜은 H9가 받는다
     const p = toStage(e); dragging = true; screen.setPointerCapture(e.pointerId);
     press = p; lastAng = planeAngle(p); lastT = performance.now();
     if (version >= 5){ target = theta; userTurn = true; } else omega *= .3;
@@ -1127,6 +1151,7 @@ body.bare .bar>*{pointer-events:auto}
   });
   screen.addEventListener('pointermove', e => {
     if (scrollDrag){ if (kfDrag(e)) return; scrollT = Math.max(0, Math.min(maxS(), scrollDrag.t0 - (toStage(e).y - scrollDrag.y))); return; }
+    if (H9.move(toStage(e))) return;
     if (!dragging) return;
     const p = toStage(e), now = performance.now(); press = p;
     if (version >= 5 ? Math.hypot(p.x-HUB5.x, p.y-HUB5.y) < 40 : Math.hypot(p.x-CX, p.y-CY0-bob) < 30) { lastT = now; return; }
@@ -1134,9 +1159,9 @@ body.bare .bar>*{pointer-events:auto}
     if (version >= 5){ target += da; lastAng = a; lastT = now; lastInput = now; return; }   // the heavy wheel chases the hand
     theta += da; omega = omega*.6 + (da/dt)*.4; lastAng = a; lastT = now; lastInput = now;
   });
-  const end = () => { if (scrollDrag && scrollDrag.h){ const dl = scrollDrag.dial; dl.target = kfSettle(scrollDrag); dl.drag = false; scrollT = scrollDrag.t0; scrollDrag = null; lastWheel = 0; return; } if (scrollDrag){ const t0 = scrollDrag.t0; scrollDrag = null; scrollT = version === 6 ? snap6(scrollT, t0) : (scrollT < 700 ? 0 : 1024); lastWheel = 0; return; } dragging = false; press = null; lastInput = performance.now(); };
+  const end = () => { H9.up(); if (scrollDrag && scrollDrag.h){ const dl = scrollDrag.dial; dl.target = kfSettle(scrollDrag); dl.drag = false; scrollT = scrollDrag.t0; scrollDrag = null; lastWheel = 0; return; } if (scrollDrag){ const t0 = scrollDrag.t0; scrollDrag = null; scrollT = version === 6 ? snap6(scrollT, t0) : (scrollT < 700 ? 0 : 1024); lastWheel = 0; return; } dragging = false; press = null; lastInput = performance.now(); };
   screen.addEventListener('pointerup', end); screen.addEventListener('pointercancel', end);
-  screen.addEventListener('wheel', e => { if (version >= 5){ e.preventDefault(); if (sailing) return; if (arrived || scrollS > 2){ if (version === 6){ if (!kfWheel(e.deltaX, e.deltaY)) wheel6(e.deltaY); } else scrollT = Math.max(0, Math.min(1024, scrollT + e.deltaY)); lastWheel = performance.now(); } else { omega += e.deltaY*.25; userTurn = true; lastInput = performance.now(); } return; } e.preventDefault(); omega += (e.deltaY + e.deltaX)*2.2; lastInput = performance.now(); touched = true; hint.classList.add('off'); }, {passive:false});
+  screen.addEventListener('wheel', e => { if (version >= 5){ e.preventDefault(); if (sailing) return; if (arrived || scrollS > 2){ if (version === 6){ if (!kfWheel(e.deltaX, e.deltaY)) wheel6(e.deltaY); } else scrollT = Math.max(0, Math.min(1024, scrollT + e.deltaY)); lastWheel = performance.now(); } else if (version === 6 && H9.on){ H9.wheel(e); lastInput = performance.now(); } else { omega += e.deltaY*.25; userTurn = true; lastInput = performance.now(); } return; } e.preventDefault(); omega += (e.deltaY + e.deltaX)*2.2; lastInput = performance.now(); touched = true; hint.classList.add('off'); }, {passive:false});
 
   // ---- sea (ver 2): two swells shaped like the Figma wave, moving in opposite directions ----
   let stir = 0;                                      // spinning the helm stirs the sea
@@ -1451,6 +1476,180 @@ void main(){
   story.querySelectorAll('.w').forEach((w, i) => w.style.transitionDelay = (i*70) + 'ms');
   let panS = 0, rollS = 0, target = 16, sail = 0, sailing = false, arrived = false, trans0 = 0, scrollS = 0, scrollT = 0, userTurn = false, prevTheta = 16, scrollDrag = null, lastWheel = 0, lastPct = -1;
   document.getElementById('again').addEventListener('click', () => { scrollT = 0; lastWheel = 0; });
+
+  // ---- 새 홈 · Figma 2399:9632 (흰 배경 · 물결 · 3D 조타륜) ----
+  // 기존 ver 6 첫 화면(영상 + 3D 키)은 그대로 두고 그 위에 덮는다. 두 번째 페이지부터(#pages6)는 ver 6 스크롤을 그대로 쓴다.
+  // 기존 홈으로 보기: 상단 막대의 「기존 홈 보기」 버튼, 또는 주소 뒤에 ?home=old
+  const H9 = (() => {
+    const el = document.getElementById('home9');
+    const stub = {on:false, setOn(){}, fit(){}, down(){}, move(){ return false; }, up(){}, wheel(){ return false; }, step(){}, reset(){}, atRest(){ return true; }};
+    if (!el) return stub;
+    let on = new URLSearchParams(location.search).get('home') !== 'old';
+    const cv = document.getElementById('h9wheel'), waveF = document.getElementById('h9waveF'), waveB = document.getElementById('h9waveB');
+    const typeEl = document.getElementById('h9type'), typePath = document.getElementById('h9typePath'), turb = document.getElementById('h9turb'), disp = document.getElementById('h9disp');
+    const pill9 = document.getElementById('h9pill'), bar9 = document.getElementById('h9bar'), tog = document.getElementById('homeTog');
+
+    // 3D: 이동 · 보는 각도(RX·RY) · 바퀴 자체 회전(RZ) — 돌리는 회전이 가장 안쪽이라 보는 각도는 유지되고 원근만 바뀐다
+    const R = d => d*Math.PI/180;
+    const M4 = (A, B) => { const o = new Float32Array(16); for (let c = 0; c < 4; c++) for (let r = 0; r < 4; r++){ let v = 0; for (let k = 0; k < 4; k++) v += A[k*4+r]*B[c*4+k]; o[c*4+r] = v; } return o; };
+    const RXm = a => { const c = Math.cos(a), s = Math.sin(a); return [1,0,0,0, 0,c,s,0, 0,-s,c,0, 0,0,0,1]; };
+    const RYm = a => { const c = Math.cos(a), s = Math.sin(a); return [c,0,-s,0, 0,1,0,0, s,0,c,0, 0,0,0,1]; };
+    const RZm = a => { const c = Math.cos(a), s = Math.sin(a); return [c,s,0,0, -s,c,0,0, 0,0,1,0, 0,0,0,1]; };
+    const TRm = (x, y, z) => [1,0,0,0, 0,1,0,0, 0,0,1,0, x,y,z,1];
+    const T0 = 1/Math.tan(R(15));
+    const PRJ = (() => { const a = 1366/1024, n = .1, f = 100; return [T0/a,0,0,0, 0,T0,0,0, 0,0,(f+n)/(n-f),-1, 0,0,2*f*n/(n-f),0]; })();
+    const HUB = {x:683, y:512.5}, DIST = T0*512/222, HUB_Y = -(HUB.y - 512)/512*DIST/T0, VIEW = {pitch:12, yaw:-18};
+    let zoom = 1;
+    const model = (th, p, y) => M4(TRm(0, HUB_Y, -DIST/zoom), M4(RXm(R(p)), M4(RYm(R(y)), RZm(-R(th)))));
+
+    const gl = cv.getContext('webgl', {alpha:true, premultipliedAlpha:true, antialias:true, depth:true});
+    let mesh = null;
+    if (gl){
+      const sh = (k, src) => { const s = gl.createShader(k); gl.shaderSource(s, src); gl.compileShader(s); return gl.getShaderParameter(s, gl.COMPILE_STATUS) ? s : null; };
+      const vs = sh(gl.VERTEX_SHADER, `attribute vec3 aP; attribute vec3 aN; uniform mat4 uMVP, uM; varying vec3 vN; varying vec3 vW;
+void main(){ vN = (uM*vec4(aN,0.0)).xyz; vW = (uM*vec4(aP,1.0)).xyz; gl_Position = uMVP*vec4(aP,1.0); }`);
+      // 사진 속 조타륜처럼 광택 있는 검은 래커 — 흰 배경을 비추는 회색 반사 + 날카로운 하이라이트
+      const fs = sh(gl.FRAGMENT_SHADER, `precision mediump float; varying vec3 vN; varying vec3 vW;
+void main(){
+  vec3 N = normalize(vN); vec3 V = normalize(-vW); if (dot(N,V) < 0.0) N = -N;
+  vec3 L1 = normalize(vec3(-0.45, 0.75, 0.6)), L2 = normalize(vec3(0.7, 0.1, 0.5));
+  float ndv = max(dot(N,V), 0.0); vec3 Rf = reflect(-V, N);
+  vec3 env = mix(vec3(0.16), vec3(0.78), smoothstep(-0.3, 0.9, Rf.y));
+  float fr = 0.05 + 0.95*pow(1.0 - ndv, 5.0);
+  vec3 col = vec3(0.075, 0.075, 0.08)*(0.4 + 0.9*max(dot(N,L1),0.0));
+  col += env*(0.06 + fr*0.7);
+  col += vec3(1.0)*pow(max(dot(N, normalize(L1+V)),0.0), 70.0)*0.75;
+  col += vec3(1.0)*pow(max(dot(N, normalize(L2+V)),0.0), 40.0)*0.22;
+  gl_FragColor = vec4(col, 1.0);
+}`);
+      if (vs && fs){
+        const pg = gl.createProgram(); gl.attachShader(pg, vs); gl.attachShader(pg, fs); gl.linkProgram(pg);
+        if (gl.getProgramParameter(pg, gl.LINK_STATUS)){
+          const b64 = s => Uint8Array.from(atob(s), ch => ch.charCodeAt(0));
+          const buf = (k, d) => { const b = gl.createBuffer(); gl.bindBuffer(k, b); gl.bufferData(k, d, gl.STATIC_DRAW); return b; };
+          mesh = {pg, pos:buf(gl.ARRAY_BUFFER, b64(HELM3D.pos)), nor:buf(gl.ARRAY_BUFFER, b64(HELM3D.nor)), idx:buf(gl.ELEMENT_ARRAY_BUFFER, b64(HELM3D.idx)), n:HELM3D.f*3,
+            aP:gl.getAttribLocation(pg,'aP'), aN:gl.getAttribLocation(pg,'aN'), uMVP:gl.getUniformLocation(pg,'uMVP'), uM:gl.getUniformLocation(pg,'uM')};
+        }
+      }
+      gl.clearColor(0, 0, 0, 0);
+    }
+    function draw(th, p, y){
+      if (!mesh) return;
+      gl.viewport(0, 0, cv.width, cv.height); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      gl.useProgram(mesh.pg); gl.enable(gl.DEPTH_TEST);
+      const M = model(th, p, y);
+      gl.bindBuffer(gl.ARRAY_BUFFER, mesh.pos); gl.enableVertexAttribArray(mesh.aP); gl.vertexAttribPointer(mesh.aP, 3, gl.SHORT, true, 0, 0);
+      gl.bindBuffer(gl.ARRAY_BUFFER, mesh.nor); gl.enableVertexAttribArray(mesh.aN); gl.vertexAttribPointer(mesh.aN, 3, gl.BYTE, true, 0, 0);
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.idx);
+      gl.uniformMatrix4fv(mesh.uMVP, false, M4(PRJ, M)); gl.uniformMatrix4fv(mesh.uM, false, M);
+      gl.drawElements(gl.TRIANGLES, mesh.n, gl.UNSIGNED_SHORT, 0);
+    }
+    // 화면 좌표 → 기울어진 바퀴 면 위의 각도 (손가락이 손잡이를 잡고 돌리는 느낌)
+    function angle(sx, sy, p, y){
+      const M = model(0, p, y), o = [M[12], M[13], M[14]], n = [M[8], M[9], M[10]], ux = [M[0], M[1], M[2]], uy = [M[4], M[5], M[6]];
+      const d = [(sx - 683)/512/T0, -(sy - 512)/512/T0, -1], den = n[0]*d[0] + n[1]*d[1] + n[2]*d[2];
+      if (Math.abs(den) < 1e-5) return Math.atan2(sy - HUB.y, sx - HUB.x)*180/Math.PI;
+      const k = (n[0]*o[0] + n[1]*o[1] + n[2]*o[2])/den, h = [d[0]*k - o[0], d[1]*k - o[1], d[2]*k - o[2]];
+      return -Math.atan2(h[0]*uy[0] + h[1]*uy[1] + h[2]*uy[2], h[0]*ux[0] + h[1]*ux[1] + h[2]*ux[2])*180/Math.PI;
+    }
+
+    // 상태
+    const SAIL_T = 2.6, BACK_T = 1.8, SPIN = 1080, SCROLL_AT = .45;   // 초 · 초 · 출항 때 더 도는 각도 · ver 6 스크롤을 시작하는 지점
+    let th = 14, tgt = 14, om = 0, hd = 0, p9 = VIEW.pitch, y9 = VIEW.yaw, drag = false, last = 0, travel = 0, net = 0;
+    let u = 0, dir = 0, sailed = false, spin0 = 0, spinDir = 1, launched = false, drawn = true;
+    const sea = {roll:0, vr:0, x:0, vx:0, y:0, vy:0, stir:0, om:0, pf:0, pfy:0, pb:0, pby:0};
+    const c01 = x => Math.max(0, Math.min(1, x)), seg = (x, a, b) => c01((x - a)/(b - a));
+    const eio = x => x < .5 ? 4*x*x*x : 1 - Math.pow(-2*x + 2, 3)/2, ein = x => x*x*x;
+    const wrapA = a => ((a + 540) % 360) - 180;
+
+    function reset(){
+      th = tgt = 14; om = hd = 0; p9 = VIEW.pitch; y9 = VIEW.yaw; drag = false; travel = net = 0; u = 0; dir = 0; sailed = false; launched = false; zoom = 1;
+      Object.assign(sea, {roll:0, vr:0, x:0, vx:0, y:0, vy:0, stir:0, om:0});
+    }
+    function setOn(v){
+      on = v; screen.classList.toggle('h9', on); el.hidden = !on; reset();
+      if (tog){ tog.textContent = on ? '기존 홈 보기' : '새 홈 보기'; tog.setAttribute('aria-pressed', String(!on)); }
+    }
+    function sailOut(now){
+      spinDir = (Math.abs(hd) > 5 ? Math.sign(hd) : Math.sign(net)) || 1;   // 마지막으로 돌리던 방향 그대로 출항
+      spin0 = th; dir = 1; drag = false; launched = false;
+      if (window.steerTrack) steerTrack('home_sail', {direction: spinDir > 0 ? 'cw' : 'ccw'});
+    }
+    const free = () => on && version === 6 && !dir && !sailed && !sailing && !arrived && scrollS < 2;
+
+    return {
+      get on(){ return on; }, setOn, reset,
+      atRest: () => !on || (travel === 0 && !dir && !sailed),
+      fit(s, dpr){ cv.width = Math.round(1366*s*dpr); cv.height = Math.round(1024*s*dpr); },
+      down(p){ if (!free()) return false; drag = true; last = angle(p.x, p.y, p9, y9); tgt = th; return true; },
+      move(p){
+        if (!on || !drag) return false;
+        if (Math.hypot(p.x - HUB.x, p.y - HUB.y) < 36) return true;          // 축 바로 위는 각도가 튄다
+        const a = angle(p.x, p.y, p9, y9), da = wrapA(a - last); tgt += da; travel += Math.abs(da); net += da; last = a; return true;
+      },
+      up(){ drag = false; },
+      wheel(e){ if (!free()) return false; const d = e.deltaY*.35; tgt += d; travel += Math.abs(d); net += d; return true; },
+      step(now, dt, t){
+        if (!on || version !== 6) return;
+        // 출항 / 귀항
+        if (!dir && !sailed && travel >= 360 && scrollS < 2) sailOut(now);
+        if (!dir && sailed && scrollT === 0 && scrollS < 700){ dir = -1; spin0 = th - spinDir*SPIN*eio(u); }   // 맨 위로 돌아오면 같은 움직임을 거꾸로 감는다
+        if (dir){
+          u = c01(u + dir*dt/(dir > 0 ? SAIL_T : BACK_T));
+          tgt = spin0 + spinDir*SPIN*eio(u);                              // 출항: 같은 방향으로 휘몰아 돈다 · 귀항: 되감기
+          if (dir > 0 && !launched && u >= SCROLL_AT){ launched = true; sail = 1; sailing = true; trans0 = now; }   // ver 6 스크롤로 두 번째 페이지 진입
+          if (dir > 0 && u >= 1){ dir = 0; sailed = true; }
+          if (dir < 0 && u <= 0){ dir = 0; sailed = false; launched = false; travel = net = 0; tgt = th; }
+        }
+        const shown = scrollS < 1020;
+        el.style.visibility = shown ? '' : 'hidden';
+        el.style.transform = scrollS > .5 ? `translateY(${(-scrollS).toFixed(1)}px)` : '';
+        // 바퀴: 손이 정한 목표 각도를 스프링처럼 따라간다
+        const k = dir ? 30 : (drag ? 22 : 7), b4 = th;
+        th += (tgt - th)*(1 - Math.exp(-k*dt)); om = (th - b4)/Math.max(dt, 1e-3);
+        sea.om += (om - sea.om)*(1 - Math.exp(-6*dt));                       // 손 떨림·이벤트 간격으로 튀는 각속도를 거른다
+        if (dir >= 0) hd += om*dt;
+        hd *= Math.exp(-(dir < 0 ? 3.5 : drag ? .25 : 1.1)*dt);
+        const steer = Math.tanh(hd/260), turn = Math.max(-1, Math.min(1, sea.om/360));
+        sea.stir += (Math.min(1, Math.abs(sea.om)/300) - sea.stir)*(1 - Math.exp(-(Math.abs(sea.om) > Math.abs(sea.stir*300) ? 1.6 : .7)*dt));
+        const sway = reduce ? 0 : Math.sin(t*.9);
+        const yT = VIEW.yaw + steer*24 + turn*6 + sway*(2.2 + sea.stir*4), pT = VIEW.pitch + Math.abs(steer)*7 + Math.sin(t*.7 + 1)*(reduce ? 0 : 1.6 + sea.stir*3);
+        y9 += (yT - y9)*(1 - Math.exp(-5*dt)); p9 += (pT - p9)*(1 - Math.exp(-5*dt));
+        zoom = 1 + 1.9*ein(seg(u, .1, .85));                                  // 출항: 바퀴가 카메라 쪽으로 다가온다
+        if (shown && u < .999){ draw(th, p9, y9); drawn = true; } else if (drawn && gl){ gl.clear(gl.COLOR_BUFFER_BIT); drawn = false; }
+        if (!shown) return;
+        // 바다: 스프링(감쇠 진동)으로 크게 기울고 쓸리고 솟는다 — 놓으면 반대로 한두 번 출렁이다 멈춘다
+        const K = 26, C = 3.4, spring = (x, v, g) => { v += (K*(g - x) - C*v)*dt; return [x + v*dt, v]; };
+        [sea.roll, sea.vr] = spring(sea.roll, sea.vr, -steer*9);
+        [sea.x, sea.vx] = spring(sea.x, sea.vx, -steer*190);
+        [sea.y, sea.vy] = spring(sea.y, sea.vy, -Math.abs(steer)*46 - sea.stir*18);
+        const a = reduce ? 0 : 1, amp = 1 + sea.stir*2.4;
+        // 위상은 매 프레임 누적한다 — sin(t × 바뀌는 속도)로 쓰면 속도가 바뀔 때 위상이 튀어 물결이 떨린다
+        sea.pf += dt*(1.1 + sea.stir*.6); sea.pfy += dt*(1.56 + sea.stir*.7); sea.pb += dt*(.8 + sea.stir*.5); sea.pby += dt*(1.0 + sea.stir*.6);
+        const surge = 720*eio(seg(u, .12, .62));
+        const fx = sea.x + a*amp*18*Math.sin(sea.pf), fy = sea.y + a*amp*6*Math.sin(sea.pfy + .6) - surge;
+        const bx = sea.x*1.7 - a*amp*26*Math.sin(sea.pb + 1.2), by = sea.y*1.35 + a*amp*9*Math.sin(sea.pby + 2.1) - surge*1.08;
+        waveF.style.transform = `translate(${fx.toFixed(2)}px,${fy.toFixed(2)}px) rotate(${sea.roll.toFixed(3)}deg)`;
+        waveB.style.transform = `translate(${bx.toFixed(2)}px,${by.toFixed(2)}px) rotate(${(sea.roll*1.45 + a*sea.stir*2*Math.sin(t*1.7)).toFixed(3)}deg)`;
+        const fill = seg(u, .38, .62); el.style.backgroundColor = fill ? `rgb(${Math.round(255 - 129*fill)},${Math.round(255 - 27*fill)},255)` : '';
+        // 글씨: 돌리는 동안 바다 쪽으로 휘청이며 일렁이고, 출항하면 바퀴 축을 중심으로 같은 방향으로 소용돌이치며 빨려 든다
+        const v = ein(seg(u, 0, .7));
+        const rotY = -steer*24*(1 - v), skew = -steer*9*(1 - v) + v*18*spinDir, rotX = Math.abs(steer)*10*(1 - v);
+        typeEl.style.transform = `perspective(1100px) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) rotate(${(v*220*spinDir).toFixed(2)}deg) skewX(${skew.toFixed(2)}deg) scale(${(1 - .8*v).toFixed(3)})`;
+        typeEl.style.opacity = (1 - seg(u, .42, .72)).toFixed(3);
+        const warp = a*(sea.stir*30 + Math.abs(steer)*10 + v*170);
+        if (warp > .6){
+          typePath.setAttribute('filter', 'url(#h9warp)'); disp.setAttribute('scale', warp.toFixed(1));
+          turb.setAttribute('baseFrequency', `${(0.007 + .0025*Math.sin(t*2.3) + v*.006).toFixed(4)} ${(0.014 + .004*Math.cos(t*1.9) + v*.01).toFixed(4)}`);
+        } else typePath.removeAttribute('filter');
+        pill9.style.opacity = (1 - seg(u, 0, .15)).toFixed(3);
+        bar9.style.width = (Math.min(1, travel/360)*100).toFixed(1) + '%';
+      }
+    };
+  })();
+  H9.setOn(H9.on);
+  if (document.getElementById('homeTog')) document.getElementById('homeTog').addEventListener('click', () => { H9.setOn(!H9.on); setVersion(6); });
+
   function studio(now, dt){
     if (arrived && scrollS < 2 && scrollT === 0){ arrived = false; sail = 0; }          // back at the helm: start over
     if (!arrived && !sailing && scrollS < 2){
@@ -1481,7 +1680,7 @@ void main(){
     if (version === 6) steerType.style.transform = `translateY(${(-lift*.8).toFixed(1)}px)`;
     if (version === 6){
       vid.style.transform = `translate(${(-panS).toFixed(1)}px, ${(-lift).toFixed(1)}px) rotate(${rollS.toFixed(2)}deg) scale(${(sc*1.02).toFixed(4)})`;
-      if (scrollS >= 1020){ if (!vid.paused) vid.pause(); } else if (vid.paused) vid.play().catch(() => {});
+      if (scrollS >= 1020 || H9.on){ if (!vid.paused) vid.pause(); } else if (vid.paused) vid.play().catch(() => {});
     }
     if (version >= 7){ seaC.style.transform = duoC.style.transform = `translateY(${(-lift).toFixed(1)}px) scale(${sc.toFixed(4)})`; scene.style.transform = `translateY(${(-lift).toFixed(1)}px)`; }
     const pct = Math.round(Math.min(sail, 1)*100);
@@ -1742,7 +1941,7 @@ void main(){
   P13.addEventListener('click', e => { e.stopPropagation(); if (version !== 6 || scrollS < 500) return; scrollT = 0; lastWheel = 0; lock6 = 0; });
   // 전시 모드 비활동 복귀: 기존 setVersion으로 첫 화면(scroll 0, 히어로 영상)으로 즉시 되돌리고 보너스 스티커를 비운다
   window.steerHome = {
-    atTop: () => scrollS < 2 && scrollT === 0 && !B14.items.length,
+    atTop: () => scrollS < 2 && scrollT === 0 && !B14.items.length && H9.atRest(),
     reset(){ B14.items.forEach(o => { o.getAnimations().forEach(a => a.cancel()); o.remove(); }); B14.items = []; B14.n = 0; B14.counts = [0, 0, 0, 0, 0];
       B14.cnt.forEach(n => n.textContent = '0'); B14.tint.style.backgroundColor = 'transparent'; lastWheel = 0; lock6 = 0; scrollDrag = null; setVersion(version); }
   };
@@ -2030,6 +2229,7 @@ void main(){
       panS += (tgt - panS)*Math.min(1, dt*5); const rl = version >= 6 ? 3.5 : 2.2, rk = version >= 6 ? .011 : .006; rollS += (Math.max(-rl, Math.min(rl, -omega*rk)) - rollS)*Math.min(1, dt*3);
     }
     if (version >= 5) studio(now, dt);
+    H9.step(now, dt, t);
     if (version === 2){
       const y0 = swell(CX, t, false), slope = (swell(CX+40, t, false) - swell(CX-40, t, false))/80;
       bob += ((y0 - 545)*.9 - bob)*Math.min(1, dt*4);
@@ -2053,7 +2253,7 @@ void main(){
     if (version === 8 && duo && scrollS < 1020) duo.draw(t);
     if (version === 2) drawSea(t);
     else if (version === 3 && ocean) ocean.draw({VP: VP3, camY: CAM_H, waves: W3, ph: PH0, sun: SUN3, pal: PAL3});
-    else if (version >= 4 && version < 7 && ocean && !(version >= 5 && scrollS >= 1020)){ const o = steerParams(); if (ocean.helm){ o.helmM = helmModel(theta); o.helmMVP = mul(PROJ, o.helmM); if (version >= 5) o.helmBase = [0.11, 0.12, 0.13]; } o.noSea = version >= 6; o.toon = version >= 7; ocean.draw(o); }
+    else if (version >= 4 && version < 7 && ocean && !(version >= 5 && scrollS >= 1020) && !(version === 6 && H9.on)){ const o = steerParams(); if (ocean.helm){ o.helmM = helmModel(theta); o.helmMVP = mul(PROJ, o.helmM); if (version >= 5) o.helmBase = [0.11, 0.12, 0.13]; } o.noSea = version >= 6; o.toon = version >= 7; ocean.draw(o); }
 
     if (speed > 70 && drops.length < 450){ emitAcc += Math.min(reduce ? 60 : Q[q].emit, (speed - 70)*.45)*dt; const n = emitAcc|0; emitAcc -= n; if (n) emit(n); }
 
