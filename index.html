@@ -471,7 +471,33 @@ body.bare .bar>*{pointer-events:auto}
 #lgd .ldcm-kb b{font:700 16px/21.6px 'Noto Sans KR',var(--font-ui);word-break:break-all}
 #lgd .ldcm-kb span{font:400 12px/16.8px 'Noto Sans KR',var(--font-ui);color:#7A7A7A}
 #lgd .ldcm-k em{display:flex;align-items:center;justify-content:center;height:28px;border-radius:100px;background:#0A0A0A;color:#fff;font:normal 700 12px/14px 'Noto Sans KR',var(--font-ui)}
-#lgd .ldci{position:absolute;left:572px;top:960px;display:flex;gap:8px}
+#lgd .ldnv.inv svg{color:#fff}
+#lgd .ldnv.inv svg path:first-child{color:#0A0A0A}
+#lgd .ldxf{position:absolute;left:549px;top:-19px;width:817px;height:1043px;background:#0A0A0A}
+#lgd .ldxc{position:absolute;box-sizing:border-box;border-radius:20px;background:rgba(255,255,255,var(--a));color:#fff;transform-origin:50% 50%}
+#lgd .ldxc4{background:#87E6FF;color:#0A0A0A}
+#lgd .ldxc>*{position:absolute;margin:0}
+#lgd .ldxc .ldxn{display:block}
+#lgd .ldxc small{top:23px;font:500 12px/14px 'Pretendard',var(--font-ui);color:rgba(255,255,255,.6);white-space:nowrap}
+#lgd .ldxc b{left:24px;top:52px;font:700 22px/26px 'Pretendard',var(--font-ui);white-space:nowrap}
+#lgd .ldxc p{left:24px;top:90px;font:400 14px/21.7px 'Pretendard',var(--font-ui);color:rgba(255,255,255,.6);word-break:break-all}
+#lgd .ldxc.f-pr small{font-weight:400}
+#lgd .ldxc.f-nr small{font:400 12px/14px 'Noto Sans KR',var(--font-ui)}
+#lgd .ldxc.f-nr p{font-family:'Noto Sans KR',var(--font-ui)}
+#lgd .ldxc4 small{color:rgba(10,10,10,.6)}
+#lgd .ldxc4 p{color:rgba(10,10,10,.75)}
+#lgd .ldxc:not(.ldxc4) p{white-space:nowrap}
+#lgd .ldxd{position:absolute;display:block;border-radius:50%}
+#lgd .ldxd.p{width:14px;height:14px;background:#87E6FF}
+#lgd .ldxd.x{width:10px;height:10px;background:#fff;opacity:.28}
+#lgd .ldxalt{display:block;overflow:visible}
+#lgd .ldxph{left:320px;top:14px;width:101px;height:130px;border-radius:10px;background:#0A0A0A}
+#lgd .ldxph>*{position:absolute;display:block}
+#lgd .ldxhm{left:15px;top:2px;transform-origin:10px 10px}
+#lgd .ldxds{left:29.19px;top:16.13px}
+#lgd .ldxph .sc{left:13px;top:34px;width:75px;height:66px;border-radius:6px;background:rgba(255,255,255,.9)}
+#lgd .ldxph .br{left:13px;top:106px;width:75px;height:14px;border-radius:10px;background:#87E6FF;transform-origin:0 50%}
+#lgd .ldci{position:absolute;left:683px;top:960px;display:flex;gap:8px;transform:translateX(-50%)}
 #lgd .ldci button{display:flex;align-items:center;justify-content:center;gap:8px;height:30px;min-width:44px;box-sizing:border-box;padding:0 14px;margin:0;border:0;border-radius:100px;background:#F2F2F2;color:#7A7A7A;font:500 12px/14px 'Noto Sans KR',var(--font-ui);cursor:pointer}
 #lgd .ldci button.cur{background:#0A0A0A;color:#fff;cursor:default}
 #lgd .ldci button[aria-disabled="true"]{cursor:default}
@@ -2867,12 +2893,12 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
 (() => {
   const root = document.getElementById('lgd'); if (!root) return;
   const RM = matchMedia('(prefers-reduced-motion: reduce)');
-  const PAGES = ['translate-01', 'translate-02', 'combine-01', 'combine-02'];
+  const PAGES = ['translate-01', 'translate-02', 'combine-01', 'combine-02', 'explain-01'];
   // 챕터: 번호 · 이름 · 페이지 수. 아직 디자인이 없는 페이지는 PAGES에 없으므로 이동하지 않는다
   const CH = {translate:[1, 'Translate', 2], combine:[2, 'Combine', 2], explain:[3, 'Explain', 1], record:[4, 'Record', 2]};
   const CHK = ['translate', 'combine', 'explain', 'record'];
   const pinfo = id => { const [k, n] = id.split('-'); return {k, ch:CH[k][0], name:CH[k][1], i:+n, of:CH[k][2]}; };
-  const plabel = id => { const q = pinfo(id); return '0' + q.ch + ' ' + q.name + ' ' + q.i + '/' + q.of; };
+  const plabel = id => { const q = pinfo(id); return '0' + q.ch + ' ' + q.name + (q.of > 1 ? ' ' + q.i + '/' + q.of : ''); };
   const E = 'cubic-bezier(.2,.7,.2,1)';
   const ARW = '<svg width="36" height="16" viewBox="0 0 36 16" aria-hidden="true"><path d="M0.640625 8H33.498M30.2121 2L34.0692 8L30.2121 14" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>';
   const PLUS = '<svg width="23" height="24" viewBox="0 0 22.572 23.32" aria-hidden="true"><path fill="rgba(255,255,255,.5)" d="M11.286 23.32C9.96162 23.32 8.888 22.2464 8.888 20.922V13.992H2.31C1.03422 13.992 0 12.9578 0 11.682C0 10.4062 1.03422 9.372 2.31 9.372H8.888V2.398C8.888 1.07362 9.96162 0 11.286 0C12.6104 0 13.684 1.07362 13.684 2.398V9.372H20.262C21.5378 9.372 22.572 10.4062 22.572 11.682C22.572 12.9578 21.5378 13.992 20.262 13.992H13.684V20.922C13.684 22.2464 12.6104 23.32 11.286 23.32Z"/></svg>';
@@ -2972,6 +2998,41 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   + '<p class="ldds ldin">밖으로 나서기에서는 시간·행동·동행을 고르고,<br>머물기에서는 시간·행동만 고릅니다.<br>각 모드의 선택값이 하나의 미션으로 조합됩니다.</p>'
   + cmField('out') + cmField('home');
 
+  // 03 Explain · 이유 (Figma 4042:12071 기본 · 4042:17992 더보기 펼침). 숫자와 Daily Steer는 Megascope를 Figma에서 외곽선으로 추출
+  // 카드: [왼쪽 위 x, y, 폭, 높이, 배경 알파, 숫자, 작은 제목, 제목, 설명, 설명 폭, 글꼴 계열]
+  const EXC = [
+    [632, 166, 662, 139, .06, 'n1', '추천 후보 생성', '용신 × 행동', '용신 水와 들어 보기에 맞는, 물소리를 들을 수 있는 장소를 추립니다.', 448, 'pm'],
+    [667, 338, 592, 143, .09, 'n2', '도달 가능성 확인', '시간 · 거리 · 동행', '시간 내 이동 가능한지와 동행에 어울리는지 확인합니다.', 378, 'pr'],
+    [702, 510, 522, 141, .12, 'n3', '후보 예외 조정', '예외와 반복 조정', '장소 후보가 없거나 반복되면 대안을 탐색합니다.', 278, 'nr'],
+    [737, 682, 452, 158, 0, 'n4', '오늘의 실천으로', '장소 한 곳 + 행동', '무엇을, 어디에서 할지 추천 이유와 함께 카드로 제시합니다.', 238, 'pm']];
+  // 후보 점 (Figma 좌표): 통과 14px 하늘색 · 제외 10px 흰색 28%
+  const EXD = [
+    {p:[[1180.7,243.8],[1129.7,213.4],[1174.3,238.6],[1124.7,274.4],[1194.2,229.4],[1152.7,265],[1203.4,197.4]],
+     x:[[1183.8,213.5],[1208.1,205.8],[1192.5,238.7],[1138.7,195],[1245.5,287],[1130.9,234.4],[1247.8,208.9],[1172.7,245],[1208.1,218.1],[1137.9,288.6],[1176.4,213.3]]},
+    {p:[[1153.4,393.7],[1099.9,436.2],[1126.8,395.6]], x:[[1090.1,454.6],[1112.4,450.4],[1144.9,385.6],[1163.4,402.2]]},
+    {p:[[1147.2,596.7]], x:[[1063,556.4],[1107,543]], alt:[1164, 589]},
+    {}];
+  const NUMS = {n1:['15','#87E6FF','M5.39688 10.7999C2.50188 10.7999 -0.00312499 8.2949 -0.00312499 5.3999C-0.00312499 2.5049 2.50188 -9.82285e-05 5.39688 -9.82285e-05C8.29188 -9.82285e-05 10.8119 2.5049 10.8119 5.3999C10.8119 8.2949 8.29188 10.7999 5.39688 10.7999ZM5.39688 9.4199C7.60188 9.4199 9.35688 7.6349 9.35688 5.3999C9.35688 3.1649 7.60188 1.3799 5.39688 1.3799C3.20688 1.3799 1.43688 3.1649 1.43688 5.3999C1.43688 7.6349 3.20688 9.4199 5.39688 9.4199ZM12.9268 10.6499V1.4849H11.7868V0.149902H14.3218V10.6499H12.9268Z'], n2:['19','#87E6FF','M5.39688 10.7999C2.50188 10.7999 -0.00312499 8.2949 -0.00312499 5.3999C-0.00312499 2.5049 2.50188 -9.82285e-05 5.39688 -9.82285e-05C8.29188 -9.82285e-05 10.8119 2.5049 10.8119 5.3999C10.8119 8.2949 8.29188 10.7999 5.39688 10.7999ZM5.39688 9.4199C7.60188 9.4199 9.35688 7.6349 9.35688 5.3999C9.35688 3.1649 7.60188 1.3799 5.39688 1.3799C3.20688 1.3799 1.43688 3.1649 1.43688 5.3999C1.43688 7.6349 3.20688 9.4199 5.39688 9.4199ZM13.4426 10.6499L16.1276 4.5899C16.3976 3.9599 16.5626 3.5099 16.5626 2.8799C16.5626 1.9799 15.9026 1.3199 15.0326 1.3199C14.1776 1.3199 13.5176 1.9649 13.5176 2.8499H12.1676C12.1676 1.2749 13.4426 0.0299023 15.0326 0.0299023C16.6376 0.0299023 17.9126 1.3049 17.9126 2.9099C17.9126 3.7349 17.6726 4.4099 17.3426 5.1599L15.5276 9.3149H18.3176V10.6499H13.4426Z'], n3:['18','#87E6FF','M5.39688 10.7999C2.50188 10.7999 -0.00312499 8.2949 -0.00312499 5.3999C-0.00312499 2.5049 2.50188 -9.82285e-05 5.39688 -9.82285e-05C8.29188 -9.82285e-05 10.8119 2.5049 10.8119 5.3999C10.8119 8.2949 8.29188 10.7999 5.39688 10.7999ZM5.39688 9.4199C7.60188 9.4199 9.35688 7.6349 9.35688 5.3999C9.35688 3.1649 7.60188 1.3799 5.39688 1.3799C3.20688 1.3799 1.43688 3.1649 1.43688 5.3999C1.43688 7.6349 3.20688 9.4199 5.39688 9.4199ZM11.7871 10.6499V9.3149H14.0371C15.4321 9.3149 16.5271 8.2349 16.5271 6.8399C16.5271 5.4599 15.4321 4.3799 14.0371 4.3799H12.7771V3.0449H14.0221C14.4721 3.0449 14.8021 2.7149 14.8021 2.2649C14.8021 1.8149 14.4721 1.4849 14.0071 1.4849H12.7771V0.149902H14.0371C15.1921 0.149902 16.1671 1.0799 16.1671 2.1599C16.1671 2.6099 15.9721 3.0149 15.6871 3.3299C17.0371 3.9449 17.9671 5.2349 17.9671 6.8399C17.9671 8.9849 16.2571 10.6499 14.0371 10.6499H11.7871Z'], n4:['20','#0A0A0A','M5.39688 10.7999C2.50188 10.7999 -0.00312499 8.2949 -0.00312499 5.3999C-0.00312499 2.5049 2.50188 -9.82285e-05 5.39688 -9.82285e-05C8.29188 -9.82285e-05 10.8119 2.5049 10.8119 5.3999C10.8119 8.2949 8.29188 10.7999 5.39688 10.7999ZM5.39688 9.4199C7.60188 9.4199 9.35688 7.6349 9.35688 5.3999C9.35688 3.1649 7.60188 1.3799 5.39688 1.3799C3.20688 1.3799 1.43688 3.1649 1.43688 5.3999C1.43688 7.6349 3.20688 9.4199 5.39688 9.4199ZM12.275 8.1449L15.695 0.149902H17.315L14.45 6.8099H17.255V3.7649H18.635V6.8099H19.595V8.1449H18.635V10.6499H17.255V8.1449H12.275Z']};
+  const exCard = (c, i) => { const [x, y, w, h, a, n, sub, t, d, dw, f] = c, nm = NUMS[n], dots = EXD[i];
+    return '<section class="ldxc ldxc' + (i + 1) + ' f-' + f + '" data-x="' + i + '" style="left:' + x + 'px;top:' + y + 'px;width:' + w + 'px;height:' + h + 'px' + (i < 3 ? ';--a:' + a : '') + '" aria-label="0' + (i + 1) + ' ' + sub + ' · ' + t + '">'
+      + '<svg class="ldxn" style="left:24px;top:24.35px" width="' + nm[0] + '" height="11" viewBox="0 0 ' + nm[0] + ' 11" aria-hidden="true"><path fill="' + nm[1] + '" d="' + nm[2] + '"/></svg>'
+      + '<small style="left:' + (i === 3 ? 52 : i ? 52 : 52) + 'px">' + sub + '</small><b>' + t + '</b><p style="width:' + dw + 'px">' + d + '</p>'
+      + (dots.p ? dots.p.map(([dx, dy]) => '<i class="ldxd p" style="left:' + (dx - x).toFixed(1) + 'px;top:' + (dy - y).toFixed(1) + 'px"></i>').join('')
+        + dots.x.map(([dx, dy]) => '<i class="ldxd x" style="left:' + (dx - x).toFixed(1) + 'px;top:' + (dy - y).toFixed(1) + 'px"></i>').join('') : '')
+      + (dots.alt ? '<svg class="ldxalt" style="left:' + (dots.alt[0] - x) + 'px;top:' + (dots.alt[1] - y) + 'px" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="6" fill="none" stroke="#87E6FF" stroke-width="2" stroke-dasharray="3 3"/></svg>' : '')
+      + (i === 3 ? '<div class="ldxph" aria-hidden="true"><svg class="ldxhm" width="21" height="21" viewBox="0 0 21 21"><path fill="#87E6FF" opacity=".98" d="M9.79623 8.34484C9.85413 8.48598 10.0511 8.49383 10.12 8.35775L11.3834 5.86435C11.4233 5.78545 11.5152 5.74782 11.599 5.77597L12.0472 5.92646C12.1502 5.96104 12.1986 6.07894 12.1495 6.17586L11.0616 8.32424C10.987 8.47149 11.1355 8.63222 11.2882 8.56958L14.7734 7.13986C14.8644 7.10252 14.9685 7.14604 15.0058 7.23708L15.1856 7.67537C15.223 7.76641 15.1794 7.87049 15.0884 7.90783L11.3385 9.44615C11.1858 9.50879 11.193 9.72745 11.3495 9.77992L15.2482 11.087C15.3512 11.1216 15.3996 11.2394 15.3506 11.3364L15.1372 11.7583C15.0972 11.8372 15.0054 11.8749 14.9215 11.8468L11.0138 10.5365C10.8692 10.488 10.7345 10.6319 10.7924 10.7731L12.2036 14.2133C12.241 14.3043 12.1974 14.4084 12.1064 14.4458L11.6121 14.6485C11.5211 14.6859 11.417 14.6424 11.3796 14.5513L9.97357 11.1238C9.91566 10.9826 9.71868 10.9748 9.64977 11.1109L7.80382 14.7571C7.76386 14.836 7.67203 14.8737 7.58815 14.8455L7.13999 14.6951C7.037 14.6605 6.98867 14.5426 7.03775 14.4457L8.88962 10.789C8.96419 10.6418 8.81575 10.481 8.66304 10.5437L4.89779 12.0883C4.80675 12.1256 4.70267 12.0821 4.66533 11.9911L4.48553 11.5528C4.44818 11.4617 4.49171 11.3576 4.58275 11.3203L8.08337 9.88426C8.23606 9.82162 8.22888 9.60297 8.0724 9.55049L5.77688 8.78069C5.67382 8.74613 5.62546 8.62814 5.67461 8.5312L5.88809 8.11008C5.92806 8.03124 6.01979 7.99362 6.10361 8.0217L8.74562 8.90678C8.89027 8.95523 9.02495 8.81134 8.96706 8.67021L7.87671 6.01229C7.83937 5.92125 7.88289 5.81718 7.97393 5.77983L8.46824 5.57705C8.55928 5.53971 8.66335 5.58323 8.7007 5.67427L9.79623 8.34484Z"/></svg><svg class="ldxds" width="48" height="12" viewBox="0 0 48 12"><path fill="#87E6FF" d="M-0.00166443 9.87012V0.0701165H2.63034C5.48634 0.0701165 7.69834 2.21212 7.69834 4.97012C7.69834 7.72812 5.48634 9.87012 2.63034 9.87012H-0.00166443ZM1.30034 8.62412H2.63034C4.81434 8.62412 6.35434 7.09812 6.35434 4.97012C6.35434 2.84212 4.81434 1.31612 2.63034 1.31612H1.30034V8.62412ZM10.5682 9.99612C9.11223 9.99612 7.90823 8.79212 7.90823 7.35012C7.90823 5.95012 9.12623 4.71812 10.5682 4.71812C10.7782 4.71812 10.9742 4.76012 11.1702 4.81612L9.79823 1.68012H11.1842L12.7102 5.18012C13.0182 5.89412 13.2422 6.52412 13.2422 7.32212C13.2422 8.77812 12.0242 9.99612 10.5682 9.99612ZM10.5682 8.79212C11.3662 8.79212 11.9962 8.14812 11.9962 7.35012C11.9962 6.55212 11.3662 5.92212 10.5682 5.92212C9.79823 5.92212 9.16823 6.55212 9.16823 7.35012C9.16823 8.14812 9.79823 8.79212 10.5682 8.79212ZM14.5116 1.42812C14.1196 1.42812 13.7976 1.10612 13.7976 0.714117C13.7976 0.322117 14.1196 0.000116587 14.5116 0.000116587C14.9036 0.000116587 15.2256 0.322117 15.2256 0.714117C15.2256 1.10612 14.9036 1.42812 14.5116 1.42812ZM13.8676 9.87012V1.68012H15.1416V9.87012H13.8676ZM15.8872 9.87012V0.0701165H17.1612V9.87012H15.8872ZM17.4029 11.4801L19.6009 6.46812L17.5009 1.68012H18.9149L20.3009 4.85812L21.6729 1.68012H23.0169L18.7189 11.4801H17.4029ZM24.9799 9.87012V8.62412H26.9959C28.3119 8.62412 29.3339 7.58812 29.3339 6.28612C29.3339 4.92812 28.3679 4.13012 26.9819 3.94812C25.8479 3.80812 24.9799 3.10812 24.9799 1.98812C24.9799 0.868117 25.8479 0.0701165 26.9679 0.0701165H27.7659V1.31612H27.0099C26.6179 1.31612 26.3239 1.58212 26.3239 1.97412C26.3239 2.36612 26.6039 2.63212 27.1079 2.71612C29.1239 2.96812 30.6779 4.22812 30.6779 6.31412C30.6779 8.33012 29.0679 9.87012 26.9959 9.87012H24.9799ZM31.3789 9.87012V2.89812H30.5669V1.68012H31.3789V0.0701165H32.6529V1.68012H33.4789V2.89812H32.6529V9.87012H31.3789ZM36.3679 1.55412C37.8239 1.55412 39.0279 2.75812 39.0279 4.20012C39.0279 5.60012 37.8099 6.83212 36.3539 6.83212C36.1579 6.83212 35.9619 6.79012 35.7659 6.73412L37.1379 9.87012H35.7519L34.2259 6.37012C33.9179 5.65612 33.6939 5.02612 33.6939 4.22812C33.6939 2.77212 34.9119 1.55412 36.3679 1.55412ZM36.3539 2.75812C35.5699 2.75812 34.9399 3.40212 34.9399 4.20012C34.9399 4.99812 35.5699 5.62812 36.3539 5.62812C37.1379 5.62812 37.7679 4.99812 37.7679 4.20012C37.7679 3.40212 37.1379 2.75812 36.3539 2.75812ZM42.0653 1.55412C43.5213 1.55412 44.7253 2.75812 44.7253 4.20012C44.7253 5.60012 43.5073 6.83212 42.0513 6.83212C41.8553 6.83212 41.6593 6.79012 41.4633 6.73412L42.8353 9.87012H41.4493L39.9233 6.37012C39.6153 5.65612 39.3913 5.02612 39.3913 4.22812C39.3913 2.77212 40.6093 1.55412 42.0653 1.55412ZM42.0513 2.75812C41.2673 2.75812 40.6373 3.40212 40.6373 4.20012C40.6373 4.99812 41.2673 5.62812 42.0513 5.62812C42.8353 5.62812 43.4653 4.99812 43.4653 4.20012C43.4653 3.40212 42.8353 2.75812 42.0513 2.75812ZM45.3507 9.87012V3.54212C45.3507 2.50612 46.1907 1.68012 47.2267 1.68012H47.7307V2.89812H47.3107C46.9327 2.89812 46.6247 3.20612 46.6247 3.58412V9.87012H45.3507Z"/></svg><i class="sc"></i><i class="br"></i></div>' : '')
+      + '</section>'; };
+  const page5 =
+    '<div class="ldxf ldin2" aria-hidden="false"></div>'
+  + '<p class="ldeb ldin">03 Explain</p>'
+  + '<h1 class="ldh ldin">개운 장소 추천 방식</h1>'
+  + '<p class="ldds ldin" style="top:242px">Logic 04에서 정한 조건을 바탕으로 후보를 생성하고,<br>시간·거리·동행으로 추립니다.<br>방향은 나서기에서만 반영하며, 후보가 부족하면 대안을 탐색합니다.</p>'
+  + tgl(3, '거리 · 방향 · 후보 보정',
+      '<h4>거리 · 고른 시간=갈 수 있는 거리</h4><p class="w">이동을 포함해 30분은 600m, 1시간은 1.2km, 3시간은 2.4km 안에서 후보를 찾습니다.</p>'
+    + '<h4 class="b2">방향은 걷기를 고를 때만 반영</h4><p class="w">걷기를 고르면 용신의 방위(木 동쪽 · 火 남쪽 · 金 서쪽 · 水 북쪽) 자체가 미션이 됩니다. 土는 지금 있는 곳을 한 바퀴 돕니다. 다른 행동에는 방향을 더하지 않습니다.</p>'
+    + '<h4 class="b2">장소 후보 보정</h4><p class="w">조건에 맞는 장소가 없으면 가까운 대안을 찾고, 최근에 추천한 곳이 반복되지 않도록 조정합니다.</p>').replace('class="ldtg ldin"', 'class="ldtg ldin" style="top:377px"')
+  + '<div class="ldxs" role="list" aria-label="추천 장소가 정해지는 네 단계">' + EXC.map(exCard).join('') + '</div>';
+
   root.innerHTML =
     '<div class="ldpg" data-p="0">'
   + '<p class="ldeb ldin">01 Translate  ·  1/2</p>'
@@ -3008,10 +3069,11 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   + '<div class="ldpg" data-p="1">' + page2 + '</div>'
   + '<div class="ldpg" data-p="2">' + page3 + '</div>'
   + '<div class="ldpg" data-p="3">' + page4 + '</div>'
+  + '<div class="ldpg" data-p="4">' + page5 + '</div>'
   + '<div class="ldnv"></div>'
   + '<button type="button" class="lda prv">' + ARC('M44 39L35 48L44 57', true) + '</button>'
   + '<button type="button" class="lda nxt">' + ARC('M44 39L53 48L44 57', false) + '</button>'
-  + '<nav class="ldci" aria-label="Logic 챕터">' + CHK.map(k => '<button type="button" data-ch="' + k + '">0' + CH[k][0] + '<i aria-hidden="true">' + '<b></b>'.repeat(CH[k][2]) + '</i></button>').join('') + '</nav>';
+  + '<nav class="ldci" aria-label="Logic 챕터">' + CHK.map(k => '<button type="button" data-ch="' + k + '">0' + CH[k][0] + (CH[k][2] > 1 ? '<i aria-hidden="true">' + '<b></b>'.repeat(CH[k][2]) + '</i>' : '') + '</button>').join('') + '</nav>';
   // 오늘의 일진 문구는 Figma에서 흰색이다: <i> 강조는 결과 문구의 '개운 미션'에만 쓴다
   root.querySelector('.ldpg[data-p="0"] .ldf2 .ldt i').outerHTML = '오늘의 일진';
   root.querySelector('.ldpg[data-p="0"] .ldf2 .ldt').style.color = '#87E6FF';
@@ -3042,6 +3104,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
       if (on) tc.firstElementChild.animate([{opacity:0, transform:'translateY(-6px)'}, {opacity:1, transform:'none'}], {duration:360, delay:80, easing:E, fill:'backwards'});
       a.onfinish = () => { tgA.delete(tg); if (!tg.classList.contains('on')) tc.hidden = true; };
     }
+    if (pgs[4] && pgs[4].contains(tg)) { if (on) exPause(); else exResume(); }   // Explain: 더보기를 읽는 동안 단계 강조 일시 정지
     if (!quiet && window.steerTrack) steerTrack('logic_detail_toggle', {page_id:PAGES[cur], section:th.textContent, state:on ? 'open' : 'close'});
   }
   root.querySelectorAll('.ldtg').forEach(tg => tg.querySelector('.ldtg-h').addEventListener('click', () => setTg(tg, !tg.classList.contains('on'))));
@@ -3080,6 +3143,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     pg.querySelectorAll('.ldrow').forEach((e, i) => e.animate([{opacity:0, transform:'translateY(12px)'}, {opacity:1, transform:'none'}], {duration:440, delay:240 + i*70, easing:E, fill:'backwards'}));
     pg.querySelectorAll('.ldwm').forEach(e => e.animate([{opacity:0, transform:'translateY(18px)'}, {opacity:1, transform:'none'}], {duration:620, delay:200, easing:E, fill:'backwards'}));
     if (n === 2) enter3();
+    if (n === 4) exStart(650);
     if (n === 3) { if (!RM.matches) ['out', 'home'].forEach((k, j) => setTimeout(() => { if (cur === 3) { pgs[3].querySelector('.ldcm[data-m="' + k + '"] .ldcm-k b').textContent = ''; cmDraw(k, true); } }, 520 + j*260)); }
   }
   // 02 Combine 1/2: 가만히 두어도 조타키는 돌렸다 놓고, 기기는 흔들렸다 멈추기를 반복한다 · 기준 막대는 진입 때 한 번만 차오른다
@@ -3198,6 +3262,46 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     if (window.steerTrack) steerTrack('logic_combine_select', {page_id:'combine-02', mode:k, step:c + 1, value:b.textContent});
   }));
   function cmReset(){ cmSel.out = CM.out.def.slice(); cmSel.home = CM.home.def.slice(); pgs[3].querySelectorAll('.ldcm-k b').forEach(b => b.textContent = ''); cmDraw('out', false); cmDraw('home', false); }
+  // 03 Explain: 네 단계가 위에서 아래로 차례로 활성화되며 후보 점이 생겼다가 걸러지고, 마지막 카드에서 추천이 확정된다
+  // 단계당 1초 · 결과 1.5초 유지 · 0.8초 동안 처음 상태로 = 6.3초 주기. 더보기를 열면 일시 정지, 닫으면 이어서 재생
+  const p5 = pgs[4], exCards = [...p5.querySelectorAll('.ldxc')];
+  const X_T = 6300, X_S = 1000, X_HOLD = 5500, X_RST = 6000;
+  const EX = {a:[], on:false};
+  const tl = (pts, ease) => pts.map(([t, v], j) => Object.assign({offset:Math.min(1, t / X_T), easing:(ease && ease[j]) || 'cubic-bezier(.3,.7,.3,1)'}, v));
+  const exPlay = (el, pts, ease, delay) => { const a = el.animate(tl(pts, ease), {duration:X_T, delay:delay || 0, iterations:Infinity, fill:'backwards'}); EX.a.push(a); return a; };
+  function exStop(){ EX.a.forEach(a => a.cancel()); EX.a = []; EX.on = false; }
+  function exStart(delay){
+    exStop(); if (RM.matches) return; EX.on = true;
+    const D = delay || 0;
+    exCards.forEach((c, i) => {
+      const st = i * X_S, en = i < 3 ? (i + 1) * X_S : X_HOLD, past = i < 3 ? .62 : 1, a = +c.style.getPropertyValue('--a') || 0;
+      exPlay(c, [[0, {opacity:.32}], [st, {opacity:.32}], [st + 350, {opacity:1}], [en, {opacity:1}], [en + 350, {opacity:past}], [Math.max(en + 350, X_HOLD), {opacity:past}], [X_RST, {opacity:.32}], [X_T, {opacity:.32}]], null, D);
+      if (i < 3) exPlay(c, [[0, {translate:'0 0', backgroundColor:'rgba(255,255,255,' + a + ')'}], [st, {translate:'0 0', backgroundColor:'rgba(255,255,255,' + a + ')'}],
+        [st + 350, {translate:'0 -4px', backgroundColor:'rgba(255,255,255,' + (a + .08) + ')'}], [en, {translate:'0 -4px', backgroundColor:'rgba(255,255,255,' + (a + .08) + ')'}],
+        [en + 350, {translate:'0 0', backgroundColor:'rgba(255,255,255,' + a + ')'}], [X_T, {translate:'0 0', backgroundColor:'rgba(255,255,255,' + a + ')'}]], null, D);
+      else exPlay(c, [[0, {scale:'1', translate:'0 0'}], [st, {scale:'1', translate:'0 0'}], [st + 380, {scale:'1.03', translate:'0 -4px'}], [st + 700, {scale:'1.015', translate:'0 -4px'}], [X_HOLD, {scale:'1.015', translate:'0 -4px'}], [X_RST, {scale:'1', translate:'0 0'}], [X_T, {scale:'1', translate:'0 0'}]],
+        [null, 'cubic-bezier(.2,.9,.3,1.25)', 'cubic-bezier(.3,.7,.3,1)'], D);
+      // 후보 점: 제외 점이 먼저 하얗게 떠올랐다가 흐려지고(걸러짐), 통과 점이 튀어 오르며 남는다
+      const xs = [...c.querySelectorAll('.ldxd.x')], ps = [...c.querySelectorAll('.ldxd.p')], gap = Math.min(55, 420 / Math.max(1, xs.length + ps.length));
+      xs.forEach((d, j) => { const t0 = st + 80 + j * gap;
+        exPlay(d, [[0, {opacity:0, scale:'.3'}], [t0, {opacity:0, scale:'.3'}], [t0 + 220, {opacity:.85, scale:'1'}], [st + 640, {opacity:.85, scale:'1'}], [st + 900, {opacity:.28, scale:'1'}], [X_HOLD, {opacity:.28, scale:'1'}], [X_HOLD + 400, {opacity:0, scale:'.6'}], [X_T, {opacity:0, scale:'.3'}]], null, D); });
+      ps.forEach((d, j) => { const t0 = st + 160 + j * gap;
+        exPlay(d, [[0, {opacity:0, scale:'0'}], [t0, {opacity:0, scale:'0'}], [t0 + 260, {opacity:1, scale:'1.3'}], [t0 + 460, {opacity:1, scale:'1'}], [X_HOLD, {opacity:1, scale:'1'}], [X_HOLD + 400, {opacity:0, scale:'.6'}], [X_T, {opacity:0, scale:'0'}]],
+          [null, 'cubic-bezier(.2,.9,.3,1.4)', 'ease-out'], D); });
+      const alt = c.querySelector('.ldxalt');
+      if (alt) { exPlay(alt, [[0, {opacity:0, scale:'.4'}], [st + 450, {opacity:0, scale:'.4'}], [st + 750, {opacity:1, scale:'1'}], [X_HOLD, {opacity:1, scale:'1'}], [X_HOLD + 400, {opacity:0, scale:'.6'}], [X_T, {opacity:0, scale:'.4'}]], null, D);
+        const sp = alt.querySelector('circle').animate([{strokeDashoffset:0}, {strokeDashoffset:-12}], {duration:900, iterations:Infinity}); EX.a.push(sp); }
+      // 마지막 카드: 기기 화면이 채워지고 버튼 막대가 그어지며 추천이 확정된다
+      const sc = c.querySelector('.ldxph .sc'), br = c.querySelector('.ldxph .br'), hm = c.querySelector('.ldxhm');
+      if (sc) {
+        exPlay(sc, [[0, {opacity:.18}], [st + 250, {opacity:.18}], [st + 650, {opacity:1}], [X_HOLD, {opacity:1}], [X_RST, {opacity:.18}], [X_T, {opacity:.18}]], null, D);
+        exPlay(br, [[0, {scale:'0 1'}], [st + 450, {scale:'0 1'}], [st + 900, {scale:'1 1'}], [X_HOLD, {scale:'1 1'}], [X_RST, {scale:'0 1'}], [X_T, {scale:'0 1'}]], null, D);
+        exPlay(hm, [[0, {rotate:'0deg'}], [st + 200, {rotate:'0deg'}], [st + 800, {rotate:'120deg'}], [X_T, {rotate:'120deg'}]], [null, 'cubic-bezier(.2,.8,.3,1)'], D);
+      }
+    });
+  }
+  const exPause = () => EX.a.forEach(a => a.pause());
+  const exResume = () => { if (EX.on) EX.a.forEach(a => a.play()); };
   // 화살표 · 챕터 표시 상태
   const prv = root.querySelector('.lda.prv'), nxt = root.querySelector('.lda.nxt'), cis = [...root.querySelectorAll('.ldci button')];
   const first = k => PAGES.find(id => id.startsWith(k + '-'));
@@ -3221,6 +3325,8 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   }
   function show(n, anim){
     if (n !== 2) stop3();
+    if (n !== 4) exStop();
+    nv.classList.toggle('inv', n === 4);   // Explain은 오른쪽이 검정 필드라 내비 글자를 흰색으로
     pgs.forEach((g, i) => { g.classList.toggle('on', i === n); g.toggleAttribute('inert', i !== n); g.setAttribute('aria-hidden', i === n ? 'false' : 'true'); });
     cur = n; chrome(); if (anim) enter(n);
   }
@@ -3243,7 +3349,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     else if (n !== cur) { go(n); return; }
     if (window.steerTrack) steerTrack('logic_detail_view', {page_id:PAGES[n]});
   }
-  function close(){ stop3(); root.classList.remove('open'); root.setAttribute('aria-hidden', 'true'); }
+  function close(){ stop3(); exStop(); root.classList.remove('open'); root.setAttribute('aria-hidden', 'true'); }
   const lgx = document.getElementById('lgx');
   // L0에서 진입: 기운을 행동으로 폴더 · '기준'(translate-01) · '번역'(translate-02) 칩
   if (lgx) {
@@ -3261,7 +3367,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   show(0, false);
   window.steerLD = {open, close, isOpen, page:() => PAGES[cur], go, select:setEl};
   const hs = (location.hash || '').slice(1).toUpperCase();
-  const HS = {'LOGIC-T1':'translate-01', 'LOGIC-T2':'translate-02', 'LOGIC-C1':'combine-01', 'LOGIC-C2':'combine-02'};
+  const HS = {'LOGIC-T1':'translate-01', 'LOGIC-T2':'translate-02', 'LOGIC-C1':'combine-01', 'LOGIC-C2':'combine-02', 'LOGIC-E1':'explain-01'};
   if (HS[hs]) { if (window.steerL0) window.steerL0.open(); open(HS[hs]); }
 })();
 </script>
