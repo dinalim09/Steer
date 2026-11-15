@@ -5,7 +5,8 @@ import {createPalmOverlay} from './palm-overlay.js';
 import {GLYPHS} from './glyphs.js';
 
 const BASE = new URL('./', import.meta.url).href;
-const N = 512, STRENGTH = .65, FADE = 380;
+// 어안 왜곡 강도: 0.65(중앙 1.27배) → 0.92(중앙 1.80배, 가장자리 2.8배 압축). tan 발산 한계 1.309보다 충분히 낮다
+const N = 512, STRENGTH = .92, FADE = 380;
 const COLORS = ['#c2ff0a', '#ff8778', '#ffcc45', '#baa7ef', '#87dff4'], HELM = '#ff8778';
 const KEYS = ['wood', 'fire', 'earth', 'metal', 'water'], NAMES = ['木 나무', '火 불', '土 흙', '金 쇠', '水 물'];
 const keyOf = e => e < 0 ? 'helm' : KEYS[e];
@@ -98,7 +99,7 @@ export function createLens(root, hooks = {}){
   const video = $('.ll-video'), out = $('.ll-out'), hint = $('.ll-hint'), shutter = $('.ll-shutter');
   const stateH = $('.ll-state h3'), stateP = $('.ll-state p'), spin = $('.ll-spin'), retry = $('.ll-retry');
   const count = $('.ll-count'), flash = $('.ll-flash'), save = $('.ll-save'), buttons = [...root.querySelectorAll('.ll-f')];
-  const renderer = createFisheye(out), previews = createFilterPreviews(buttons), palm = createPalmOverlay();
+  const renderer = createFisheye(out), previews = createFilterPreviews(buttons, STRENGTH), palm = createPalmOverlay();
   const frame = document.createElement('canvas'); frame.width = frame.height = N; const fctx = frame.getContext('2d', {willReadFrequently:renderer.type !== 'webgl'});
   const stickers = {}; for (const k of ['helm', ...KEYS]) { const im = new Image(); im.decoding = 'async'; im.src = `${BASE}st-${k}.webp`; stickers[k] = im; }
   const settings = {strength:STRENGTH, element:-1, from:-1, t:1, amount:1};

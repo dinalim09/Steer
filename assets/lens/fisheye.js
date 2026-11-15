@@ -4,8 +4,12 @@ const N = 512;
 // settings.element(현재) · settings.from(이전) · settings.t(0→1 전환 진행)로 두 색보정을 섞는다. -1(helm)은 보정 없음.
 export function grades(s){ const t = s.t == null ? 1 : s.t, from = s.from == null ? s.element : s.from;
   return [Math.max(0, from), from < 0 ? 0 : s.amount, Math.max(0, s.element), s.element < 0 ? 0 : s.amount, t]; }
-export function createFisheye(initialCanvas){
+// 왜곡: 출력 반지름 r(0~1)의 픽셀이 원본 반지름 rs = tan(r·a)/tan(a), a = strength·1.2 에서 색을 가져온다.
+// 중앙 배율 = tan(a)/a(볼록 확대), 가장자리로 갈수록 압축되며 r = 1에서 rs = 1(원본 정사각형의 내접원 경계)로 정확히 끝난다.
+// a < π/2(strength < 1.309)이면 tan이 발산하지 않으므로 범위 안에서는 수치적으로 안정하다.
+export function createFisheye(initialCanvas, options = {}){
   let canvas = initialCanvas;
+  if (options.cpu) return makeCPU(canvas);
   try { return makeWebGL(canvas); } catch { const fresh = canvas.cloneNode(); canvas.replaceWith(fresh); canvas = fresh; return makeCPU(canvas); }
 }
 function makeWebGL(canvas){
