@@ -832,16 +832,18 @@ body.bare .bar>*{pointer-events:auto}
 #rsx .htm .gr3 .dt{position:absolute;white-space:nowrap;color:#fff;font:400 14px/21px 'Noto Sans KR',var(--font-ui)}
 /* R4 · accordion */
 #rsx .htm .r4w{display:flex;flex-direction:column;gap:20px}
-#rsx .htm .r4k{position:relative;flex:none;height:111px;border-radius:60px;overflow:hidden;color:#fff;transition:height .8s cubic-bezier(.22,.8,.2,1)}
-#rsx .htm .r4k.big{height:544px}
-#rsx .htm .r4k>img{position:absolute;left:var(--il,0px);top:var(--st,-216px);width:var(--iw,633px);height:var(--ih,544px);max-width:none;object-fit:cover;-webkit-user-drag:none;transition:top .8s cubic-bezier(.22,.8,.2,1)}
-#rsx .htm .r4k.big>img{top:var(--bt,0px)}
+#rsx .htm .r4k{position:relative;flex:none;height:111px;border-radius:60px;overflow:hidden;color:#fff;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:height .75s cubic-bezier(.4,0,.2,1)}
+#rsx .htm .r4k.big{height:544px;cursor:default}
+#rsx .htm .r4k:focus-visible{outline:3px solid #87E6FF;outline-offset:3px}
+/* 이미지 크롭: 접힘(--cl·--st·--cw·--ch) ↔ 펼침(--il·--bt·--iw·--ih), Figma 4042:12760 · 12767(접힘) · 12798(펼침) */
+#rsx .htm .r4k>img{position:absolute;left:var(--cl,0px);top:var(--st,-216px);width:var(--cw,633px);height:var(--ch,544px);max-width:none;object-fit:cover;-webkit-user-drag:none;transition:top .75s cubic-bezier(.4,0,.2,1),left .75s cubic-bezier(.4,0,.2,1),width .75s cubic-bezier(.4,0,.2,1),height .75s cubic-bezier(.4,0,.2,1)}
+#rsx .htm .r4k.big>img{left:var(--il,0px);top:var(--bt,0px);width:var(--iw,633px);height:var(--ih,544px)}
 #rsx .htm .r4k>i{position:absolute;inset:0;background:linear-gradient(248deg,rgba(135,230,255,.52),rgba(135,230,255,0) 70%),linear-gradient(180deg,rgba(0,0,0,0) 55%,rgba(0,0,0,.62)),linear-gradient(rgba(0,0,0,.2),rgba(0,0,0,.2))}
-#rsx .htm .r4k .cw{position:absolute;left:111px;top:34px;transition:opacity .3s ease}
-#rsx .htm .r4k .ic{position:absolute;left:23px;top:23.5px;width:64px;height:64px;border-radius:50%;background:#fff;display:grid;place-items:center;color:#8A8A8A;z-index:1;transition:top .8s cubic-bezier(.22,.8,.2,1),color .4s ease}
-#rsx .htm .r4k.big .ic{top:32px;color:#87E6FF}
+#rsx .htm .r4k .cw{position:absolute;left:111px;top:34px;transition:opacity .35s ease .3s}
+#rsx .htm .r4k .ic{position:absolute;left:23px;top:24px;width:64px;height:64px;border-radius:50%;background:#fff;display:grid;place-items:center;color:#8A8A8A;z-index:1;transition:top .75s cubic-bezier(.4,0,.2,1),color .4s ease}
+#rsx .htm .r4k.big .ic{top:32px;color:#0A0A0A}   /* Figma 주석: 확대 시 검정 아이콘 */
 #rsx .htm .r4k .ic svg{display:block}
-#rsx .htm .r4k:not(.big) .cw{opacity:0;transition-duration:.15s}
+#rsx .htm .r4k:not(.big) .cw{opacity:0;transition-duration:.15s;transition-delay:0s}
 #rsx .htm .r4k .cw{z-index:1}
 #rsx .htm .r4k strong{display:block;font-weight:700;font-size:22px;line-height:30px;margin-bottom:17px}
 #rsx .htm .r4k small{display:block;font-weight:400;font-size:14px;line-height:20px}
@@ -929,13 +931,6 @@ body.bare .bar>*{pointer-events:auto}
 #rsx .htm .i6d{font:400 18px/29px 'Pretendard','Noto Sans KR',var(--font-ui);color:#fff;margin:0;text-align:center}
 #rsx .htm .i6cta{display:flex;align-items:center;justify-content:center;box-sizing:border-box;background:#0A0A0A;border:1.5px solid #0A0A0A;border-radius:999px;color:#fff;font:500 16px/1 'Pretendard','Noto Sans KR',var(--font-ui)}
 /* R4 stacked cards (redesign) */
-#rsx .htm .r4c{border-radius:20px;overflow:hidden;color:#fff;background:linear-gradient(150deg,#94C5C5,#536B6E 55%,#242A31)}
-#rsx .htm .r4c.m{background:linear-gradient(140deg,#ABC9D7,#63757D 55%,#2F313B)}
-#rsx .htm .r4c:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,rgba(0,0,0,.62))}
-#rsx .htm .r4c .cap{color:rgba(255,255,255,.82);z-index:1}
-#rsx .htm .r4c .cw{position:absolute;left:28px;bottom:26px;z-index:1}
-#rsx .htm .r4c strong{display:block;font:700 24px/33px 'Noto Sans KR',var(--font-ui);letter-spacing:-.5px;margin:0 0 10px}
-#rsx .htm .r4c small{font:400 14px/18px 'Noto Sans KR',var(--font-ui);color:rgba(255,255,255,.85)}
 /* R5 place-attachment diagram (redesign) */
 #rsx .htm .dgm{background:#F2F2F2;border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:36px;padding:40px 36px}
 #rsx .htm .dgm .row{display:flex;gap:18px;width:100%}
@@ -2656,8 +2651,8 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     +   '<span class="dt" style="left:13px;top:294px">2025.4</span><span class="dt" style="left:375px;top:294px">2026.4</span></div>',
   R4: col('인문학 · 행동', '행동에 따라', '달라질 수 있는 운', '순자는 주어진 조건 속 실천을, 와이즈먼은 우연한 기회를<br>만들고 알아차리는 행동을 강조합니다.', '순자 「천론」 · 와이즈먼의 기회 포착', 0, 0, 575, 416)
     + '<div class="el r4w" data-g="v" style="left:693px;top:179px;width:633px;height:675px">'
-    +   '<div class="r4k big"><img src="assets/rs5-r4-sunja.webp" alt="구름이 흐르는 하늘"><i></i><span class="ic"><svg width="22" height="24" viewBox="0 0 22 24" fill="none" aria-hidden="true" style="margin:-1px 0 0 1px"><path d="M9.6892 4.55923C15.0564 0.979317 17.74 -0.810638 19.7599 0.355567C21.7798 1.52177 21.5715 4.7408 21.1548 11.1789L20.871 15.563C20.551 20.5074 20.391 22.9796 19.166 23.5054C18.8367 23.6468 18.4734 23.7105 18.1046 23.6917C16.7328 23.6216 15.4183 21.4082 12.7893 16.9815C12.2061 15.9996 11.9146 15.5086 11.4679 15.193C11.3383 15.1015 11.2004 15.0219 11.0563 14.9554C10.5596 14.7264 9.98866 14.7193 8.84675 14.7053C3.69855 14.6418 1.12445 14.6101 0.377884 13.4572C0.17717 13.1472 0.0507506 12.8007 0.00851244 12.4448C-0.148596 11.121 1.91237 9.74638 6.0343 6.99705L9.6892 4.55923Z" fill="currentColor"/></svg></span><div class="cw"><strong>상황을 바꾸지 못해도<br>태도는 선택할 수 있다</strong><small>고전 사상 · 순자 「천론」</small></div></div>'
-    +   '<div class="r4k" style="--iw:655px;--ih:640px;--il:-22px;--st:-407px;--bt:-32px"><img src="assets/rs6-r4-walk.webp" alt="운동화를 신고 거리를 걷는 사람"><i></i><span class="ic"><svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M25.4687 24L10.6176 24C6.70584 24 4.74993 24 3.55775 22.5104C1.2949 19.683 3.87326 12.1651 5.43515 9.33333C5.96465 12.5333 11.4157 12.4444 13.4013 12C12.0783 9.33492 13.8444 8.4455 14.7274 8.00079L14.729 8C18.667 12.6667 27.0868 15.2053 29.1502 20.2918C30.0415 22.489 27.5019 24 25.4687 24Z" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.667 18.668C8.3 20.6 11.97 21.23 16.03 19.74C17.4 19.3 18.05 19.07 18.44 19.14C18.83 19.17 19.6 19.53 21.39 20.35C23.4 21.29 26.3 21.9 29.33 20.48" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M18 12.668L20 10.668" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20.667 14.668L22.667 12.668" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><div class="cw"><strong>행동으로<br>기회를 늘릴 수 있다</strong><small>현대 심리학 · Richard Wiseman</small></div></div></div>',
+    +   '<div class="r4k big" role="button" tabindex="0" aria-expanded="true" aria-label="고전 사상 · 순자 「천론」 — 상황을 바꾸지 못해도 태도는 선택할 수 있다"><img src="assets/rs5-r4-sunja.webp" alt="구름이 흐르는 하늘"><i></i><span class="ic"><svg width="22" height="24" viewBox="0 0 22 24" fill="none" aria-hidden="true" style="margin:-1px 0 0 1px"><path d="M9.6892 4.55923C15.0564 0.979317 17.74 -0.810638 19.7599 0.355567C21.7798 1.52177 21.5715 4.7408 21.1548 11.1789L20.871 15.563C20.551 20.5074 20.391 22.9796 19.166 23.5054C18.8367 23.6468 18.4734 23.7105 18.1046 23.6917C16.7328 23.6216 15.4183 21.4082 12.7893 16.9815C12.2061 15.9996 11.9146 15.5086 11.4679 15.193C11.3383 15.1015 11.2004 15.0219 11.0563 14.9554C10.5596 14.7264 9.98866 14.7193 8.84675 14.7053C3.69855 14.6418 1.12445 14.6101 0.377884 13.4572C0.17717 13.1472 0.0507506 12.8007 0.00851244 12.4448C-0.148596 11.121 1.91237 9.74638 6.0343 6.99705L9.6892 4.55923Z" fill="currentColor"/></svg></span><div class="cw"><strong>상황을 바꾸지 못해도<br>태도는 선택할 수 있다</strong><small>고전 사상 · 순자 「천론」</small></div></div>'
+    +   '<div class="r4k" role="button" tabindex="0" aria-expanded="false" aria-label="현대 심리학 · Richard Wiseman — 행동으로 기회를 늘릴 수 있다" style="--cw:633px;--ch:618px;--cl:0px;--st:-399px;--iw:655px;--ih:640px;--il:-22px;--bt:-32px"><img src="assets/rs6-r4-walk.webp" alt="운동화를 신고 거리를 걷는 사람"><i></i><span class="ic"><svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M25.4687 24L10.6176 24C6.70584 24 4.74993 24 3.55775 22.5104C1.2949 19.683 3.87326 12.1651 5.43515 9.33333C5.96465 12.5333 11.4157 12.4444 13.4013 12C12.0783 9.33492 13.8444 8.4455 14.7274 8.00079L14.729 8C18.667 12.6667 27.0868 15.2053 29.1502 20.2918C30.0415 22.489 27.5019 24 25.4687 24Z" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.667 18.668C8.3 20.6 11.97 21.23 16.03 19.74C17.4 19.3 18.05 19.07 18.44 19.14C18.83 19.17 19.6 19.53 21.39 20.35C23.4 21.29 26.3 21.9 29.33 20.48" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M18 12.668L20 10.668" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20.667 14.668L22.667 12.668" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><div class="cw"><strong>행동으로<br>기회를 늘릴 수 있다</strong><small>현대 심리학 · Richard Wiseman</small></div></div></div>',
   R5: '<div class="el bgph" aria-hidden="true" style="left:0;top:0;width:1366px;height:1024px"><img src="assets/rs4-r5-bg.webp" alt=""></div>'
     + col('공간 경험', '같은 장소도', '무엇을 하느냐에 따라 다른 경험', '장소의 의미를 이해하려면 공간의 특성뿐 아니라,<br>그곳에서 한 행동과 함께한 관계를 함께 살펴봐야 합니다.', '장소의 의미를 만드는 경험 · 연구 배경', 0, 0, 575, 416, 'nt')
     + '<div class="el dg5" data-g5="1" role="img" aria-label="장소, 의례·행동, 함께한 사람이 모여 장소 애착이 됩니다" style="left:808px;top:236px;width:485px;height:157px">'
@@ -2863,15 +2858,17 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     if (chrome(id)) { CHV.style.visibility = 'visible'; return; }
     const im = $('rs-' + id) && $('rs-' + id).querySelector(':scope > img'); CHV.style.visibility = 'hidden';
     if (im) im.addEventListener('load', () => { if (cur === id && chrome(id)) CHV.style.visibility = 'visible'; }, {once:true}); }
-  // R4 · 두 카드가 2초마다 544px ↔ 111px로 교대하는 아코디언(전환 0.8초)
-  let r4T = 0;
-  function r4Run(id){
-    clearInterval(r4T); r4T = 0;
+  // R4 · 두 관점 아코디언(Figma 4042:12759): 기본은 순자 펼침 · 와이즈먼 접힘, 접힌 카드를 누르면 그 카드가 펼쳐지고 다른 카드는 접힘(0.75초)
+  function r4Set(k){
     const w = $('rs-R4') && $('rs-R4').querySelector('.r4w'); if (!w) return;
-    const ks = [...w.children]; ks[0].classList.add('big'); ks[1].classList.remove('big');
-    if (id !== 'R4' || RM.matches) return;
-    r4T = setInterval(() => { if (cur !== 'R4') { clearInterval(r4T); r4T = 0; return; } ks.forEach(k => k.classList.toggle('big')); }, 2000);
+    [...w.children].forEach((c, i) => { const on = i === k; c.classList.toggle('big', on); c.setAttribute('aria-expanded', on ? 'true' : 'false'); });
   }
+  function r4Run(id){ r4Set(0); }   // R4에 들어오거나 Research를 초기화하면 기본 상태로
+  // 카드 터치: 페이지는 아래에서 만들어지므로 Research 루트에서 위임으로 받는다(hover 없이 click·Enter·Space)
+  const r4Pick = c => { if (!c || c.classList.contains('big')) return; const k = [...c.parentElement.children].indexOf(c); r4Set(k);
+    if (window.steerTrack) steerTrack('research_r4_card', {card:k ? 'wiseman' : 'sunja'}); };
+  root.addEventListener('click', e => { const c = e.target.closest && e.target.closest('#rs-R4 .r4k'); if (c) r4Pick(c); });
+  root.addEventListener('keydown', e => { if (e.key !== 'Enter' && e.key !== ' ') return; const c = e.target.closest && e.target.closest('#rs-R4 .r4k'); if (c) { e.preventDefault(); r4Pick(c); } });
   // R1 · 운(運)·명(命) 카드 영상: R1에서만 재생, 벗어나면 일시정지. 저전력 모드 등으로 자동재생이 막히면 R1에서의 다음 터치 때 다시 재생
   let r1Kick = null;
   function r1Vid(id){
