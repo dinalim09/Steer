@@ -497,6 +497,7 @@ body.bare .bar>*{pointer-events:auto}
 #lgd .ldxds{left:29.19px;top:16.13px}
 #lgd .ldxph .sc{left:13px;top:34px;width:75px;height:66px;border-radius:6px;background:rgba(255,255,255,.9)}
 #lgd .ldxph .br{left:13px;top:106px;width:75px;height:14px;border-radius:10px;background:#87E6FF;transform-origin:0 50%}
+#lgd .ldxph .ldxgo{left:43.5px;top:60px;opacity:0}
 #lgd .ldrf{position:absolute;left:549px;top:-30px;width:817px;height:1054px;background:#87E6FF}
 #lgd .ldrdl{margin:8px 0 0;padding:0}
 #lgd .ldrdl div{display:flex;height:23px;margin-top:12px}
@@ -3301,7 +3302,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
       + (dots.p ? dots.p.map(([dx, dy]) => '<i class="ldxd p" style="left:' + (dx - x).toFixed(1) + 'px;top:' + (dy - y).toFixed(1) + 'px"></i>').join('')
         + dots.x.map(([dx, dy]) => '<i class="ldxd x" style="left:' + (dx - x).toFixed(1) + 'px;top:' + (dy - y).toFixed(1) + 'px"></i>').join('') : '')
       + (dots.alt ? '<svg class="ldxalt" style="left:' + (dots.alt[0] - x) + 'px;top:' + (dots.alt[1] - y) + 'px" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="6" fill="none" stroke="#87E6FF" stroke-width="2" stroke-dasharray="3 3"/></svg>' : '')
-      + (i === 3 ? '<div class="ldxph" aria-hidden="true"><svg class="ldxhm" width="21" height="21" viewBox="0 0 21 21"><path fill="#87E6FF" opacity=".98" d="M9.79623 8.34484C9.85413 8.48598 10.0511 8.49383 10.12 8.35775L11.3834 5.86435C11.4233 5.78545 11.5152 5.74782 11.599 5.77597L12.0472 5.92646C12.1502 5.96104 12.1986 6.07894 12.1495 6.17586L11.0616 8.32424C10.987 8.47149 11.1355 8.63222 11.2882 8.56958L14.7734 7.13986C14.8644 7.10252 14.9685 7.14604 15.0058 7.23708L15.1856 7.67537C15.223 7.76641 15.1794 7.87049 15.0884 7.90783L11.3385 9.44615C11.1858 9.50879 11.193 9.72745 11.3495 9.77992L15.2482 11.087C15.3512 11.1216 15.3996 11.2394 15.3506 11.3364L15.1372 11.7583C15.0972 11.8372 15.0054 11.8749 14.9215 11.8468L11.0138 10.5365C10.8692 10.488 10.7345 10.6319 10.7924 10.7731L12.2036 14.2133C12.241 14.3043 12.1974 14.4084 12.1064 14.4458L11.6121 14.6485C11.5211 14.6859 11.417 14.6424 11.3796 14.5513L9.97357 11.1238C9.91566 10.9826 9.71868 10.9748 9.64977 11.1109L7.80382 14.7571C7.76386 14.836 7.67203 14.8737 7.58815 14.8455L7.13999 14.6951C7.037 14.6605 6.98867 14.5426 7.03775 14.4457L8.88962 10.789C8.96419 10.6418 8.81575 10.481 8.66304 10.5437L4.89779 12.0883C4.80675 12.1256 4.70267 12.0821 4.66533 11.9911L4.48553 11.5528C4.44818 11.4617 4.49171 11.3576 4.58275 11.3203L8.08337 9.88426C8.23606 9.82162 8.22888 9.60297 8.0724 9.55049L5.77688 8.78069C5.67382 8.74613 5.62546 8.62814 5.67461 8.5312L5.88809 8.11008C5.92806 8.03124 6.01979 7.99362 6.10361 8.0217L8.74562 8.90678C8.89027 8.95523 9.02495 8.81134 8.96706 8.67021L7.87671 6.01229C7.83937 5.92125 7.88289 5.81718 7.97393 5.77983L8.46824 5.57705C8.55928 5.53971 8.66335 5.58323 8.7007 5.67427L9.79623 8.34484Z"/></svg><svg class="ldxds" width="48" height="12" viewBox="0 0 48 12"><path fill="#87E6FF" d="M-0.00166443 9.87012V0.0701165H2.63034C5.48634 0.0701165 7.69834 2.21212 7.69834 4.97012C7.69834 7.72812 5.48634 9.87012 2.63034 9.87012H-0.00166443ZM1.30034 8.62412H2.63034C4.81434 8.62412 6.35434 7.09812 6.35434 4.97012C6.35434 2.84212 4.81434 1.31612 2.63034 1.31612H1.30034V8.62412ZM10.5682 9.99612C9.11223 9.99612 7.90823 8.79212 7.90823 7.35012C7.90823 5.95012 9.12623 4.71812 10.5682 4.71812C10.7782 4.71812 10.9742 4.76012 11.1702 4.81612L9.79823 1.68012H11.1842L12.7102 5.18012C13.0182 5.89412 13.2422 6.52412 13.2422 7.32212C13.2422 8.77812 12.0242 9.99612 10.5682 9.99612ZM10.5682 8.79212C11.3662 8.79212 11.9962 8.14812 11.9962 7.35012C11.9962 6.55212 11.3662 5.92212 10.5682 5.92212C9.79823 5.92212 9.16823 6.55212 9.16823 7.35012C9.16823 8.14812 9.79823 8.79212 10.5682 8.79212ZM14.5116 1.42812C14.1196 1.42812 13.7976 1.10612 13.7976 0.714117C13.7976 0.322117 14.1196 0.000116587 14.5116 0.000116587C14.9036 0.000116587 15.2256 0.322117 15.2256 0.714117C15.2256 1.10612 14.9036 1.42812 14.5116 1.42812ZM13.8676 9.87012V1.68012H15.1416V9.87012H13.8676ZM15.8872 9.87012V0.0701165H17.1612V9.87012H15.8872ZM17.4029 11.4801L19.6009 6.46812L17.5009 1.68012H18.9149L20.3009 4.85812L21.6729 1.68012H23.0169L18.7189 11.4801H17.4029ZM24.9799 9.87012V8.62412H26.9959C28.3119 8.62412 29.3339 7.58812 29.3339 6.28612C29.3339 4.92812 28.3679 4.13012 26.9819 3.94812C25.8479 3.80812 24.9799 3.10812 24.9799 1.98812C24.9799 0.868117 25.8479 0.0701165 26.9679 0.0701165H27.7659V1.31612H27.0099C26.6179 1.31612 26.3239 1.58212 26.3239 1.97412C26.3239 2.36612 26.6039 2.63212 27.1079 2.71612C29.1239 2.96812 30.6779 4.22812 30.6779 6.31412C30.6779 8.33012 29.0679 9.87012 26.9959 9.87012H24.9799ZM31.3789 9.87012V2.89812H30.5669V1.68012H31.3789V0.0701165H32.6529V1.68012H33.4789V2.89812H32.6529V9.87012H31.3789ZM36.3679 1.55412C37.8239 1.55412 39.0279 2.75812 39.0279 4.20012C39.0279 5.60012 37.8099 6.83212 36.3539 6.83212C36.1579 6.83212 35.9619 6.79012 35.7659 6.73412L37.1379 9.87012H35.7519L34.2259 6.37012C33.9179 5.65612 33.6939 5.02612 33.6939 4.22812C33.6939 2.77212 34.9119 1.55412 36.3679 1.55412ZM36.3539 2.75812C35.5699 2.75812 34.9399 3.40212 34.9399 4.20012C34.9399 4.99812 35.5699 5.62812 36.3539 5.62812C37.1379 5.62812 37.7679 4.99812 37.7679 4.20012C37.7679 3.40212 37.1379 2.75812 36.3539 2.75812ZM42.0653 1.55412C43.5213 1.55412 44.7253 2.75812 44.7253 4.20012C44.7253 5.60012 43.5073 6.83212 42.0513 6.83212C41.8553 6.83212 41.6593 6.79012 41.4633 6.73412L42.8353 9.87012H41.4493L39.9233 6.37012C39.6153 5.65612 39.3913 5.02612 39.3913 4.22812C39.3913 2.77212 40.6093 1.55412 42.0653 1.55412ZM42.0513 2.75812C41.2673 2.75812 40.6373 3.40212 40.6373 4.20012C40.6373 4.99812 41.2673 5.62812 42.0513 5.62812C42.8353 5.62812 43.4653 4.99812 43.4653 4.20012C43.4653 3.40212 42.8353 2.75812 42.0513 2.75812ZM45.3507 9.87012V3.54212C45.3507 2.50612 46.1907 1.68012 47.2267 1.68012H47.7307V2.89812H47.3107C46.9327 2.89812 46.6247 3.20612 46.6247 3.58412V9.87012H45.3507Z"/></svg><i class="sc"></i><i class="br"></i></div>' : '')
+      + (i === 3 ? '<div class="ldxph" aria-hidden="true"><svg class="ldxhm" width="21" height="21" viewBox="0 0 21 21"><path fill="#87E6FF" opacity=".98" d="M9.79623 8.34484C9.85413 8.48598 10.0511 8.49383 10.12 8.35775L11.3834 5.86435C11.4233 5.78545 11.5152 5.74782 11.599 5.77597L12.0472 5.92646C12.1502 5.96104 12.1986 6.07894 12.1495 6.17586L11.0616 8.32424C10.987 8.47149 11.1355 8.63222 11.2882 8.56958L14.7734 7.13986C14.8644 7.10252 14.9685 7.14604 15.0058 7.23708L15.1856 7.67537C15.223 7.76641 15.1794 7.87049 15.0884 7.90783L11.3385 9.44615C11.1858 9.50879 11.193 9.72745 11.3495 9.77992L15.2482 11.087C15.3512 11.1216 15.3996 11.2394 15.3506 11.3364L15.1372 11.7583C15.0972 11.8372 15.0054 11.8749 14.9215 11.8468L11.0138 10.5365C10.8692 10.488 10.7345 10.6319 10.7924 10.7731L12.2036 14.2133C12.241 14.3043 12.1974 14.4084 12.1064 14.4458L11.6121 14.6485C11.5211 14.6859 11.417 14.6424 11.3796 14.5513L9.97357 11.1238C9.91566 10.9826 9.71868 10.9748 9.64977 11.1109L7.80382 14.7571C7.76386 14.836 7.67203 14.8737 7.58815 14.8455L7.13999 14.6951C7.037 14.6605 6.98867 14.5426 7.03775 14.4457L8.88962 10.789C8.96419 10.6418 8.81575 10.481 8.66304 10.5437L4.89779 12.0883C4.80675 12.1256 4.70267 12.0821 4.66533 11.9911L4.48553 11.5528C4.44818 11.4617 4.49171 11.3576 4.58275 11.3203L8.08337 9.88426C8.23606 9.82162 8.22888 9.60297 8.0724 9.55049L5.77688 8.78069C5.67382 8.74613 5.62546 8.62814 5.67461 8.5312L5.88809 8.11008C5.92806 8.03124 6.01979 7.99362 6.10361 8.0217L8.74562 8.90678C8.89027 8.95523 9.02495 8.81134 8.96706 8.67021L7.87671 6.01229C7.83937 5.92125 7.88289 5.81718 7.97393 5.77983L8.46824 5.57705C8.55928 5.53971 8.66335 5.58323 8.7007 5.67427L9.79623 8.34484Z"/></svg><svg class="ldxds" width="48" height="12" viewBox="0 0 48 12"><path fill="#87E6FF" d="M-0.00166443 9.87012V0.0701165H2.63034C5.48634 0.0701165 7.69834 2.21212 7.69834 4.97012C7.69834 7.72812 5.48634 9.87012 2.63034 9.87012H-0.00166443ZM1.30034 8.62412H2.63034C4.81434 8.62412 6.35434 7.09812 6.35434 4.97012C6.35434 2.84212 4.81434 1.31612 2.63034 1.31612H1.30034V8.62412ZM10.5682 9.99612C9.11223 9.99612 7.90823 8.79212 7.90823 7.35012C7.90823 5.95012 9.12623 4.71812 10.5682 4.71812C10.7782 4.71812 10.9742 4.76012 11.1702 4.81612L9.79823 1.68012H11.1842L12.7102 5.18012C13.0182 5.89412 13.2422 6.52412 13.2422 7.32212C13.2422 8.77812 12.0242 9.99612 10.5682 9.99612ZM10.5682 8.79212C11.3662 8.79212 11.9962 8.14812 11.9962 7.35012C11.9962 6.55212 11.3662 5.92212 10.5682 5.92212C9.79823 5.92212 9.16823 6.55212 9.16823 7.35012C9.16823 8.14812 9.79823 8.79212 10.5682 8.79212ZM14.5116 1.42812C14.1196 1.42812 13.7976 1.10612 13.7976 0.714117C13.7976 0.322117 14.1196 0.000116587 14.5116 0.000116587C14.9036 0.000116587 15.2256 0.322117 15.2256 0.714117C15.2256 1.10612 14.9036 1.42812 14.5116 1.42812ZM13.8676 9.87012V1.68012H15.1416V9.87012H13.8676ZM15.8872 9.87012V0.0701165H17.1612V9.87012H15.8872ZM17.4029 11.4801L19.6009 6.46812L17.5009 1.68012H18.9149L20.3009 4.85812L21.6729 1.68012H23.0169L18.7189 11.4801H17.4029ZM24.9799 9.87012V8.62412H26.9959C28.3119 8.62412 29.3339 7.58812 29.3339 6.28612C29.3339 4.92812 28.3679 4.13012 26.9819 3.94812C25.8479 3.80812 24.9799 3.10812 24.9799 1.98812C24.9799 0.868117 25.8479 0.0701165 26.9679 0.0701165H27.7659V1.31612H27.0099C26.6179 1.31612 26.3239 1.58212 26.3239 1.97412C26.3239 2.36612 26.6039 2.63212 27.1079 2.71612C29.1239 2.96812 30.6779 4.22812 30.6779 6.31412C30.6779 8.33012 29.0679 9.87012 26.9959 9.87012H24.9799ZM31.3789 9.87012V2.89812H30.5669V1.68012H31.3789V0.0701165H32.6529V1.68012H33.4789V2.89812H32.6529V9.87012H31.3789ZM36.3679 1.55412C37.8239 1.55412 39.0279 2.75812 39.0279 4.20012C39.0279 5.60012 37.8099 6.83212 36.3539 6.83212C36.1579 6.83212 35.9619 6.79012 35.7659 6.73412L37.1379 9.87012H35.7519L34.2259 6.37012C33.9179 5.65612 33.6939 5.02612 33.6939 4.22812C33.6939 2.77212 34.9119 1.55412 36.3679 1.55412ZM36.3539 2.75812C35.5699 2.75812 34.9399 3.40212 34.9399 4.20012C34.9399 4.99812 35.5699 5.62812 36.3539 5.62812C37.1379 5.62812 37.7679 4.99812 37.7679 4.20012C37.7679 3.40212 37.1379 2.75812 36.3539 2.75812ZM42.0653 1.55412C43.5213 1.55412 44.7253 2.75812 44.7253 4.20012C44.7253 5.60012 43.5073 6.83212 42.0513 6.83212C41.8553 6.83212 41.6593 6.79012 41.4633 6.73412L42.8353 9.87012H41.4493L39.9233 6.37012C39.6153 5.65612 39.3913 5.02612 39.3913 4.22812C39.3913 2.77212 40.6093 1.55412 42.0653 1.55412ZM42.0513 2.75812C41.2673 2.75812 40.6373 3.40212 40.6373 4.20012C40.6373 4.99812 41.2673 5.62812 42.0513 5.62812C42.8353 5.62812 43.4653 4.99812 43.4653 4.20012C43.4653 3.40212 42.8353 2.75812 42.0513 2.75812ZM45.3507 9.87012V3.54212C45.3507 2.50612 46.1907 1.68012 47.2267 1.68012H47.7307V2.89812H47.3107C46.9327 2.89812 46.6247 3.20612 46.6247 3.58412V9.87012H45.3507Z"/></svg><i class="sc"></i><i class="br"></i><i class="ldxd p ldxgo"></i></div>' : '')
       + '</section>'; };
   const page5 =
     '<div class="ldxf ldin2" aria-hidden="false"></div>'
@@ -3485,7 +3486,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
       a.onfinish = () => { tgA.delete(tg); if (!tg.classList.contains('on')) tc.hidden = true; };
       }
     }
-    if (pgs[4] && pgs[4].contains(tg)) { if (on) exPause(); else exResume(); }   // Explain: 더보기를 읽는 동안 단계 강조 일시 정지
+    if (pgs[4] && pgs[4].contains(tg)) { if (on) exPause(); else exResume(); }   // Explain: 더보기를 읽는 동안 필터링 모션 일시 정지
     if (pgs[5] && pgs[5].contains(tg)) { if (on) rPause(); else rResume(); }      // Record: 더보기를 읽는 동안 순환 모션 일시 정지
     if (pgs[6] && pgs[6].contains(tg)) { if (on) wPause(); else wResume();        // Record 2/2: 일시 정지 + 패널을 Figma 펼침 상태처럼 흐리게
       const pn = pgs[6].querySelector('.ldwp'); if (RM.matches || quiet) pn.style.opacity = on ? '.35' : ''; else pn.animate([{opacity:on ? 1 : .35}, {opacity:on ? .35 : 1}], {duration:450, easing:'cubic-bezier(.3,.7,.2,1)'}).onfinish = () => { pn.style.opacity = on ? '.35' : ''; }; }
@@ -3688,43 +3689,57 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
       const A = cmA[k], tok = A.tok; A.on = true; A.n = 0;
       A.t.push(setTimeout(() => { if (A.tok === tok && cur === 3 && isOpen()) cmAutoRun(k); }, CM_AUTO[k].start)); });
   }
-  // 03 Explain: 네 단계가 위에서 아래로 차례로 활성화되며 후보 점이 생겼다가 걸러지고, 마지막 카드에서 추천이 확정된다
-  // 단계당 1초 · 결과 1.5초 유지 · 0.8초 동안 처음 상태로 = 6.3초 주기. 더보기를 열면 일시 정지, 닫으면 이어서 재생
+  // 03 Explain: 후보 점이 위에서 아래로 전달되며 걸러지는 하나의 필터링 흐름. 카드는 고정, 진행 상태는 점의 이동과 감소로만 보여 준다
+  // 01 생성(점이 차례로 나타나고 맞지 않는 점이 빠짐) → 02 남은 점이 내려와 시간·거리·동행으로 하나씩 제거 → 03 다시 내려와 예외 조정, 대안 표시
+  // → 04 마지막 한 점이 기기 화면으로 이동해 추천 확정 → 유지 → 짧게 비우고 반복. 6.8초 주기. 더보기를 열면 일시 정지, 닫으면 이어서 재생
   const p5 = pgs[4], exCards = [...p5.querySelectorAll('.ldxc')];
-  const X_T = 6300, X_S = 1000, X_HOLD = 5500, X_RST = 6000;
+  const X_T = 6800, X_H = [1300, 2700, 4100], X_R = [820, 2000, 3350], X_FLY = 520, X_HOLD = 6300, X_OUT = 6650;
+  const X_ON = {p:1, x:.55}, X_DIM = .3, X_MOVE = 'cubic-bezier(.45,0,.2,1)';
   const EX = {a:[], on:false};
   const tl = (pts, ease) => pts.map(([t, v], j) => Object.assign({offset:Math.min(1, t / X_T), easing:(ease && ease[j]) || 'cubic-bezier(.3,.7,.3,1)'}, v));
-  const exPlay = (el, pts, ease, delay) => { const a = el.animate(tl(pts, ease), {duration:X_T, delay:delay || 0, iterations:Infinity, fill:'backwards'}); EX.a.push(a); return a; };
+  const exPlay = (el, pts, ease, delay) => { if (!el) return; const a = el.animate(tl(pts, ease), {duration:X_T, delay:delay || 0, iterations:Infinity, fill:'backwards'}); EX.a.push(a); return a; };
+  // 카드 기준 점 중심 좌표(px): 카드 left/top + 점 left/top + 반지름
+  const exPt = (c, d) => { const r = d.classList.contains('p') ? 7 : 5; return [parseFloat(c.style.left) + parseFloat(d.style.left) + r, parseFloat(c.style.top) + parseFloat(d.style.top) + r]; };
+  const byX = (c, ds) => ds.map(d => ({d, pt:exPt(c, d), p:d.classList.contains('p')})).sort((a, b) => a.pt[0] - b.pt[0]);
   function exStop(){ EX.a.forEach(a => a.cancel()); EX.a = []; EX.on = false; }
   function exStart(delay){
     exStop(); if (RM.matches) return; EX.on = true;
-    const D = delay || 0;
-    exCards.forEach((c, i) => {
-      const st = i * X_S, en = i < 3 ? (i + 1) * X_S : X_HOLD, past = i < 3 ? .62 : 1, a = +c.style.getPropertyValue('--a') || 0;
-      exPlay(c, [[0, {opacity:.32}], [st, {opacity:.32}], [st + 350, {opacity:1}], [en, {opacity:1}], [en + 350, {opacity:past}], [Math.max(en + 350, X_HOLD), {opacity:past}], [X_RST, {opacity:.32}], [X_T, {opacity:.32}]], null, D);
-      if (i < 3) exPlay(c, [[0, {translate:'0 0', backgroundColor:'rgba(255,255,255,' + a + ')'}], [st, {translate:'0 0', backgroundColor:'rgba(255,255,255,' + a + ')'}],
-        [st + 350, {translate:'0 -4px', backgroundColor:'rgba(255,255,255,' + (a + .08) + ')'}], [en, {translate:'0 -4px', backgroundColor:'rgba(255,255,255,' + (a + .08) + ')'}],
-        [en + 350, {translate:'0 0', backgroundColor:'rgba(255,255,255,' + a + ')'}], [X_T, {translate:'0 0', backgroundColor:'rgba(255,255,255,' + a + ')'}]], null, D);
-      else exPlay(c, [[0, {scale:'1', translate:'0 0'}], [st, {scale:'1', translate:'0 0'}], [st + 380, {scale:'1.03', translate:'0 -4px'}], [st + 700, {scale:'1.015', translate:'0 -4px'}], [X_HOLD, {scale:'1.015', translate:'0 -4px'}], [X_RST, {scale:'1', translate:'0 0'}], [X_T, {scale:'1', translate:'0 0'}]],
-        [null, 'cubic-bezier(.2,.9,.3,1.25)', 'cubic-bezier(.3,.7,.3,1)'], D);
-      // 후보 점: 제외 점이 먼저 하얗게 떠올랐다가 흐려지고(걸러짐), 통과 점이 튀어 오르며 남는다
-      const xs = [...c.querySelectorAll('.ldxd.x')], ps = [...c.querySelectorAll('.ldxd.p')], gap = Math.min(55, 420 / Math.max(1, xs.length + ps.length));
-      xs.forEach((d, j) => { const t0 = st + 80 + j * gap;
-        exPlay(d, [[0, {opacity:0, scale:'.3'}], [t0, {opacity:0, scale:'.3'}], [t0 + 220, {opacity:.85, scale:'1'}], [st + 640, {opacity:.85, scale:'1'}], [st + 900, {opacity:.28, scale:'1'}], [X_HOLD, {opacity:.28, scale:'1'}], [X_HOLD + 400, {opacity:0, scale:'.6'}], [X_T, {opacity:0, scale:'.3'}]], null, D); });
-      ps.forEach((d, j) => { const t0 = st + 160 + j * gap;
-        exPlay(d, [[0, {opacity:0, scale:'0'}], [t0, {opacity:0, scale:'0'}], [t0 + 260, {opacity:1, scale:'1.3'}], [t0 + 460, {opacity:1, scale:'1'}], [X_HOLD, {opacity:1, scale:'1'}], [X_HOLD + 400, {opacity:0, scale:'.6'}], [X_T, {opacity:0, scale:'0'}]],
-          [null, 'cubic-bezier(.2,.9,.3,1.4)', 'ease-out'], D); });
+    const D = delay || 0, dots = exCards.slice(0, 3).map(c => byX(c, [...c.querySelectorAll('.ldxd')]));
+    // 살아남은 점이 다음 단계로 넘어가는 시점에 흐려지며 흔적만 남긴다
+    const keep = (t0, h) => [[h, {opacity:1}], [h + 400, {opacity:X_DIM}], [X_HOLD, {opacity:X_DIM}], [X_OUT, {opacity:0}], [X_T, {opacity:0}]];
+    // 걸러지는 점: 짧은 간격으로 작아지며 사라진다
+    const drop = (r, on) => [[r, {opacity:on, scale:'1'}], [r + 320, {opacity:0, scale:'.65'}], [X_T, {opacity:0, scale:'.65'}]];
+    // 01 추천 후보 생성: 18개 후보가 튀지 않고 차례로 나타난 뒤, 맞지 않는 후보가 빠진다
+    const g1 = [...exCards[0].querySelectorAll('.ldxd')], src1 = dots[0].filter(o => o.p);
+    let rx = 0;
+    g1.forEach((d, j) => { const p = d.classList.contains('p'), on = p ? X_ON.p : X_ON.x, t0 = j * 26;
+      const head = [[0, {opacity:0, scale:'.85'}], [t0, {opacity:0, scale:'.85'}], [t0 + 360, {opacity:on, scale:'1'}]];
+      if (p) { const h = X_H[0] + src1.findIndex(o => o.d === d) * 45; exPlay(d, head.concat(keep(t0, h)), null, D); }
+      else exPlay(d, head.concat(drop(X_R[0] + rx++ * 24, on)), null, D); });
+    // 02·03 단계: 앞 단계에서 남은 점(x 순서)과 이번 단계의 점(x 순서)을 짝지어, 위 카드의 점 위치에서 내려와 자리 잡는다
+    [1, 2].forEach(s => { const prev = dots[s - 1].filter(o => o.p), cur = dots[s], H = X_H[s - 1], c = exCards[s];
+      let k = 0;
+      cur.forEach((o, j) => { const from = prev[Math.min(j, prev.length - 1)].pt, a0 = H + j * 45, arr = a0 + X_FLY, on = o.p ? X_ON.p : X_ON.x;
+        exPlay(o.d, [[0, {translate:(from[0] - o.pt[0]).toFixed(1) + 'px ' + (from[1] - o.pt[1]).toFixed(1) + 'px'}], [a0, {translate:(from[0] - o.pt[0]).toFixed(1) + 'px ' + (from[1] - o.pt[1]).toFixed(1) + 'px'}], [arr, {translate:'0px 0px'}], [X_T, {translate:'0px 0px'}]], [null, X_MOVE], D);
+        const head = [[0, {opacity:0, scale:'1'}], [a0, {opacity:0, scale:'1'}], [a0 + 200, {opacity:on, scale:'1'}]];
+        if (o.p) { const nx = s < 2 ? dots[s].filter(q => q.p).indexOf(o) : 0; exPlay(o.d, head.concat(keep(a0, X_H[s] + nx * 45)), null, D); }
+        else exPlay(o.d, head.concat(drop(Math.max(X_R[s] + k++ * (s === 1 ? 130 : 170), arr + 100), on)), null, D); });
+      // 03 예외 대안: 후보가 정리된 뒤에만 점선 원으로 조용히 나타난다
       const alt = c.querySelector('.ldxalt');
-      if (alt) { exPlay(alt, [[0, {opacity:0, scale:'.4'}], [st + 450, {opacity:0, scale:'.4'}], [st + 750, {opacity:1, scale:'1'}], [X_HOLD, {opacity:1, scale:'1'}], [X_HOLD + 400, {opacity:0, scale:'.6'}], [X_T, {opacity:0, scale:'.4'}]], null, D);
-        const sp = alt.querySelector('circle').animate([{strokeDashoffset:0}, {strokeDashoffset:-12}], {duration:900, iterations:Infinity}); EX.a.push(sp); }
-      // 마지막 카드: 기기 화면이 채워지고 버튼 막대가 그어지며 추천이 확정된다
-      const sc = c.querySelector('.ldxph .sc'), br = c.querySelector('.ldxph .br'), hm = c.querySelector('.ldxhm');
-      if (sc) {
-        exPlay(sc, [[0, {opacity:.18}], [st + 250, {opacity:.18}], [st + 650, {opacity:1}], [X_HOLD, {opacity:1}], [X_RST, {opacity:.18}], [X_T, {opacity:.18}]], null, D);
-        exPlay(br, [[0, {scale:'0 1'}], [st + 450, {scale:'0 1'}], [st + 900, {scale:'1 1'}], [X_HOLD, {scale:'1 1'}], [X_RST, {scale:'0 1'}], [X_T, {scale:'0 1'}]], null, D);
-        exPlay(hm, [[0, {rotate:'0deg'}], [st + 200, {rotate:'0deg'}], [st + 800, {rotate:'120deg'}], [X_T, {rotate:'120deg'}]], [null, 'cubic-bezier(.2,.8,.3,1)'], D);
-      }
+      if (alt) exPlay(alt, [[0, {opacity:0, scale:'.85'}], [3650, {opacity:0, scale:'.85'}], [4000, {opacity:1, scale:'1'}], [X_H[2], {opacity:1, scale:'1'}], [X_H[2] + 400, {opacity:.4, scale:'1'}], [X_HOLD, {opacity:.4, scale:'1'}], [X_OUT, {opacity:0, scale:'1'}], [X_T, {opacity:0, scale:'1'}]], null, D);
     });
+    // 04 오늘의 실천으로: 마지막 한 점이 기기 화면으로 내려와 선명하게 남고, 화면과 버튼 막대가 채워지며 추천이 확정된다
+    const c4 = exCards[3], ph = c4.querySelector('.ldxph'), go = c4.querySelector('.ldxgo'), last = dots[2].find(o => o.p);
+    if (go && last) {
+      const cs = getComputedStyle(ph), gs = getComputedStyle(go), gx = parseFloat(c4.style.left) + parseFloat(cs.left) + parseFloat(gs.left) + 7, gy = parseFloat(c4.style.top) + parseFloat(cs.top) + parseFloat(gs.top) + 7;
+      const off = (last.pt[0] - gx).toFixed(1) + 'px ' + (last.pt[1] - gy).toFixed(1) + 'px', a0 = X_H[2];
+      exPlay(go, [[0, {translate:off}], [a0, {translate:off}], [a0 + X_FLY + 80, {translate:'0px 0px'}], [X_T, {translate:'0px 0px'}]], [null, X_MOVE], D);
+      exPlay(go, [[0, {opacity:0}], [a0, {opacity:0}], [a0 + 200, {opacity:1}], [X_HOLD, {opacity:1}], [X_OUT, {opacity:0}], [X_T, {opacity:0}]], null, D);
+    }
+    const sc = c4.querySelector('.ldxph .sc'), br = c4.querySelector('.ldxph .br'), hm = c4.querySelector('.ldxhm');
+    exPlay(sc, [[0, {opacity:.18}], [4450, {opacity:.18}], [4850, {opacity:1}], [X_HOLD, {opacity:1}], [X_OUT, {opacity:.18}], [X_T, {opacity:.18}]], null, D);
+    exPlay(br, [[0, {scale:'0 1'}], [4550, {scale:'0 1'}], [4950, {scale:'1 1'}], [X_HOLD, {scale:'1 1'}], [X_OUT, {scale:'0 1'}], [X_T, {scale:'0 1'}]], null, D);
+    exPlay(hm, [[0, {rotate:'0deg'}], [4400, {rotate:'0deg'}], [5000, {rotate:'120deg'}], [X_HOLD, {rotate:'120deg'}], [X_OUT, {rotate:'0deg'}], [X_T, {rotate:'0deg'}]], [null, 'cubic-bezier(.2,.8,.3,1)'], D);
   }
   const exPause = () => EX.a.forEach(a => a.pause());
   const exResume = () => { if (EX.on) EX.a.forEach(a => a.play()); };
