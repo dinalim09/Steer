@@ -3082,9 +3082,9 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     if (n === 2) enter3();
     if (n === 3) { if (!RM.matches) ['out', 'home'].forEach((k, j) => setTimeout(() => { if (cur === 3) { pgs[3].querySelector('.ldcm[data-m="' + k + '"] .ldcm-k b').textContent = ''; cmDraw(k, true); } }, 520 + j*260)); }
   }
-  // 02 Combine 1/2: 가만히 두어도 조타키는 돌렸다 놓고, 기기는 흔들렸다 멈추고, 기준 막대는 차올랐다 비워지기를 반복한다
+  // 02 Combine 1/2: 가만히 두어도 조타키는 돌렸다 놓고, 기기는 흔들렸다 멈추기를 반복한다 · 기준 막대는 진입 때 한 번만 차오른다
   // 반복 모션은 개별 변환 속성(rotate · translate · scale)으로, 등장 모션은 transform으로 분리해 서로 덮어쓰지 않는다
-  // 조타키 카드를 누르면 같은 왕복 모션 + 동행 선택이 시계 방향으로 넘어가고, 흔들기 카드를 누르면 즉시 흔들리고 막대가 다시 찬다
+  // 조타키 카드를 누르면 같은 왕복 모션 + 동행 선택이 시계 방향으로 넘어가고, 흔들기 카드를 누르면 즉시 흔들린다
   const p3 = pgs[2], helm = p3.querySelector('.ldhelm'), opts = [...p3.querySelectorAll('.ldopt')], optl = [...p3.querySelectorAll('.ldopl')];
   const phone = p3.querySelector('.ldphone'), shk = p3.querySelector('.ldshk'), bars = [...p3.querySelectorAll('.ldbar u')];
   let optI = 3;
@@ -3104,15 +3104,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     .map(([t, r, x, y]) => ({offset:t/P_T, rotate:r + 'deg', translate:x + 'px ' + y + 'px', easing:SNAP}));
   const S_KF = [[0, 0, 1, 1], [70, -7, 1.18, 1], [190, 3, 1.04, .75], [310, -6, 1.16, 1], [430, 2, 1.04, .75], [560, -3, 1.08, .9], [690, 0, 1.02, 1], [800, 0, 1, 1], [P_T, 0, 1, 1]]
     .map(([t, x, sc, o]) => ({offset:t/P_T, translate:x + 'px 0', scale:sc + ' ' + (1 + (sc - 1) * 1.6), opacity:o, easing:SNAP}));
-  // 막대: 위에서 아래로 0.12초 간격, 각 1초 차오름(빠르게 시작 · 부드럽게 감속) → 1.2초 유지 → 0.35초 비움 → 반복 3.5초
-  const B_T = 3500, B_FILL = 1000, B_GAP = 120, B_HOLD_END = 3 * B_GAP + B_FILL + 1200, B_EMPTY = 350;
-  const B_KF = i => [
-    {transform:'scaleX(0)', offset:0},
-    {transform:'scaleX(0)', offset:i * B_GAP / B_T, easing:'cubic-bezier(.16,.84,.3,1)'},
-    {transform:'scaleX(1)', offset:(i * B_GAP + B_FILL) / B_T},
-    {transform:'scaleX(1)', offset:B_HOLD_END / B_T, easing:'cubic-bezier(.5,0,.75,0)'},
-    {transform:'scaleX(0)', offset:(B_HOLD_END + B_EMPTY) / B_T},
-    {transform:'scaleX(0)', offset:1}];
+  const B_FILL = 1000, B_GAP = 120;
   const loop = (el, kf, T, delay) => el.animate(kf, {duration:T, delay:delay || 0, iterations:Infinity, fill:'backwards'});
   function stop3(){
     clearTimeout(L3.t); L3.on = false;
@@ -3121,7 +3113,9 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   }
   function startHelm(delay){ if (L3.helm) L3.helm.cancel(); L3.helm = loop(helm, H_KF, H_T, delay); }
   function startPhone(delay){ [L3.phone, L3.shk].forEach(a => a && a.cancel()); L3.phone = loop(phone, P_KF, P_T, delay); L3.shk = loop(shk, S_KF, P_T, delay); }
-  function startBars(delay){ L3.bars.forEach(a => a.cancel()); L3.bars = bars.map((u, i) => loop(u, B_KF(i), B_T, delay)); }
+  // 막대는 화면에 들어올 때 한 번만 차오른다 (위에서 아래로 0.12초 간격 · 각 1초 · 감속)
+  function startBars(delay){ L3.bars.forEach(a => a.cancel());
+    L3.bars = bars.map((u, i) => u.animate([{transform:'scaleX(0)'}, {transform:'scaleX(1)'}], {duration:B_FILL, delay:(delay || 0) + i * B_GAP, easing:'cubic-bezier(.16,.84,.3,1)', fill:'backwards'})); }
   function start3(delay){
     stop3(); if (RM.matches) return;
     L3.on = true; startHelm(delay); startPhone(delay + 250); startBars(delay);
@@ -3150,13 +3144,12 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     const one = L3.one;
     one.onfinish = () => { if (L3.one !== one) return; L3.one = null; if (L3.on) startHelm(500); };
   }
-  // 누를 때: 흔드는 중이면 그대로 두고, 쉬는 중이면 바로 흔들기 시작 · 막대는 처음부터 다시 찬다
+  // 누를 때: 흔드는 중이면 그대로 두고, 쉬는 중이면 바로 흔들기 시작
   function shake(){
     if (window.steerTrack) steerTrack('logic_combine_try', {page_id:'combine-01', method:'shake'});
     if (RM.matches || !L3.on) return;
     const t = L3.phone ? (L3.phone.currentTime || 0) : 0;
     if (!L3.phone || t < 0 || t % P_T > 800) startPhone(0);
-    startBars(0);
   }
   p3.querySelector('.ldcd1').addEventListener('click', turn);
   helm.addEventListener('click', turn);
