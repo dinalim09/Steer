@@ -3100,8 +3100,9 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     const to = on ? tc.scrollHeight : 0;
     if (quiet || RM.matches) { if (!on) tc.hidden = true; }
     else {
-      const a = tc.animate([{height:from + 'px'}, {height:to + 'px'}], {duration:on ? 420 : 340, easing:'cubic-bezier(.3,.7,.2,1)'}); tgA.set(tg, a);
-      if (on) tc.firstElementChild.animate([{opacity:0, transform:'translateY(-6px)'}, {opacity:1, transform:'none'}], {duration:360, delay:80, easing:E, fill:'backwards'});
+      const ex = pgs[4] && pgs[4].contains(tg);   // Explain 더보기: 0.45초 펼침 · 내용은 아래에서 10px 올라오며 페이드인
+      const a = tc.animate([{height:from + 'px'}, {height:to + 'px'}], {duration:on ? (ex ? 450 : 420) : 340, easing:'cubic-bezier(.3,.7,.2,1)'}); tgA.set(tg, a);
+      if (on) tc.firstElementChild.animate([{opacity:0, transform:'translateY(' + (ex ? 10 : -6) + 'px)'}, {opacity:1, transform:'none'}], {duration:ex ? 400 : 360, delay:80, easing:E, fill:'backwards'});
       a.onfinish = () => { tgA.delete(tg); if (!tg.classList.contains('on')) tc.hidden = true; };
     }
     if (pgs[4] && pgs[4].contains(tg)) { if (on) exPause(); else exResume(); }   // Explain: 더보기를 읽는 동안 단계 강조 일시 정지
