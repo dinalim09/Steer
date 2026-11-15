@@ -1,4 +1,4 @@
-// STEER Camera — Luck Lens 오행 포토부스. 카메라 영상 · 손 위치 · 촬영 사진은 기기 안에서 처리되며 서버로 전송되지 않는다.
+// STEER Camera — Luck Lens 오행 포토부스(실시간 카메라 전용, 샘플 사진 모드 없음). 카메라 영상 · 손 위치 · 촬영 사진은 기기 안에서 처리되며 서버로 전송되지 않는다.
 import {createFisheye} from './fisheye.js';
 import {createFilterPreviews} from './filter-previews.js';
 import {createPalmOverlay} from './palm-overlay.js';
@@ -9,32 +9,50 @@ const N = 512, STRENGTH = .65, FADE = 380;
 const COLORS = ['#c2ff0a', '#ff8778', '#ffcc45', '#baa7ef', '#87dff4'], HELM = '#ff8778';
 const KEYS = ['wood', 'fire', 'earth', 'metal', 'water'], NAMES = ['木 나무', '火 불', '土 흙', '金 쇠', '水 물'];
 const keyOf = e => e < 0 ? 'helm' : KEYS[e];
-const HINT = {sample:'카메라를 켜면 손바닥에 오행 스티커가 나타나요', loading:'손 인식을 준비하고 있어요', searching:'카메라에 손바닥을 펴보세요!', found:'오늘의 기운을 손바닥에 담아보세요!', unavailable:'카메라에 손바닥을 펴보세요!'};
+const HINT = {loading:'손 인식을 준비하고 있어요', searching:'카메라에 손바닥을 펴보세요!', found:'오늘의 기운을 손바닥에 담아보세요!', unavailable:'카메라에 손바닥을 펴보세요!'};
+// 카메라를 쓸 수 없을 때 렌즈 안에 띄우는 안내(샘플 사진으로 대체하지 않는다)
+const STATE = {
+  connecting:['카메라를 연결하고 있어요', ''],
+  denied:['카메라를 허용해야 Luck Lens를 사용할 수 있어요', '권한 요청이 다시 뜨지 않으면 주소창 왼쪽 ‘가가’ › 웹 사이트 설정 › 카메라를 ‘허용’으로 바꾸거나, 설정 앱 › Safari › 카메라에서 ‘묻기’ 또는 ‘허용’을 선택한 뒤 다시 시도해 주세요.'],
+  notfound:['사용할 수 있는 카메라를 찾지 못했어요', '기기에 카메라가 연결되어 있는지 확인한 뒤 다시 시도해 주세요.'],
+  busy:['다른 앱이 카메라를 사용하고 있어요', '카메라를 쓰는 다른 앱이나 탭을 닫은 뒤 다시 시도해 주세요.'],
+  ended:['카메라 연결이 끊어졌어요', '다시 시도를 누르면 카메라를 다시 연결합니다.'],
+  unsupported:['이 브라우저에서는 카메라를 쓸 수 없어요', 'iPad Safari 최신 버전에서 https 주소로 열어 주세요.'],
+  error:['카메라를 시작하지 못했어요', '다시 시도를 눌러 주세요.']
+};
 
 const CSS = `
 .llz{position:absolute;inset:0;background:#0A0A0A;color:#fff;font-family:Pretendard,'Noto Sans KR',system-ui,sans-serif;overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;--accent:${HELM}}
 .llz button,.llz a{font:inherit;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 .llz .ll-lens{position:absolute;left:394px;top:100px;width:580px;height:580px;box-sizing:border-box;border:11.354px solid var(--accent);border-radius:50%;overflow:hidden;background:#141414;box-shadow:0 22px 50.6px rgba(0,0,0,.25);transition:border-color .38s ease}
-.llz .ll-lens canvas{position:absolute;left:0;top:0;width:100%;height:100%;display:block}
-.llz .ll-sticker{position:absolute;left:837.9px;top:261.1px;height:148px;transform:translate(-50%,-50%) rotate(12deg);pointer-events:none;transition:opacity .25s ease}
-.llz .ll-sticker img{height:100%;width:auto;display:block}
-.llz:not(.sample) .ll-sticker,.llz.result .ll-sticker{opacity:0}
-.llz .ll-mode{position:absolute;left:684px;top:628px;transform:translateX(-50%);height:44px;padding:0 20px;border:0;border-radius:22px;background:rgba(10,10,10,.72);color:#fff;font-size:16px;font-weight:500;cursor:pointer;white-space:nowrap;transition:transform .15s ease,opacity .2s}
-.llz .ll-mode.press{transform:translateX(-50%) scale(.96)}
+.llz .ll-lens canvas{position:absolute;left:0;top:0;width:100%;height:100%;display:block;opacity:0;transition:opacity .25s ease}
+.llz.live .ll-lens canvas{opacity:1}
+.llz .ll-state{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 64px;text-align:center;gap:14px;word-break:keep-all}
+.llz.live .ll-state{display:none}
+.llz .ll-state h3{margin:0;font-size:26px;font-weight:600;line-height:1.4;letter-spacing:-.01em;color:#fff}
+.llz .ll-state p{margin:0;font-size:17px;line-height:1.6;color:rgba(255,255,255,.66)}
+.llz .ll-state p:empty{display:none}
+.llz .ll-retry{margin-top:10px;min-width:160px;height:56px;padding:0 28px;border:0;border-radius:28px;background:var(--accent);color:#0A0A0A;font-size:20px;font-weight:600;cursor:pointer;transition:transform .15s ease}
+.llz .ll-retry.press{transform:scale(.96)}
+.llz .ll-retry[hidden]{display:none}
+.llz .ll-spin{width:44px;height:44px;border-radius:50%;border:4px solid rgba(255,255,255,.18);border-top-color:var(--accent);animation:llSpin .9s linear infinite}
+.llz .ll-spin[hidden]{display:none}
+@keyframes llSpin{to{transform:rotate(360deg)}}
 .llz .ll-hint{position:absolute;left:684px;top:697px;transform:translateX(-50%);height:56px;padding:0 20px;box-sizing:border-box;border-radius:500px;background:rgba(255,255,255,.1);font-size:24px;font-weight:500;line-height:56px;letter-spacing:-.01em;white-space:nowrap}
-.llz .ll-notice{position:absolute;left:684px;top:697px;transform:translateX(-50%);max-width:880px;min-height:56px;padding:14px 24px;box-sizing:border-box;border-radius:28px;background:rgba(255,135,120,.16);color:#fff;font-size:18px;line-height:28px;text-align:center;display:none}
-.llz.noticed .ll-notice{display:block}.llz.noticed .ll-hint{display:none}
+.llz:not(.live) .ll-hint{opacity:0}
 .llz .ll-strip{position:absolute;left:0;top:790px;width:1366px;height:209px;transition:opacity .25s ease}
 .llz .ll-f{position:absolute;top:0;width:207.052px;height:208.646px;padding:0;border:0;background:none;cursor:pointer;transition:transform .15s ease}
 .llz .ll-f.press{transform:scale(.96)}
-.llz .ll-f .ll-th,.llz .ll-f canvas{position:absolute;left:0;top:0;width:206.959px;height:171.388px;display:block;object-fit:cover}
-.llz .ll-f canvas{opacity:0;transition:opacity .2s}.llz .ll-f canvas.on{opacity:1}
+.llz .ll-f::before{content:'';position:absolute;left:0;top:0;width:206.959px;height:171.388px;background:#1A1A1A}
+.llz .ll-f canvas{position:absolute;left:0;top:0;width:206.959px;height:171.388px;display:block;transition:opacity .2s}
+.llz:not(.live) .ll-f canvas{opacity:0}
 .llz .ll-cap{position:absolute;left:0;top:171px;width:207.052px;height:37.646px;background:#f2f2f2;transition:background-color .25s ease}
 .llz .ll-cap svg{position:absolute;fill:#0A0A0A}
 .llz .ll-f[aria-pressed=true] .ll-cap{background:var(--accent)}
 .llz .ll-shutter{position:absolute;left:609px;top:820px;width:148px;height:148px;padding:0;border:0;border-radius:50%;background:none;cursor:pointer;color:var(--accent);transition:transform .15s ease,opacity .25s ease}
 .llz .ll-shutter.press{transform:scale(.96)}.llz .ll-shutter svg{display:block}
 .llz .ll-shutter:disabled{cursor:default}
+.llz .ll-shutter:disabled g{opacity:.35}
 .llz .ll-count{position:absolute;left:405.354px;top:111.354px;width:557.292px;height:557.292px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:160px;font-weight:700;color:#fff;text-shadow:0 4px 24px rgba(0,0,0,.35);pointer-events:none;opacity:0}
 .llz .ll-count.on{animation:llCount 1s ease both}
 @keyframes llCount{0%{opacity:0;transform:scale(1.25)}20%{opacity:1;transform:scale(1)}80%{opacity:1}100%{opacity:0;transform:scale(.92)}}
@@ -47,8 +65,8 @@ const CSS = `
 .llz .ll-retake{background:rgba(255,255,255,.12);color:#fff}
 .llz .ll-save{background:var(--accent);color:#0A0A0A}
 .llz.result .ll-actions{display:flex}
-.llz.result .ll-strip,.llz.result .ll-shutter,.llz.result .ll-mode,.llz.result .ll-hint{opacity:0;pointer-events:none}
-.llz.busy .ll-strip,.llz.busy .ll-mode{pointer-events:none}
+.llz.result .ll-strip,.llz.result .ll-shutter,.llz.result .ll-hint{opacity:0;pointer-events:none}
+.llz.busy .ll-strip{pointer-events:none}
 .llz .ll-video{position:absolute;left:0;top:0;width:2px;height:2px;opacity:0;pointer-events:none}
 .llz .ll-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 @media (prefers-reduced-motion:reduce){.llz .ll-count.on{animation-duration:.01s}.llz .ll-flash.on{animation:none}}
@@ -63,34 +81,38 @@ const SHUTTER = `<svg viewBox="0 0 148 148" width="148" height="148" aria-hidden
 
 export function createLens(root, hooks = {}){
   if (!document.getElementById('llz-css')) { const st = document.createElement('style'); st.id = 'llz-css'; st.textContent = CSS; document.head.appendChild(st); }
-  root.classList.add('llz', 'sample');
+  root.classList.add('llz');
   root.innerHTML = `
-    <div class="ll-lens"><canvas class="ll-out" width="${N}" height="${N}" role="img" aria-label="Luck Lens 미리보기"></canvas></div>
-    <div class="ll-sticker"><img alt="" src="${BASE}st-helm.webp"></div>
+    <div class="ll-lens"><canvas class="ll-out" width="${N}" height="${N}" role="img" aria-label="Luck Lens 미리보기"></canvas>
+      <div class="ll-state" role="status" aria-live="polite"><span class="ll-spin" aria-hidden="true"></span><h3></h3><p></p><button class="ll-retry" type="button" hidden>다시 시도</button></div></div>
     <div class="ll-count" aria-live="assertive"></div><div class="ll-flash"></div>
-    <button class="ll-mode" type="button">카메라 켜기</button>
-    <div class="ll-hint" aria-live="polite">${HINT.sample}</div>
-    <div class="ll-notice" role="alert"></div>
+    <div class="ll-hint" aria-live="polite">${HINT.searching}</div>
     <div class="ll-strip" role="group" aria-label="오행 필터">
-      ${[-1, 0, 1, 2, 3, 4].map((e, i) => `<button class="ll-f" type="button" data-element="${e}" aria-pressed="${e < 0}" aria-label="${e < 0 ? '기본(helm)' : NAMES[e]} 필터" style="left:${COL[i]}px"><img class="ll-th" alt="" src="${BASE}th-${keyOf(e)}.webp"><canvas class="filter-preview"></canvas><span class="ll-cap">${capSVG(e)}</span></button>`).join('')}
+      ${[-1, 0, 1, 2, 3, 4].map((e, i) => `<button class="ll-f" type="button" data-element="${e}" aria-pressed="${e < 0}" aria-label="${e < 0 ? '기본(helm)' : NAMES[e]} 필터" style="left:${COL[i]}px"><canvas class="filter-preview"></canvas><span class="ll-cap">${capSVG(e)}</span></button>`).join('')}
     </div>
-    <button class="ll-shutter" type="button" aria-label="3초 뒤 촬영">${SHUTTER}</button>
+    <button class="ll-shutter" type="button" aria-label="3초 뒤 촬영" disabled>${SHUTTER}</button>
     <div class="ll-actions"><button class="ll-retake" type="button">다시 찍기</button><a class="ll-save" download="Steer-Luck-Lens.png" href="#">사진 저장</a></div>
     <p class="ll-sr">카메라 영상·손 위치·촬영 사진은 기기 안에서 처리되며 서버로 전송되지 않습니다.</p>
     <video class="ll-video" autoplay playsinline muted></video>`;
   const $ = s => root.querySelector(s);
-  const video = $('.ll-video'), out = $('.ll-out'), hint = $('.ll-hint'), notice = $('.ll-notice'), mode = $('.ll-mode'), shutter = $('.ll-shutter');
-  const count = $('.ll-count'), flash = $('.ll-flash'), stickerImg = $('.ll-sticker img'), save = $('.ll-save'), buttons = [...root.querySelectorAll('.ll-f')];
+  const video = $('.ll-video'), out = $('.ll-out'), hint = $('.ll-hint'), shutter = $('.ll-shutter');
+  const stateH = $('.ll-state h3'), stateP = $('.ll-state p'), spin = $('.ll-spin'), retry = $('.ll-retry');
+  const count = $('.ll-count'), flash = $('.ll-flash'), save = $('.ll-save'), buttons = [...root.querySelectorAll('.ll-f')];
   const renderer = createFisheye(out), previews = createFilterPreviews(buttons), palm = createPalmOverlay();
   const frame = document.createElement('canvas'); frame.width = frame.height = N; const fctx = frame.getContext('2d', {willReadFrequently:renderer.type !== 'webgl'});
   const stickers = {}; for (const k of ['helm', ...KEYS]) { const im = new Image(); im.decoding = 'async'; im.src = `${BASE}st-${k}.webp`; stickers[k] = im; }
-  const ref = new Image(); ref.decoding = 'async'; ref.src = `${BASE}ref.webp`;
   const settings = {strength:STRENGTH, element:-1, from:-1, t:1, amount:1};
-  let stream = null, request = 0, live = false, active = false, raf = 0, fadeStart = 0, lastPreview = 0, hintState = '', result = false, busy = false, saveURL = '', timers = [], resumeLive = false;
+  let stream = null, request = 0, live = false, shown = false, active = false, raf = 0, fadeStart = 0, lastPreview = 0, hintState = '', result = false, busy = false, saveURL = '', timers = [], resumeLive = false;
 
   const emit = (type, extra = {}) => { try { hooks.event && hooks.event(type, {element:keyOf(settings.element), ...extra}); } catch {} };
   const setHint = k => { if (hintState !== k) { hintState = k; hint.textContent = HINT[k]; } };
-  const showNotice = text => { notice.textContent = text; root.classList.toggle('noticed', !!text); };
+  // 렌즈 안 상태 안내: connecting(로딩) · denied · notfound · busy · ended · unsupported · error
+  function setState(k){
+    const [h, p] = STATE[k]; stateH.textContent = h; stateP.textContent = p;
+    spin.hidden = k !== 'connecting'; retry.hidden = k === 'connecting';
+  }
+  // 첫 실시간 프레임이 그려진 뒤에만 렌즈 · 썸네일을 보인다(이전 화면의 정지 프레임이 남지 않도록). 그 전에는 촬영 버튼 비활성
+  function setShown(on){ shown = on; root.classList.toggle('live', on); shutter.disabled = !on || busy; }
 
   function choose(e, quiet){
     if (busy || result) return;
@@ -98,7 +120,6 @@ export function createLens(root, hooks = {}){
     settings.from = settings.element; settings.element = e; settings.t = 0; fadeStart = performance.now();
     root.style.setProperty('--accent', e < 0 ? HELM : COLORS[e]);
     buttons.forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.element) === e)));
-    stickerImg.src = `${BASE}st-${keyOf(e)}.webp`;
     if (!quiet) emit('filter');
   }
   buttons.forEach(b => b.addEventListener('click', () => choose(Number(b.dataset.element))));
@@ -108,21 +129,14 @@ export function createLens(root, hooks = {}){
     const vw = video.videoWidth, vh = video.videoHeight; if (!vw || !vh) return false;
     const s = Math.min(vw, vh); fctx.save(); fctx.setTransform(-1, 0, 0, 1, N, 0); fctx.drawImage(video, (vw - s) / 2, (vh - s) / 2, s, s, 0, 0, N, N); fctx.restore(); return true;
   }
-  // 샘플: Figma 원본 렌즈 사진(이미 어안 처리됨)의 원 안쪽 영역
-  function drawSample(){
-    if (!ref.complete || !ref.naturalWidth) return false;
-    const k = ref.naturalWidth / 631, d = 558 * k; fctx.drawImage(ref, 315.3 * k - d / 2, 293.3 * k - d / 2, d, d, 0, 0, N, N); return true;
-  }
   function tick(now){
-    raf = 0; if (!active || result) return;
+    raf = 0; if (!active || result || !live) return;
     if (settings.t < 1) { const x = Math.min(1, (now - fadeStart) / FADE); settings.t = x * x * (3 - 2 * x); if (x >= 1) { settings.t = 1; settings.from = settings.element; } }
     if (live && drawVideo()) {
       palm.scanHands(frame, now); const st = palm.paintPalm(stickers[keyOf(settings.element)], now);
       setHint(st); renderer.render(frame, palm.ink, settings);
-      if (now - lastPreview > 180) { lastPreview = now; previews.render(frame, true); buttons.forEach(b => b.querySelector('canvas').classList.add('on')); }
-    } else if (!live && drawSample()) {
-      palm.clear(); renderer.render(frame, palm.ink, {...settings, strength:0});
-      if (!lastPreview) { lastPreview = now; previews.render(frame, false); buttons.forEach(b => b.querySelector('canvas').classList.add('on')); }
+      if (now - lastPreview > 180) { lastPreview = now; previews.render(frame, true); }
+      if (!shown) setShown(true);
     }
     raf = requestAnimationFrame(tick);
   }
@@ -131,35 +145,31 @@ export function createLens(root, hooks = {}){
   function stopCamera(){
     request++;
     if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; emit('camera_stop'); }
-    video.pause(); video.srcObject = null; live = false; palm.clear();
+    video.pause(); video.srcObject = null; live = false; palm.clear(); setShown(false); lastPreview = 0;
   }
-  function toSample(){ stopCamera(); root.classList.add('sample'); mode.textContent = '카메라 켜기'; lastPreview = 0; setHint('sample'); }
+  function fail(k, reason){ stopCamera(); setState(k); emit(k === 'denied' ? 'camera_denied' : 'camera_error', {reason}); }
   async function openCamera(){
-    const token = ++request; showNotice('');
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.isSecureContext) { toSample(); showNotice('이 브라우저에서는 카메라를 사용할 수 없습니다. Safari 최신 버전에서 다시 시도해 주세요.'); emit('camera_error', {reason:'unsupported'}); return; }
-    mode.disabled = true; mode.textContent = '카메라 연결 중…';
+    if (stream) return;   // 이미 연결된 스트림은 그대로 쓴다(필터 변경 · 다시 찍기에서 재시작하지 않음)
+    const token = ++request; setShown(false); setState('connecting');
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.isSecureContext) { fail('unsupported', 'unsupported'); return; }
     try {
       const s = await navigator.mediaDevices.getUserMedia({audio:false, video:{facingMode:{ideal:'user'}, width:{ideal:1280}, height:{ideal:720}}});
       if (token !== request || !active) { s.getTracks().forEach(t => t.stop()); return; }
       stream = s; video.srcObject = s; try { await video.play(); } catch {}
-      live = true; root.classList.remove('sample'); mode.textContent = '샘플 미리보기'; lastPreview = 0; setHint('loading');
+      s.getVideoTracks().forEach(t => t.addEventListener('ended', () => { if (stream === s && active) fail('ended', 'track_ended'); }));
+      live = true; lastPreview = 0; setHint('loading'); loop();
       palm.start(); emit('camera_start');
     } catch (err) {
       if (token !== request) return;
-      toSample();
       const n = err && err.name;
-      showNotice(n === 'NotAllowedError' || n === 'SecurityError' ? '카메라 권한이 허용되지 않았습니다. 설정 › Safari › 카메라에서 허용한 뒤 ‘카메라 켜기’를 눌러 주세요. 지금은 샘플 사진으로 필터를 미리 볼 수 있습니다.'
-        : n === 'NotFoundError' || n === 'OverconstrainedError' ? '사용할 수 있는 카메라를 찾지 못했습니다. 샘플 사진으로 필터를 미리 볼 수 있습니다.'
-        : n === 'NotReadableError' ? '다른 앱이 카메라를 사용 중입니다. 다른 앱을 닫은 뒤 ‘카메라 켜기’를 눌러 주세요.'
-        : '카메라를 시작하지 못했습니다. ‘카메라 켜기’를 눌러 다시 시도해 주세요.');
-      emit('camera_denied', {reason:n || 'error'});
-    } finally { if (token === request) mode.disabled = false; }
+      fail(n === 'NotAllowedError' || n === 'SecurityError' ? 'denied' : n === 'NotFoundError' || n === 'OverconstrainedError' ? 'notfound' : n === 'NotReadableError' || n === 'AbortError' ? 'busy' : 'error', n || 'error');
+    }
   }
-  mode.addEventListener('click', () => { if (busy || result) return; if (live) { toSample(); emit('sample_mode'); } else openCamera(); });
+  retry.addEventListener('click', () => { if (active) { emit('camera_retry'); openCamera(); } });
 
   function clearTimers(){ timers.forEach(clearTimeout); timers = []; }
   function capture(){
-    if (busy || result || !active) return;
+    if (busy || result || !active || !shown) return;
     busy = true; root.classList.add('busy'); shutter.disabled = true; emit('capture_start');
     let n = 3; const step = () => {
       if (!active) return;
@@ -172,24 +182,19 @@ export function createLens(root, hooks = {}){
     count.classList.remove('on'); count.textContent = '';
     // 프리뷰와 같은 렌더러 출력 그대로 사용 → 촬영 결과 색감이 미리보기와 동일
     if (settings.t < 1) { settings.t = 1; settings.from = settings.element; }
-    if (live && drawVideo()) { palm.paintPalm(stickers[keyOf(settings.element)], performance.now()); renderer.render(frame, palm.ink, settings); }
-    else if (drawSample()) renderer.render(frame, palm.ink, {...settings, strength:0});
+    if (!live) { busy = false; root.classList.remove('busy'); setShown(false); return; }   // 촬영 중 카메라가 끊긴 경우: 결과를 만들지 않는다
+    if (drawVideo()) { palm.paintPalm(stickers[keyOf(settings.element)], performance.now()); renderer.render(frame, palm.ink, settings); }
     const shot = document.createElement('canvas'); shot.width = shot.height = 900; const c = shot.getContext('2d');
     const accent = getComputedStyle(root).getPropertyValue('--accent').trim() || HELM;
     c.fillStyle = '#0A0A0A'; c.fillRect(0, 0, 900, 900);
     c.save(); c.beginPath(); c.arc(450, 440, 400, 0, Math.PI * 2); c.clip(); c.drawImage(renderer.canvas, 50, 40, 800, 800); c.restore();
     c.lineWidth = 12; c.strokeStyle = accent; c.beginPath(); c.arc(450, 440, 400, 0, Math.PI * 2); c.stroke();
-    if (!live) {
-      const im = stickers[keyOf(settings.element)];
-      if (im.complete && im.naturalWidth) { const h = 148 * 800 / 558, w = h * im.naturalWidth / im.naturalHeight; c.save(); c.translate(50 + (837.9 - 405.354) * 800 / 558, 40 + (261.1 - 111.354) * 800 / 558); c.rotate(12 * Math.PI / 180); c.drawImage(im, -w / 2, -h / 2, w, h); c.restore(); }
-      c.fillStyle = 'rgba(255,255,255,.6)'; c.font = '600 18px Pretendard, "Noto Sans KR", sans-serif'; c.textAlign = 'center'; c.fillText('STEER · SAMPLE PREVIEW', 450, 878);
-    }
-    result = true; busy = false; root.classList.remove('busy'); root.classList.add('result'); shutter.disabled = false;
+    result = true; busy = false; root.classList.remove('busy'); root.classList.add('result'); shutter.disabled = !shown;
     flash.classList.remove('on'); void flash.offsetWidth; flash.classList.add('on');
     if (raf) { cancelAnimationFrame(raf); raf = 0; }
     save.removeAttribute('href');
     shot.toBlob(b => { if (!b || !result) return; if (saveURL) URL.revokeObjectURL(saveURL); saveURL = URL.createObjectURL(b); save.href = saveURL; }, 'image/png');
-    emit('capture', {mode:live ? 'camera' : 'sample'});
+    emit('capture');
   }
   function retake(){
     if (!result) return; result = false; root.classList.remove('result'); save.removeAttribute('href');
@@ -204,16 +209,16 @@ export function createLens(root, hooks = {}){
   window.addEventListener('pagehide', () => stopCamera());
 
   // 터치 피드백(0.96, 0.15s) — 호버 없음
-  root.addEventListener('pointerdown', ev => { const b = ev.target.closest('.ll-f,.ll-shutter,.ll-mode,.ll-actions button,.ll-actions a'); if (!b || b.disabled) return; b.classList.add('press'); const up = () => { b.classList.remove('press'); window.removeEventListener('pointerup', up, true); window.removeEventListener('pointercancel', up, true); }; window.addEventListener('pointerup', up, true); window.addEventListener('pointercancel', up, true); });
+  root.addEventListener('pointerdown', ev => { const b = ev.target.closest('.ll-f,.ll-shutter,.ll-retry,.ll-actions button,.ll-actions a'); if (!b || b.disabled) return; b.classList.add('press'); const up = () => { b.classList.remove('press'); window.removeEventListener('pointerup', up, true); window.removeEventListener('pointercancel', up, true); }; window.addEventListener('pointerup', up, true); window.addEventListener('pointercancel', up, true); });
 
   return {
-    open(){ if (active) return; active = true; showNotice(''); setHint('sample'); loop(); openCamera(); },
+    open(){ if (active) return; active = true; setHint('searching'); openCamera(); },
     close(){
       if (!active) return; active = false; clearTimers(); stopCamera(); resumeLive = false;
       if (raf) { cancelAnimationFrame(raf); raf = 0; }
-      busy = false; result = false; root.classList.remove('busy', 'result', 'noticed'); root.classList.add('sample'); shutter.disabled = false; mode.disabled = false; mode.textContent = '카메라 켜기';
+      busy = false; result = false; root.classList.remove('busy', 'result'); setShown(false); setState('connecting');
       count.classList.remove('on'); count.textContent = ''; if (saveURL) { URL.revokeObjectURL(saveURL); saveURL = ''; } save.removeAttribute('href');
-      settings.element = settings.from = -1; settings.t = 1; root.style.setProperty('--accent', HELM); buttons.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.element === '-1'))); stickerImg.src = `${BASE}st-helm.webp`; lastPreview = 0;
+      settings.element = settings.from = -1; settings.t = 1; root.style.setProperty('--accent', HELM); buttons.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.element === '-1'))); lastPreview = 0;
     },
     isLive:() => live, isActive:() => active, element:() => settings.element, choose:e => choose(e, true), renderer
   };
