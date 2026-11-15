@@ -23,11 +23,9 @@ const CSS = `
 #tmx .tm-mb.press .tm-mbi{transform:scale(.96)}
 #tmx .tm-mb img{position:absolute;display:block;max-width:none;pointer-events:none;-webkit-user-drag:none}
 #tmx .tm-mb svg{position:absolute;display:block;pointer-events:none}
-#tmx .tm-run .tm-arm{animation:tmSpin var(--T) linear infinite}
-#tmx .tm-run .tm-arm .tm-mb{animation:tmUn var(--T) linear infinite}
+#tmx .tm-run .tm-arm{animation:var(--spin) var(--T) linear infinite}
+#tmx .tm-run .tm-arm .tm-mb{animation:var(--un) var(--T) linear infinite}
 #tmx .tm-arm.hold,#tmx .tm-arm.hold .tm-mb{animation-play-state:paused}
-@keyframes tmSpin{to{transform:rotate(360deg)}}
-@keyframes tmUn{to{transform:rotate(-360deg)}}
 #tmx .tm-back{position:absolute;left:28px;top:139px;height:64px;padding:0 18px 0 23px;border:0;margin:0;background:none;display:flex;align-items:center;gap:14px;cursor:pointer;color:#0A0A0A;font:500 16px/1 'Pretendard',PretT,'Noto Sans KR',sans-serif;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:transform .15s ease;border-radius:14px}
 #tmx .tm-back.press{transform:scale(.96)}
 #tmx .tm-back:focus-visible{outline:3px solid #87E6FF;outline-offset:2px}
@@ -57,6 +55,27 @@ function mega(lines, fs, lh, base, ls, color, align = 'left', boxW = 0){
   svg.setAttribute('width', Math.ceil(W)); svg.setAttribute('height', Math.ceil(base + (lines.length - 1) * lh + .3 * fs));
   svg.innerHTML = html; svg.dataset.w = maxW.toFixed(1); return svg;
 }
+// 화면 밖 빠른 통과: 사진·숫자 상자(흐림 여백 8px 포함)가 화면(1366×1024) 밖에 완전히 나가 있는 팔 각도 구간을
+// Figma 피벗과 상자 위치로 미리 계산하고, 그 구간만 1.2~1.5초에 지나가도록 keyframes 시간을 나눈다.
+// 구간 양 끝 속도는 평소 속도와 같게(cubic-bezier 끝 기울기 = 평소 속도) 해서 가속·감속이 끊김 없이 이어진다.
+const VW = 1366, VH = 1024, PAD = 0;   // 판정 상자 = 버튼(사진·숫자). 흐림 번짐(8px)은 거의 투명해 제외
+function offRange(box){
+  const cx = (box.x0 + box.x1) / 2 - PIVOT.x, cy = (box.y0 + box.y1) / 2 - PIVOT.y, hw = (box.x1 - box.x0) / 2 + PAD, hh = (box.y1 - box.y0) / 2 + PAD;
+  const off = d => { const r = d * Math.PI / 180, c = Math.cos(r), s = Math.sin(r), X = PIVOT.x + cx * c - cy * s, Y = PIVOT.y + cx * s + cy * c;
+    return X + hw < 0 || X - hw > VW || Y - hh > VH || Y + hh < 0; };
+  let a = null, b = null;
+  for (let i = 0; i <= 3600; i++) { const d = i / 10, o = off(d); if (o && a === null) a = d; if (!o && a !== null && b === null) { b = d; break; } }
+  return a !== null && b !== null ? [a, b] : null;   // 시작 각도(0)는 Figma 배치라 화면 안
+}
+function spinPlan(k, box){
+  const T = PERIOD[k], w = 360 / T, r = offRange(box);
+  const fast = 1.2 + .3 * (T - 30) / 150;              // 화면 밖 구간 통과 시간(초): 초침 1.2 · 분침 1.32 · 시침 1.5
+  if (!r || (r[1] - r[0]) / w <= fast) return {T, css:'@keyframes tmS-' + k + '{to{transform:rotate(360deg)}}@keyframes tmU-' + k + '{to{transform:rotate(-360deg)}}', range:r, cycle:T};
+  const [a, b] = r, D = b - a, cycle = T - D / w + fast, ta = (a / w) / cycle * 100, tb = (a / w + fast) / cycle * 100;
+  const kk = w * fast / D, ez = 'cubic-bezier(.33,' + (.33 * kk).toFixed(4) + ',.67,' + (1 - .33 * kk).toFixed(4) + ')';
+  const kf = sign => '0%{transform:rotate(0deg);animation-timing-function:linear}' + ta.toFixed(4) + '%{transform:rotate(' + (sign * a) + 'deg);animation-timing-function:' + ez + '}' + tb.toFixed(4) + '%{transform:rotate(' + (sign * b) + 'deg);animation-timing-function:linear}100%{transform:rotate(' + (sign * 360) + 'deg)}';
+  return {T, range:r, cycle, css:'@keyframes tmS-' + k + '{' + kf(1) + '}@keyframes tmU-' + k + '{' + kf(-1) + '}'};
+}
 const at = (el, x, y, extra) => { el.classList.add('tm-abs'); Object.assign(el.style, {left:x + 'px', top:y + 'px'}, extra || {}); return el; };
 const img = (src, x, y, w, h, alt = '') => { const i = new Image(); i.src = BASE + src; i.alt = alt; i.decoding = 'async'; i.draggable = false; return at(i, x, y, {width:w + 'px', height:h + 'px'}); };
 
@@ -76,13 +95,23 @@ export function createTeam(stage, hooks = {}){
   // 쌓임 순서는 Figma 레이어 순서(짧은 검정 → 긴 검정 → 하늘색이 맨 위)
   for (const k of ['hour', 'minute', 'second']) { const h = HANDS[k];
     const arm = document.createElement('div'); arm.className = 'tm-arm'; arm.dataset.hand = k;
-    Object.assign(arm.style, {left:PIVOT.x + 'px', top:PIVOT.y + 'px'}); arm.style.setProperty('--T', PERIOD[k] + 's');
+    Object.assign(arm.style, {left:PIVOT.x + 'px', top:PIVOT.y + 'px'});
     const hand = document.createElement('i'); hand.className = 'tm-hand';
     const top = h.along + h.length / 2;
     Object.assign(hand.style, {left:(-h.width / 2) + 'px', top:(-top) + 'px', width:h.width + 'px', height:h.length + 'px', background:h.color,
       transformOrigin:(h.width / 2) + 'px ' + top + 'px', transform:'rotate(' + h.angle + 'deg)'});
     arm.appendChild(hand); clock.appendChild(arm); arms[k] = arm;
   }
+  // 바늘별 회전 계획(화면 밖 구간 가속) — 한 번만 계산해 keyframes로 넣는다
+  const plans = {}; let kcss = '';
+  for (const k of Object.keys(HANDS)) {
+    const m = MEMBERS.find(x => x.hand === k);
+    const box = m ? {x0:Math.min(m.labelBox.x, m.photoBox.x), y0:Math.min(m.labelBox.y, m.photoBox.y), x1:Math.max(m.labelBox.x + m.labelBox.w, m.photoBox.x + 120), y1:m.photoBox.y + 126} : null;
+    const pl = box ? spinPlan(k, box) : {cycle:PERIOD[k], css:'@keyframes tmS-' + k + '{to{transform:rotate(360deg)}}@keyframes tmU-' + k + '{to{transform:rotate(-360deg)}}'};
+    plans[k] = pl; kcss += pl.css;
+    arms[k].style.setProperty('--T', pl.cycle.toFixed(3) + 's'); arms[k].style.setProperty('--spin', 'tmS-' + k); arms[k].style.setProperty('--un', 'tmU-' + k);
+  }
+  const kst = document.getElementById('tm-kf') || document.head.appendChild(Object.assign(document.createElement('style'), {id:'tm-kf'})); kst.textContent = kcss;
   // 사진·숫자 = 한 버튼(같은 목적지). 팔과 같은 주기로 반대 회전해 기울지 않는다
   const btns = MEMBERS.map(m => {
     const lb = m.labelBox, pb = m.photoBox, x0 = Math.min(lb.x, pb.x), y0 = Math.min(lb.y, pb.y), x1 = Math.max(lb.x + lb.w, pb.x + 120), y1 = pb.y + 126;
@@ -172,6 +201,6 @@ export function createTeam(stage, hooks = {}){
       const p = buildMember(m); mem.classList.add('on'); playMember(p); view = 'member:' + id; return true;
     },
     hide(){ clock.classList.remove('tm-run'); stopMember(); main.classList.remove('on'); mem.classList.remove('on'); mem.textContent = ''; view = null; },
-    view:() => view, members:MEMBERS.map(m => m.id)
+    view:() => view, members:MEMBERS.map(m => m.id), plans:() => plans
   };
 }
