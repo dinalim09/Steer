@@ -1667,7 +1667,7 @@ void main(){
       cv.style.left = (full ? 0 : HUB.x - HALF) + 'px'; cv.style.top = (full ? 0 : HUB.y - HALF) + 'px';
       cv.style.width = w + 'px'; cv.style.height = h + 'px';
     }
-    const setFull = f => { if (full !== f){ full = f; size(); } };
+    const setFull = f => { if (full !== f){ const t = performance.now(); full = f; size(); if (f && meter) meter.resize(performance.now() - t); } };
     // 화면 좌표 → 기울어진 바퀴 면 위의 각도 (손가락이 손잡이를 잡고 돌리는 느낌). 프레임마다 구한 V만 읽으므로 가볍다.
     function angle(sx, sy){
       const n0 = V[8], n1 = V[9], n2 = V[10], o2 = V[14];
@@ -1687,6 +1687,79 @@ void main(){
     const wrapA = a => ((a + 540) % 360) - 180;
     const at = e => ({x:(e.clientX - rect.left)/scale, y:(e.clientY - rect.top)/scale});   // 화면 위치는 누를 때 한 번만 잰다
 
+
+    // 출항 왜곡용 노이즈 — feTurbulence(fractalNoise, 0.011 0.022, 2옥타브, seed 4)와 같은 값을 SVG 명세의 알고리즘으로 한 번만 계산해 이미지로 둔다.
+    // iPad Safari는 SVG 필터를 CPU로 그리므로, 진폭이 바뀔 때마다 노이즈까지 매번 다시 계산하던 비용(4단계에서만 생기는 작업)을 없앤다.
+    // 계산은 첫 화면이 뜬 뒤, 손을 대지 않는 동안에만 4ms씩 나눠서 한다(한 번에 길게 막지 않음). 이미지 인코딩·디코딩도 비동기.
+    // 어느 단계에서든 실패하면 기존 feTurbulence를 그대로 쓴다. 출항 중이면 교체를 미뤘다가 필터가 꺼진 뒤 바꾼다.
+    let baked = false, bakeMs = 0, bakeSlices = 0, bakeState = '대기';
+    function bakeNoise(){
+      try {
+        const B = 256, M = 0xff, PN = 4096, RM = 2147483647, RA = 16807, RQ = 127773, RR = 2836;
+        let seed = 4; const rnd = () => { seed = RA*(seed % RQ) - RR*Math.floor(seed/RQ); if (seed <= 0) seed += RM; return seed; };
+        const lat = new Int32Array(B + B + 2), grad = [0,1,2,3].map(() => new Float64Array((B + B + 2)*2));
+        let i, j, k;
+        for (k = 0; k < 4; k++) for (i = 0; i < B; i++){
+          lat[i] = i;
+          const g = grad[k]; g[i*2] = ((rnd() % (B + B)) - B)/B; g[i*2+1] = ((rnd() % (B + B)) - B)/B;
+          const l = Math.sqrt(g[i*2]*g[i*2] + g[i*2+1]*g[i*2+1]); g[i*2] /= l; g[i*2+1] /= l;
+        }
+        while (--i){ k = lat[i]; j = rnd() % B; lat[i] = lat[j]; lat[j] = k; }
+        for (i = 0; i < B + 2; i++){ lat[B + i] = lat[i]; for (k = 0; k < 4; k++){ grad[k][(B + i)*2] = grad[k][i*2]; grad[k][(B + i)*2+1] = grad[k][i*2+1]; } }
+        const sc = t => t*t*(3 - 2*t), lp = (t, a, b) => a + t*(b - a);
+        const noise2 = (ch, x, y) => {
+          let t = x + PN; const bx0 = (t|0) & M, bx1 = (bx0 + 1) & M, rx0 = t - (t|0), rx1 = rx0 - 1;
+          t = y + PN; const by0 = (t|0) & M, by1 = (by0 + 1) & M, ry0 = t - (t|0), ry1 = ry0 - 1;
+          const a0 = lat[bx0], a1 = lat[bx1], b00 = lat[a0 + by0], b10 = lat[a1 + by0], b01 = lat[a0 + by1], b11 = lat[a1 + by1], g = grad[ch];
+          const sx = sc(rx0), sy = sc(ry0);
+          const a = lp(sx, rx0*g[b00*2] + ry0*g[b00*2+1], rx1*g[b10*2] + ry0*g[b10*2+1]);
+          const b = lp(sx, rx0*g[b01*2] + ry1*g[b01*2+1], rx1*g[b11*2] + ry1*g[b11*2+1]);
+          return lp(sy, a, b);
+        };
+        const FXq = 0.011, FYq = 0.022, X0 = -100, Y0 = -100, W = 1024, H = 821, S = 2, w = W/S, h = Math.ceil(H/S);   // 필터 영역과 같은 좌표 · 2단위 간격(노이즈 파장 ≥ 45)
+        const c = document.createElement('canvas'); c.width = w; c.height = h;
+        const cx = c.getContext('2d'), img = cx.createImageData(w, h), d = img.data;
+        let py = 0; bakeState = '계산 중';
+        const fail = () => { bakeState = '실패 → 기존 방식'; };
+        const swap = url => {
+          if (warpOn){ setTimeout(() => swap(url), 300); return; }        // 출항 중엔 필터가 꺼진 뒤 교체
+          const fe = document.createElementNS('http://www.w3.org/2000/svg', 'feImage');
+          fe.setAttribute('href', url); fe.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', url);
+          for (const [k2, v2] of [['x', X0], ['y', Y0], ['width', W], ['height', H], ['preserveAspectRatio', 'none'], ['result', 'n']]) fe.setAttribute(k2, v2);
+          turb.replaceWith(fe); baked = true; bakeState = '완료';
+        };
+        const finish = () => {
+          cx.putImageData(img, 0, 0);
+          const use = url => { const im = new Image(); im.src = url; (im.decode ? im.decode() : Promise.resolve()).then(() => swap(url), fail); };   // 미리 디코딩해 둔 뒤 교체
+          if (c.toBlob) c.toBlob(b => { try { if (!b) throw 0; use(URL.createObjectURL(b)); } catch (e) { fail(); } }, 'image/png');
+          else use(c.toDataURL('image/png'));
+        };
+        const slice = () => {
+          if (drag || dir){ setTimeout(slice, 250); return; }            // 돌리거나 출항하는 동안엔 쉰다
+          const t0 = performance.now();
+          try {
+            while (py < h && performance.now() - t0 < 4){
+              for (let px = 0; px < w; px++){
+                const ux = X0 + (px + .5)*S, uy = Y0 + (py + .5)*S, o = (py*w + px)*4;
+                for (let ch = 0; ch < 2; ch++){
+                  let sum = 0, vx = ux*FXq, vy = uy*FYq, r = 1;
+                  for (let oc = 0; oc < 2; oc++){ sum += noise2(ch, vx, vy)/r; vx *= 2; vy *= 2; r *= 2; }
+                  d[o + ch] = Math.max(0, Math.min(255, Math.round((sum*255 + 255)/2)));
+                }
+                d[o + 2] = 128; d[o + 3] = 255;
+              }
+              py++;
+            }
+          } catch (e) { fail(); return; }
+          bakeMs += performance.now() - t0; bakeSlices++;
+          if (py < h) setTimeout(slice, 0); else try { finish(); } catch (e) { fail(); }
+        };
+        slice();
+      } catch (e) { bakeState = '실패 → 기존 방식'; }                    // 실패하면 원래 feTurbulence를 그대로 쓴다
+    }
+    const startBake = () => setTimeout(bakeNoise, 1500);
+    if (document.readyState === 'complete') startBake(); else addEventListener('load', startBake, {once:true});
+
     // 성능 측정 표시 (?fps=1)
     const meter = qs.get('fps') ? (() => {
       const m = document.createElement('div');
@@ -1694,10 +1767,24 @@ void main(){
       screen.appendChild(m);
       window.__h9 = () => ({th, tgt, u, full, cw: cv.width, ch: cv.height});   // 측정 모드 전용: 바퀴 각도·목표 각도 확인
       let t0 = performance.now(), n = 0, worst = 0, long = 0, prevF = 0, mv = 0;
-      return {move(){ mv++; }, frame(now){
-        if (prevF){ const d = now - prevF; worst = Math.max(worst, d); if (d > 25) long++; } prevF = now; n++;
-        if (now - t0 >= 1000){ m.textContent = `fx ${FX} · ${Math.round(n*1000/(now - t0))} fps\n최악 ${worst.toFixed(0)}ms · 끊김(>25ms) ${long}\nmove ${mv}/s · ${drag ? '돌리는 중' : '대기'}`; t0 = now; n = 0; worst = 0; long = 0; mv = 0; }
-      }};
+      // 출항 1회 기록: 캔버스 전환(600×600 → 전체) 직후 프레임 · SVG 왜곡 진폭을 바꾼 직후 프레임 · 그 밖의 출항 프레임을 나눠 잰다
+      // (프레임 간격 d는 직전 프레임에서 바꾼 것을 그리는 시간까지 포함하므로, 바꾼 '다음' 프레임의 d를 그 작업에 귀속한다)
+      let rec = null, last = '';
+      const f = x => x.toFixed(0), avg = a => a.length ? a.reduce((p, q) => p + q, 0)/a.length : 0, mx = a => a.length ? Math.max(...a) : 0;
+      const close = () => {
+        if (!rec) return;
+        last = `출항 기록 · 캔버스 전환 ${f(rec.sync)}ms(동기) → 다음 프레임 ${rec.rf == null ? '-' : f(rec.rf)}ms\n왜곡 갱신 직후 ${rec.warp.length}회 평균 ${f(avg(rec.warp))} / 최악 ${f(mx(rec.warp))}ms\n그 외 출항 프레임 ${rec.plain.length}개 평균 ${f(avg(rec.plain))} / 최악 ${f(mx(rec.plain))}ms`;
+        rec = null;
+      };
+      return {move(){ mv++; },
+        resize(ms){ close(); rec = {sync: ms, rf: null, warp: [], plain: [], pend: 'resize'}; },
+        warp(){ if (rec && !rec.pend) rec.pend = 'warp'; },
+        frame(now){
+          if (prevF){ const d = now - prevF; worst = Math.max(worst, d); if (d > 25) long++;
+            if (rec){ if (rec.pend === 'resize') rec.rf = d; else if (rec.pend === 'warp') rec.warp.push(d); else if (dir > 0) rec.plain.push(d); rec.pend = null; if (dir <= 0 && u >= 1 || dir < 0) close(); } }
+          prevF = now; n++;
+          if (now - t0 >= 1000){ m.textContent = `fx ${FX} · ${Math.round(n*1000/(now - t0))} fps\n최악 ${worst.toFixed(0)}ms · 끊김(>25ms) ${long}\nmove ${mv}/s · ${dir > 0 ? '출항 중' : drag ? '돌리는 중' : '대기'}\n노이즈 사전 생성: ${bakeState}${bakeSlices ? ` (${bakeMs.toFixed(0)}ms, ${bakeSlices}회 분할)` : ''}${last ? '\n' + last : ''}`; t0 = now; n = 0; worst = 0; long = 0; mv = 0; }
+        }};
     })() : null;
 
     function reset(){
@@ -1798,10 +1885,12 @@ void main(){
         } else if (v) css(typeEl, 'transform', `rotate(${(v*220*spinDir).toFixed(2)}deg) scale(${(1 - .8*v).toFixed(3)})`);
         css(typeEl, 'opacity', u > .42 ? (1 - seg(u, .42, .72)).toFixed(3) : '');
         // 강한 SVG 왜곡은 출항 순간에만 (진폭만 바꾸고, 노이즈 모양은 고정)
-        const warp = FX >= 4 && !reduce && dir > 0 ? v*170 : 0;
+        // · 진폭은 10단위로만 바꾼다(필터 재계산 횟수 약 1/5) · 글씨가 다 사라지면(u ≥ .72) 필터를 끈다
+        const warp = FX >= 4 && !reduce && dir > 0 && u < .72 ? v*170 : 0;
         if (warp > .6){
-          if (!warpOn){ turb.setAttribute('baseFrequency', '0.011 0.022'); typePath.setAttribute('filter', 'url(#h9warp)'); warpOn = true; }
-          disp.setAttribute('scale', warp.toFixed(0));
+          if (!warpOn){ if (!baked) turb.setAttribute('baseFrequency', '0.011 0.022'); typePath.setAttribute('filter', 'url(#h9warp)'); warpOn = true; if (meter) meter.warp(); }
+          const q = String(Math.max(10, Math.round(warp/10)*10));
+          if (disp.getAttribute('scale') !== q){ disp.setAttribute('scale', q); if (meter) meter.warp(); }
         } else if (warpOn){ typePath.removeAttribute('filter'); warpOn = false; }
         css(pill9, 'opacity', u ? (1 - seg(u, 0, .15)).toFixed(3) : '');
         css(bar9, 'transform', `scaleX(${Math.min(1, travel/NEED).toFixed(3)})`);
