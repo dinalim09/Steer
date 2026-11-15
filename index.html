@@ -441,11 +441,11 @@ body.bare .bar>*{pointer-events:auto}
 #lgd .ldbar{position:absolute;left:0;width:382px;height:17px}
 #lgd .ldbar b{position:absolute;left:0;top:0;font:700 14px/17px 'Noto Sans KR',var(--font-ui);white-space:nowrap}
 #lgd .ldbar i{position:absolute;left:110px;top:5px;width:230px;height:12px;border-radius:6px;background:#fff;overflow:hidden}
-#lgd .ldbar u{display:block;height:12px;border-radius:6px;transform-origin:0 50%}
+#lgd .ldbar u{display:block;height:12px;border-radius:6px;transform-origin:0 50%;will-change:transform}
 #lgd .ldbar em{position:absolute;left:352px;top:-1px;font:normal 700 14px/17px 'Noto Sans KR',var(--font-ui)}
-#lgd .ldhelm{position:absolute;left:578px;top:84px;width:331.5px;height:333.4px;cursor:pointer;-webkit-user-drag:none;user-select:none}
-#lgd .ldphone{position:absolute;left:653.45px;top:512px;cursor:pointer;transform-origin:50% 60%}
-#lgd .ldshk{position:absolute;left:640px;top:585px}
+#lgd .ldhelm{position:absolute;left:578px;top:84px;width:331.5px;height:333.4px;cursor:pointer;-webkit-user-drag:none;user-select:none;transform-origin:49.15% 48.05%;will-change:transform}
+#lgd .ldphone{position:absolute;left:653.45px;top:512px;cursor:pointer;transform-origin:56% 82%;will-change:transform}
+#lgd .ldshk{position:absolute;left:640px;top:585px;transform-origin:100% 50%;overflow:visible}
 #lgd .ldcm{position:absolute;left:548px;width:778px;height:388px;border-radius:30px;overflow:hidden;color:#0A0A0A}
 #lgd .ldcm>*{position:absolute;margin:0}
 #lgd .ldcm-t{left:38px;top:33px;font:700 28px/34px 'Noto Sans KR',var(--font-ui);white-space:nowrap}
@@ -3082,41 +3082,93 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     if (n === 2) enter3();
     if (n === 3) { if (!RM.matches) ['out', 'home'].forEach((k, j) => setTimeout(() => { if (cur === 3) { pgs[3].querySelector('.ldcm[data-m="' + k + '"] .ldcm-k b').textContent = ''; cmDraw(k, true); } }, 520 + j*260)); }
   }
-  // 02 Combine 1/2: 조타키 카드를 누르면 조타키가 돌고 동행 선택이 시계 방향으로 넘어간다 · 흔들기 카드를 누르면 기기가 흔들리고 기준 막대가 다시 찬다
+  // 02 Combine 1/2: 가만히 두어도 조타키는 돌렸다 놓고, 기기는 흔들렸다 멈추고, 기준 막대는 차올랐다 비워지기를 반복한다
+  // 반복 모션은 개별 변환 속성(rotate · translate · scale)으로, 등장 모션은 transform으로 분리해 서로 덮어쓰지 않는다
+  // 조타키 카드를 누르면 같은 왕복 모션 + 동행 선택이 시계 방향으로 넘어가고, 흔들기 카드를 누르면 즉시 흔들리고 막대가 다시 찬다
   const p3 = pgs[2], helm = p3.querySelector('.ldhelm'), opts = [...p3.querySelectorAll('.ldopt')], optl = [...p3.querySelectorAll('.ldopl')];
-  let optI = 3, helmDeg = 0;
+  const phone = p3.querySelector('.ldphone'), shk = p3.querySelector('.ldshk'), bars = [...p3.querySelectorAll('.ldbar u')];
+  let optI = 3;
+  const L3 = {helm:null, one:null, phone:null, shk:null, bars:[], t:0, on:false};
+  // 조타키: 0.7초 빠르게 +60° → 0.15초 정지 → 0.9초 부드럽게 복귀(살짝 지나쳤다 0°) → 0.5초 쉼 = 2.25초
+  const H_T = 2250;
+  const H_KF = [
+    {rotate:'0deg', offset:0, easing:'cubic-bezier(.2,.75,.3,1.04)'},
+    {rotate:'60deg', offset:700/H_T, easing:'linear'},
+    {rotate:'60deg', offset:850/H_T, easing:'cubic-bezier(.45,0,.3,1)'},
+    {rotate:'-2.5deg', offset:1630/H_T, easing:'cubic-bezier(.3,0,.3,1)'},
+    {rotate:'0deg', offset:1750/H_T},
+    {rotate:'0deg', offset:1}];
+  // 기기: 0.9초 동안 손목으로 3~4번 빠르게 흔들고(±13° · ±10px · 위아래 튐) 0.9초 쉼 = 1.8초
+  const P_T = 1800, SNAP = 'cubic-bezier(.3,0,.2,1)';
+  const P_KF = [[0, 0, 0, 0], [70, -13, -10, -3], [190, 13, 10, 2], [310, -12, -9, -3], [430, 11, 8, 2], [560, -7, -5, -1], [690, 3, 2, 0], [800, 0, 0, 0], [P_T, 0, 0, 0]]
+    .map(([t, r, x, y]) => ({offset:t/P_T, rotate:r + 'deg', translate:x + 'px ' + y + 'px', easing:SNAP}));
+  const S_KF = [[0, 0, 1, 1], [70, -7, 1.18, 1], [190, 3, 1.04, .75], [310, -6, 1.16, 1], [430, 2, 1.04, .75], [560, -3, 1.08, .9], [690, 0, 1.02, 1], [800, 0, 1, 1], [P_T, 0, 1, 1]]
+    .map(([t, x, sc, o]) => ({offset:t/P_T, translate:x + 'px 0', scale:sc + ' ' + (1 + (sc - 1) * 1.6), opacity:o, easing:SNAP}));
+  // 막대: 위에서 아래로 0.12초 간격, 각 1초 차오름(빠르게 시작 · 부드럽게 감속) → 1.2초 유지 → 0.35초 비움 → 반복 3.5초
+  const B_T = 3500, B_FILL = 1000, B_GAP = 120, B_HOLD_END = 3 * B_GAP + B_FILL + 1200, B_EMPTY = 350;
+  const B_KF = i => [
+    {transform:'scaleX(0)', offset:0},
+    {transform:'scaleX(0)', offset:i * B_GAP / B_T, easing:'cubic-bezier(.16,.84,.3,1)'},
+    {transform:'scaleX(1)', offset:(i * B_GAP + B_FILL) / B_T},
+    {transform:'scaleX(1)', offset:B_HOLD_END / B_T, easing:'cubic-bezier(.5,0,.75,0)'},
+    {transform:'scaleX(0)', offset:(B_HOLD_END + B_EMPTY) / B_T},
+    {transform:'scaleX(0)', offset:1}];
+  const loop = (el, kf, T, delay) => el.animate(kf, {duration:T, delay:delay || 0, iterations:Infinity, fill:'backwards'});
+  function stop3(){
+    clearTimeout(L3.t); L3.on = false;
+    [L3.helm, L3.one, L3.phone, L3.shk, ...L3.bars].forEach(a => a && a.cancel());
+    L3.helm = L3.one = L3.phone = L3.shk = null; L3.bars = [];
+  }
+  function startHelm(delay){ if (L3.helm) L3.helm.cancel(); L3.helm = loop(helm, H_KF, H_T, delay); }
+  function startPhone(delay){ [L3.phone, L3.shk].forEach(a => a && a.cancel()); L3.phone = loop(phone, P_KF, P_T, delay); L3.shk = loop(shk, S_KF, P_T, delay); }
+  function startBars(delay){ L3.bars.forEach(a => a.cancel()); L3.bars = bars.map((u, i) => loop(u, B_KF(i), B_T, delay)); }
+  function start3(delay){
+    stop3(); if (RM.matches) return;
+    L3.on = true; startHelm(delay); startPhone(delay + 250); startBars(delay);
+  }
   function setOpt(i, quiet){
     optI = i; opts.forEach((o, j) => o.classList.toggle('on', j === i)); optl.forEach((o, j) => o.classList.toggle('on', j === i));
-    if (quiet) { helmDeg = 0; helm.getAnimations().forEach(a => a.cancel()); helm.style.transform = ''; }
+    if (quiet) helm.getAnimations().forEach(a => a.cancel());
   }
   const ORDER = [1, 2, 3, 0];   // 혼자 → 연인과 → 친구와 → 가족과 (시계 방향)
+  // 누를 때: 자동 반복을 멈추고, 지금 각도에서 같은 왕복을 한 번 재생한 뒤 0.5초 쉬고 자동 반복으로 돌아간다
   function turn(){
     setOpt(ORDER[optI]);
-    const from = helmDeg; helmDeg += 60;
-    if (!RM.matches) helm.animate([{transform:'rotate(' + from + 'deg)'}, {transform:'rotate(' + helmDeg + 'deg)'}], {duration:620, easing:'cubic-bezier(.3,1.25,.4,1)', fill:'forwards'});
-    else helm.style.transform = 'rotate(' + helmDeg + 'deg)';
     if (window.steerTrack) steerTrack('logic_combine_try', {page_id:'combine-01', method:'rotate', option:OPTS[optI][0]});
-  }
-  const phone = p3.querySelector('.ldphone'), shk = p3.querySelector('.ldshk'), bars = [...p3.querySelectorAll('.ldbar u')];
-  function shake(fill, delay){
     if (RM.matches) return;
-    const d = delay || 0;
-    phone.animate([{transform:'none'}, {transform:'rotate(-6deg)'}, {transform:'rotate(5deg)'}, {transform:'rotate(-4deg)'}, {transform:'rotate(3deg)'}, {transform:'none'}], {duration:620, delay:d, easing:'ease-in-out'});
-    shk.animate([{opacity:1, transform:'none'}, {opacity:.2, transform:'translateX(-6px)'}, {opacity:1, transform:'none'}], {duration:620, delay:d, easing:'ease-in-out'});
-    if (fill) bars.forEach((b, i) => b.animate([{transform:'scaleX(0)'}, {transform:'none'}], {duration:620, delay:d + 160 + i*90, easing:E, fill:'backwards'}));
+    const now = parseFloat(getComputedStyle(helm).rotate) || 0;
+    if (L3.helm) { L3.helm.cancel(); L3.helm = null; }
+    if (L3.one) L3.one.cancel();
+    const up = Math.max(160, 700 * (60 - now) / 60);
+    const T = up + 150 + 900;
+    L3.one = helm.animate([
+      {rotate:now + 'deg', offset:0, easing:'cubic-bezier(.2,.75,.3,1.04)'},
+      {rotate:'60deg', offset:up / T, easing:'linear'},
+      {rotate:'60deg', offset:(up + 150) / T, easing:'cubic-bezier(.45,0,.3,1)'},
+      {rotate:'-2.5deg', offset:(up + 150 + 780) / T, easing:'cubic-bezier(.3,0,.3,1)'},
+      {rotate:'0deg', offset:1}], {duration:T});
+    const one = L3.one;
+    one.onfinish = () => { if (L3.one !== one) return; L3.one = null; if (L3.on) startHelm(500); };
+  }
+  // 누를 때: 흔드는 중이면 그대로 두고, 쉬는 중이면 바로 흔들기 시작 · 막대는 처음부터 다시 찬다
+  function shake(){
+    if (window.steerTrack) steerTrack('logic_combine_try', {page_id:'combine-01', method:'shake'});
+    if (RM.matches || !L3.on) return;
+    const t = L3.phone ? (L3.phone.currentTime || 0) : 0;
+    if (!L3.phone || t < 0 || t % P_T > 800) startPhone(0);
+    startBars(0);
   }
   p3.querySelector('.ldcd1').addEventListener('click', turn);
   helm.addEventListener('click', turn);
-  p3.querySelector('.ldcd2').addEventListener('click', () => { shake(true); if (window.steerTrack) steerTrack('logic_combine_try', {page_id:'combine-01', method:'shake'}); });
-  phone.addEventListener('click', () => p3.querySelector('.ldcd2').click());
+  p3.querySelector('.ldcd2').addEventListener('click', shake);
+  phone.addEventListener('click', shake);
   function enter3(){
     if (RM.matches) return;
     helm.animate([{opacity:0, transform:'rotate(-50deg) scale(.86)'}, {opacity:1, transform:'none'}], {duration:760, delay:260, easing:'cubic-bezier(.2,.9,.25,1.05)', fill:'backwards'});
     phone.animate([{opacity:0, transform:'translateY(18px) rotate(-4deg)'}, {opacity:1, transform:'none'}], {duration:560, delay:380, easing:E, fill:'backwards'});
     shk.animate([{opacity:0}, {opacity:1}], {duration:400, delay:600, fill:'backwards'});
-    shake(false, 1000);
-    bars.forEach((b, i) => b.animate([{transform:'scaleX(0)'}, {transform:'none'}], {duration:680, delay:620 + i*90, easing:E, fill:'backwards'}));
     p3.querySelectorAll('.ldorbit .ldopt, .ldorbit .ldopl, .ldsteps li').forEach((e, i) => e.animate([{opacity:0, transform:'translateY(6px)'}, {opacity:1, transform:'none'}], {duration:360, delay:520 + i*40, easing:E, fill:'backwards'}));
+    start3(1000);   // 등장이 끝날 무렵부터 반복 시작 (막대는 빈 상태에서 출발)
   }
   // 02 Combine 2/2: 열마다 하나씩 고르면 경로선이 다시 그려지고 미션 카드가 바뀐다
   const cmSel = {out:CM.out.def.slice(), home:CM.home.def.slice()};
@@ -3175,6 +3227,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     setEl(DEF, true); setOpt(3, true); cmReset();
   }
   function show(n, anim){
+    if (n !== 2) stop3();
     pgs.forEach((g, i) => { g.classList.toggle('on', i === n); g.toggleAttribute('inert', i !== n); g.setAttribute('aria-hidden', i === n ? 'false' : 'true'); });
     cur = n; chrome(); if (anim) enter(n);
   }
@@ -3197,7 +3250,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     else if (n !== cur) { go(n); return; }
     if (window.steerTrack) steerTrack('logic_detail_view', {page_id:PAGES[n]});
   }
-  function close(){ root.classList.remove('open'); root.setAttribute('aria-hidden', 'true'); }
+  function close(){ stop3(); root.classList.remove('open'); root.setAttribute('aria-hidden', 'true'); }
   const lgx = document.getElementById('lgx');
   // L0에서 진입: 기운을 행동으로 폴더 · '기준'(translate-01) · '번역'(translate-02) 칩
   if (lgx) {
