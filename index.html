@@ -446,6 +446,31 @@ body.bare .bar>*{pointer-events:auto}
 #lgd .ldhelm{position:absolute;left:578px;top:84px;width:331.5px;height:333.4px;cursor:pointer;-webkit-user-drag:none;user-select:none}
 #lgd .ldphone{position:absolute;left:653.45px;top:512px;cursor:pointer;transform-origin:50% 60%}
 #lgd .ldshk{position:absolute;left:640px;top:585px}
+#lgd .ldcm{position:absolute;left:548px;width:778px;height:388px;border-radius:30px;overflow:hidden;color:#0A0A0A}
+#lgd .ldcm>*{position:absolute;margin:0}
+#lgd .ldcm-t{left:38px;top:33px;font:700 28px/34px 'Noto Sans KR',var(--font-ui);white-space:nowrap}
+#lgd .ldcm-s{top:97px;display:flex;align-items:center;gap:8px;font:700 16px/19px 'Noto Sans KR',var(--font-ui);white-space:nowrap}
+#lgd .ldcm-s i{width:22px;height:22px;border-radius:50%;background:#0A0A0A;color:#fff;display:flex;align-items:center;justify-content:center;font:normal 700 11px/13px 'Noto Sans KR',var(--font-ui)}
+#lgd .ldcm-s.off{opacity:.35}
+#lgd .ldcm-c{top:143px;width:140px;height:220px}
+#lgd .ldcm-o{position:absolute;left:0;width:140px;height:36px;box-sizing:border-box;padding:0;margin:0;border:0;border-radius:100px;background:#fff;display:flex;align-items:center;justify-content:center;font:400 15px/18px 'Noto Sans KR',var(--font-ui);color:#0A0A0A;cursor:pointer;transition:background-color .22s,color .22s}
+#lgd .ldcm-o.on{background:#0A0A0A;color:#fff;font-weight:700;cursor:default}
+#lgd .ldcm-o.dash{background:transparent;border:1.5px dashed #0A0A0A;opacity:.35;cursor:default}
+#lgd .ldcm-n{z-index:1;margin-left:-4px!important;padding:0 4px;border-radius:4px;background:inherit;font:400 12px/18px 'Noto Sans KR',var(--font-ui);color:rgba(10,10,10,.6);text-align:center;white-space:nowrap}
+#lgd .ldcm[data-m="out"] .ldcm-n{text-align:left}
+#lgd .ldcm-r{left:0;top:0;pointer-events:none;overflow:visible}
+#lgd .ldcm-r .ln{fill:none;stroke:#0A0A0A;stroke-width:3}
+#lgd .ldcm-r .ln.ds{stroke-dasharray:2 7}
+#lgd .ldcm-r .dt{stroke:#000;stroke-width:2}
+#lgd .ldcm-r .dt.w{fill:#fff}
+#lgd .ldcm-r .dt.b{fill:#0A0A0A}
+#lgd .ldcm-r .dt.m{fill:#0A0A0A;stroke:none}
+#lgd .ldcm-k{left:578px;top:143px;width:160px;box-sizing:border-box;padding:14px;border:2px solid #0A0A0A;border-radius:18px;background:#fff;display:flex;flex-direction:column;gap:13px}
+#lgd .ldcm-kb{display:flex;flex-direction:column;gap:5px}
+#lgd .ldcm-kb small{font:500 9px/11px 'Pretendard',var(--font-ui);color:#7A7A7A}
+#lgd .ldcm-kb b{font:700 16px/21.6px 'Noto Sans KR',var(--font-ui);word-break:break-all}
+#lgd .ldcm-kb span{font:400 12px/16.8px 'Noto Sans KR',var(--font-ui);color:#7A7A7A}
+#lgd .ldcm-k em{display:flex;align-items:center;justify-content:center;height:28px;border-radius:100px;background:#0A0A0A;color:#fff;font:normal 700 12px/14px 'Noto Sans KR',var(--font-ui)}
 #lgd .ldci{position:absolute;left:572px;top:960px;display:flex;gap:8px}
 #lgd .ldci button{display:flex;align-items:center;justify-content:center;gap:8px;height:30px;min-width:44px;box-sizing:border-box;padding:0 14px;margin:0;border:0;border-radius:100px;background:#F2F2F2;color:#7A7A7A;font:500 12px/14px 'Noto Sans KR',var(--font-ui);cursor:pointer}
 #lgd .ldci button.cur{background:#0A0A0A;color:#fff;cursor:default}
@@ -2842,7 +2867,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
 (() => {
   const root = document.getElementById('lgd'); if (!root) return;
   const RM = matchMedia('(prefers-reduced-motion: reduce)');
-  const PAGES = ['translate-01', 'translate-02', 'combine-01'];
+  const PAGES = ['translate-01', 'translate-02', 'combine-01', 'combine-02'];
   // 챕터: 번호 · 이름 · 페이지 수. 아직 디자인이 없는 페이지는 PAGES에 없으므로 이동하지 않는다
   const CH = {translate:[1, 'Translate', 2], combine:[2, 'Combine', 2], explain:[3, 'Explain', 1], record:[4, 'Record', 2]};
   const CHK = ['translate', 'combine', 'explain', 'record'];
@@ -2911,6 +2936,42 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   + '<svg class="ldshk" width="40" height="56" viewBox="0 0 40 56" aria-hidden="true"><path d="M6 12C0 22 0 34 6 44M18 18C15 25 15 31 18 38" stroke="#0A0A0A" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg>'
   + '<svg class="ldphone" width="152" height="209" viewBox="0 0 152 209" aria-hidden="true"><rect x="40.5448" y="4.28404" width="108.959" height="181.598" rx="20.5811" transform="rotate(11.518 40.5448 4.28404)" fill="white" stroke="black" stroke-width="7.26392"/><circle cx="90.3018" cy="32.9464" r="4.84262" transform="rotate(11.518 90.3018 32.9464)" fill="black"/></svg>';
 
+  // 02 Combine 2/2 · 조합 (Figma 4042:10626 · 4042:10958). 주석: 선택지를 고르면 미션 결과가 바뀌게
+  // 미션 문구는 페르소나 정하영의 용신 水(북쪽 · 물) 기준 예시. 기본 선택은 Figma 상태(30분 · 걷기 · 가족과 / 10분 · 듣기)
+  const CM = {
+    out:{bg:'#C9F3FF', top:146, title:'밖으로 나서기', btn:'항해 시작', end:[577.5, 227.5],
+      cols:[['얼마나', ['30분', '1시간', ['3시간']]], ['무엇을', ['먹기', '보기', '듣기', '체험', '걷기 · 방향']], ['누구와', ['혼자', '연인과', '친구와', '가족과']]],
+      def:[0, 4, 3], note:['흐린 날에는 3시간 잠금', 49, 279],
+      M:[[['국밥 한 그릇 먹기', '근처 국밥집'], ['횟집에서 저녁 먹기', '동네 횟집']],
+         [['화방에서 먹빛 물감 구경하기', '화방'], ['서예 전시 둘러보기', '서예원']],
+         [['수변 공원에서 물소리 듣기', '수변 공원'], ['레코드숍에서 잔잔한 음반 고르기', '레코드숍']],
+         [['수영장에서 가볍게 수영하기', '수영장'], ['목욕탕에서 몸 담그기', '동네 목욕탕']],
+         [['북쪽으로 걸어 영화관 다녀오기', '아트하우스 모모'], ['북쪽 물길 따라 걷기', '북쪽 산책로']]]},
+    home:{bg:'#D6D6D6', top:548, title:'집에 머물기', btn:'시작하기', end:[577.5, 213.5], mid:[468, 204.5],
+      cols:[['얼마나', ['10분', '30분', '1시간']], ['무엇을', ['먹기', '보기', '듣기', '체험', ['걷기']]], ['누구와', []]],
+      def:[0, 2], note:['집 안에서는 동행 · 방향을\n고르지 않습니다', 410, 249],
+      M:[[['짭조름한 간식 먹기'], ['미역국 끓여 먹기'], ['해물 요리 해 먹기']],
+         [['물 사진 모아 보기'], ['바다 다큐멘터리 보기'], ['물이 나오는 영화 보기']],
+         [['집에서 물소리 듣기'], ['잔잔한 음악 틀어 두기'], ['빗소리 들으며 쉬기']],
+         [['물 한 잔 천천히 마시기'], ['반신욕 하기'], ['먹으로 붓글씨 써 보기']]]}
+  };
+  const cmField = k => { const m = CM[k];
+    return '<section class="ldcm ldin" data-m="' + k + '" style="top:' + m.top + 'px;background:' + m.bg + '" aria-label="' + m.title + '">'
+    + '<h2 class="ldcm-t">' + m.title + '</h2>'
+    + m.cols.map((c, ci) => '<div class="ldcm-s' + (c[1].length ? '' : ' off') + '" style="left:' + (38 + ci*180) + 'px"><i>' + (ci + 1) + '</i>' + c[0] + '</div>'
+      + '<div class="ldcm-c" role="radiogroup" aria-label="' + c[0] + '" style="left:' + (38 + ci*180) + 'px">' + c[1].map((o, oi) => Array.isArray(o)
+        ? '<span class="ldcm-o dash" style="top:' + (oi*44) + 'px" aria-disabled="true">' + o[0] + '</span>'
+        : '<button type="button" role="radio" class="ldcm-o" data-c="' + ci + '" data-i="' + oi + '" style="top:' + (oi*44) + 'px">' + o + '</button>').join('') + '</div>').join('')
+    + '<p class="ldcm-n" style="left:' + m.note[1] + 'px;top:' + m.note[2] + 'px">' + m.note[0].replace('\n', '<br>') + '</p>'
+    + '<svg class="ldcm-r" width="778" height="388" viewBox="0 0 778 388" aria-hidden="true"></svg>'
+    + '<div class="ldcm-k" aria-live="polite"><div class="ldcm-kb"><small>Today’s Daily Steer</small><b></b><span></span></div><em>' + m.btn + '</em></div>'
+    + '</section>'; };
+  const page4 =
+    '<p class="ldeb ldin">02 Combine  ·  2/2</p>'
+  + '<h1 class="ldh ldin">조합에 따른<br>개운 미션 추천 로직</h1>'
+  + '<p class="ldds ldin">밖으로 나서기에서는 시간·행동·동행을 고르고,<br>머물기에서는 시간·행동만 고릅니다.<br>각 모드의 선택값이 하나의 미션으로 조합됩니다.</p>'
+  + cmField('out') + cmField('home');
+
   root.innerHTML =
     '<div class="ldpg" data-p="0">'
   + '<p class="ldeb ldin">01 Translate  ·  1/2</p>'
@@ -2946,6 +3007,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   + '</div>'
   + '<div class="ldpg" data-p="1">' + page2 + '</div>'
   + '<div class="ldpg" data-p="2">' + page3 + '</div>'
+  + '<div class="ldpg" data-p="3">' + page4 + '</div>'
   + '<div class="ldnv"></div>'
   + '<button type="button" class="lda prv">' + ARC('M44 39L35 48L44 57', true) + '</button>'
   + '<button type="button" class="lda nxt">' + ARC('M44 39L53 48L44 57', false) + '</button>'
@@ -3018,6 +3080,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     pg.querySelectorAll('.ldrow').forEach((e, i) => e.animate([{opacity:0, transform:'translateY(12px)'}, {opacity:1, transform:'none'}], {duration:440, delay:240 + i*70, easing:E, fill:'backwards'}));
     pg.querySelectorAll('.ldwm').forEach(e => e.animate([{opacity:0, transform:'translateY(18px)'}, {opacity:1, transform:'none'}], {duration:620, delay:200, easing:E, fill:'backwards'}));
     if (n === 2) enter3();
+    if (n === 3) { if (!RM.matches) ['out', 'home'].forEach((k, j) => setTimeout(() => { if (cur === 3) { pgs[3].querySelector('.ldcm[data-m="' + k + '"] .ldcm-k b').textContent = ''; cmDraw(k, true); } }, 520 + j*260)); }
   }
   // 02 Combine 1/2: 조타키 카드를 누르면 조타키가 돌고 동행 선택이 시계 방향으로 넘어간다 · 흔들기 카드를 누르면 기기가 흔들리고 기준 막대가 다시 찬다
   const p3 = pgs[2], helm = p3.querySelector('.ldhelm'), opts = [...p3.querySelectorAll('.ldopt')], optl = [...p3.querySelectorAll('.ldopl')];
@@ -3055,6 +3118,41 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     bars.forEach((b, i) => b.animate([{transform:'scaleX(0)'}, {transform:'none'}], {duration:680, delay:620 + i*90, easing:E, fill:'backwards'}));
     p3.querySelectorAll('.ldorbit .ldopt, .ldorbit .ldopl, .ldsteps li').forEach((e, i) => e.animate([{opacity:0, transform:'translateY(6px)'}, {opacity:1, transform:'none'}], {duration:360, delay:520 + i*40, easing:E, fill:'backwards'}));
   }
+  // 02 Combine 2/2: 열마다 하나씩 고르면 경로선이 다시 그려지고 미션 카드가 바뀐다
+  const cmSel = {out:CM.out.def.slice(), home:CM.home.def.slice()};
+  const NS = 'http://www.w3.org/2000/svg';
+  function cmDraw(k, anim){
+    const f = pgs[3].querySelector('.ldcm[data-m="' + k + '"]'), m = CM[k], sel = cmSel[k], sv = f.querySelector('.ldcm-r');
+    f.querySelectorAll('.ldcm-o[data-c]').forEach(b => { const on = +b.dataset.i === sel[+b.dataset.c]; b.classList.toggle('on', on); b.setAttribute('aria-checked', on ? 'true' : 'false'); });
+    const cy = i => 161 + i*44, L = [], D = [];
+    L.push([[178, cy(sel[0])], [218, cy(sel[1])]]); D.push([178, cy(sel[0]), 'w'], [218, cy(sel[1]), 'b']);
+    if (k === 'out') { L.push([[358, cy(sel[1])], [398, cy(sel[2])]], [[538, cy(sel[2])], m.end]); D.push([358, cy(sel[1]), 'w'], [398, cy(sel[2]), 'b'], [538, cy(sel[2]), 'w'], [m.end[0], m.end[1], 'b']); }
+    else { L.push([[358, cy(sel[1])], m.mid, 'dash'], [m.mid, m.end]); D.push([358, cy(sel[1]), 'w'], [m.mid[0], m.mid[1], 'm'], [m.end[0], m.end[1], 'b']); }
+    sv.textContent = '';
+    L.forEach((l, i) => { const pth = document.createElementNS(NS, 'path'); pth.setAttribute('d', 'M' + l[0].join(' ') + 'L' + l[1].join(' '));
+      pth.setAttribute('class', 'ln' + (l[2] ? ' ds' : '')); sv.appendChild(pth);
+      if (anim && !RM.matches) { const len = Math.hypot(l[1][0] - l[0][0], l[1][1] - l[0][1]);
+        if (l[2]) pth.animate([{opacity:0}, {opacity:1}], {duration:260, delay:i*200, easing:'ease-in-out', fill:'backwards'});
+        else { pth.style.strokeDasharray = len; pth.animate([{strokeDashoffset:len}, {strokeDashoffset:0}], {duration:260, delay:i*200, easing:'ease-in-out', fill:'backwards'}); } } });
+    D.forEach((d, i) => { const c = document.createElementNS(NS, 'circle'); c.setAttribute('cx', d[0]); c.setAttribute('cy', d[1]); c.setAttribute('r', d[2] === 'm' ? 4.5 : 3.5); c.setAttribute('class', 'dt ' + d[2]); sv.appendChild(c);
+      if (anim && !RM.matches) c.animate([{opacity:0}, {opacity:1}], {duration:160, delay:Math.max(0, Math.ceil(i/2) * 200 - 60), fill:'backwards'}); });
+    const r = k === 'out' ? m.M[sel[1]][sel[0]] : m.M[sel[1]][sel[0]];
+    const who = k === 'out' ? m.cols[2][1][sel[2]] + ' ' : '';
+    const title = who + r[0], meta = k === 'out' ? r[1] : '집 안 · ' + m.cols[0][1][sel[0]];
+    const kd = f.querySelector('.ldcm-k'), kb = kd.querySelector('b'), ks = kd.querySelector('span');
+    const put = () => { kb.textContent = title; ks.textContent = meta; };
+    if (anim && !RM.matches && kb.textContent) {
+      kd.querySelector('.ldcm-kb').animate([{opacity:1}, {opacity:0, transform:'translateY(-4px)'}], {duration:140, easing:'ease-in', fill:'forwards'}).onfinish = e => { put(); e.target.cancel();
+        kd.querySelector('.ldcm-kb').animate([{opacity:0, transform:'translateY(6px)'}, {opacity:1, transform:'none'}], {duration:320, easing:E}); };
+      kd.animate([{transform:'none'}, {transform:'scale(1.04)'}, {transform:'none'}], {duration:420, delay:(L.length - 1)*200 + 160, easing:E});
+    } else put();
+  }
+  pgs[3].querySelectorAll('.ldcm-o[data-c]').forEach(b => b.addEventListener('click', () => {
+    const k = b.closest('.ldcm').dataset.m, c = +b.dataset.c, i = +b.dataset.i;
+    if (cmSel[k][c] === i) return; cmSel[k][c] = i; cmDraw(k, true);
+    if (window.steerTrack) steerTrack('logic_combine_select', {page_id:'combine-02', mode:k, step:c + 1, value:b.textContent});
+  }));
+  function cmReset(){ cmSel.out = CM.out.def.slice(); cmSel.home = CM.home.def.slice(); pgs[3].querySelectorAll('.ldcm-k b').forEach(b => b.textContent = ''); cmDraw('out', false); cmDraw('home', false); }
   // 화살표 · 챕터 표시 상태
   const prv = root.querySelector('.lda.prv'), nxt = root.querySelector('.lda.nxt'), cis = [...root.querySelectorAll('.ldci button')];
   const first = k => PAGES.find(id => id.startsWith(k + '-'));
@@ -3074,7 +3172,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   cis.forEach(b => b.addEventListener('click', () => { const id = first(b.dataset.ch); if (id && !b.classList.contains('cur')) go(PAGES.indexOf(id)); }));
   function reset(){
     root.querySelectorAll('.ldtg').forEach(tg => setTg(tg, false, true));
-    setEl(DEF, true); setOpt(3, true);
+    setEl(DEF, true); setOpt(3, true); cmReset();
   }
   function show(n, anim){
     pgs.forEach((g, i) => { g.classList.toggle('on', i === n); g.toggleAttribute('inert', i !== n); g.setAttribute('aria-hidden', i === n ? 'false' : 'true'); });
@@ -3117,7 +3215,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   show(0, false);
   window.steerLD = {open, close, isOpen, page:() => PAGES[cur], go, select:setEl};
   const hs = (location.hash || '').slice(1).toUpperCase();
-  const HS = {'LOGIC-T1':'translate-01', 'LOGIC-T2':'translate-02', 'LOGIC-C1':'combine-01'};
+  const HS = {'LOGIC-T1':'translate-01', 'LOGIC-T2':'translate-02', 'LOGIC-C1':'combine-01', 'LOGIC-C2':'combine-02'};
   if (HS[hs]) { if (window.steerL0) window.steerL0.open(); open(HS[hs]); }
 })();
 </script>
