@@ -3530,7 +3530,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     if (n === 4) exStart(650);
     if (n === 5) rStart(700);
     if (n === 6) wStart(0);
-    if (n === 3) { if (!RM.matches) ['out', 'home'].forEach((k, j) => setTimeout(() => { if (cur === 3) { pgs[3].querySelector('.ldcm[data-m="' + k + '"] .ldcm-k b').textContent = ''; cmDraw(k, true); } }, 520 + j*260)); }
+    if (n === 3) { cmReset(); if (!RM.matches) ['out', 'home'].forEach((k, j) => setTimeout(() => { if (cur === 3) { pgs[3].querySelector('.ldcm[data-m="' + k + '"] .ldcm-k b').textContent = ''; cmDraw(k, true); } }, 520 + j*260)); cmAutoStart(); }
   }
   // 02 Combine 1/2: 가만히 두어도 조타키는 돌렸다 놓고, 기기는 흔들렸다 멈추기를 반복한다 · 기준 막대는 진입 때 한 번만 차오른다
   // 반복 모션은 개별 변환 속성(rotate · translate · scale)으로, 등장 모션은 transform으로 분리해 서로 덮어쓰지 않는다
@@ -3616,7 +3616,10 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   // 02 Combine 2/2: 열마다 하나씩 고르면 경로선이 다시 그려지고 미션 카드가 바뀐다
   const cmSel = {out:CM.out.def.slice(), home:CM.home.def.slice()};
   const NS = 'http://www.w3.org/2000/svg';
-  function cmDraw(k, anim){
+  const cmKT = {};   // 결과 카드 전환 대기 타이머 (모드별)
+  // seq: 자동 시연용 — 경로선이 모두 그려진 다음에 결과 카드를 바꿔 '선택 → 연결선 → 결과 카드' 순서를 분명히 한다
+  function cmDraw(k, anim, seq){
+    clearTimeout(cmKT[k]);
     const f = pgs[3].querySelector('.ldcm[data-m="' + k + '"]'), m = CM[k], sel = cmSel[k], sv = f.querySelector('.ldcm-r');
     f.querySelectorAll('.ldcm-o[data-c]').forEach(b => { const on = +b.dataset.i === sel[+b.dataset.c]; b.classList.toggle('on', on); b.setAttribute('aria-checked', on ? 'true' : 'false'); });
     const cy = i => 161 + i*44, L = [], D = [];
@@ -3636,18 +3639,55 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     const title = who + r[0], meta = k === 'out' ? r[1] : '집 안 · ' + m.cols[0][1][sel[0]];
     const kd = f.querySelector('.ldcm-k'), kb = kd.querySelector('b'), ks = kd.querySelector('span');
     const put = () => { kb.textContent = title; ks.textContent = meta; };
-    if (anim && !RM.matches && kb.textContent) {
-      kd.querySelector('.ldcm-kb').animate([{opacity:1}, {opacity:0, transform:'translateY(-4px)'}], {duration:140, easing:'ease-in', fill:'forwards'}).onfinish = e => { put(); e.target.cancel();
-        kd.querySelector('.ldcm-kb').animate([{opacity:0, transform:'translateY(6px)'}, {opacity:1, transform:'none'}], {duration:320, easing:E}); };
-      kd.animate([{transform:'none'}, {transform:'scale(1.04)'}, {transform:'none'}], {duration:420, delay:(L.length - 1)*200 + 160, easing:E});
-    } else put();
+    const lineEnd = (L.length - 1)*200 + 260;
+    const swap = () => {
+      const kbx = kd.querySelector('.ldcm-kb');
+      kbx.getAnimations().forEach(a => a.cancel());
+      kbx.animate([{opacity:1}, {opacity:0, transform:'translateY(-4px)'}], {duration:140, easing:'ease-in', fill:'forwards'}).onfinish = e => { put(); e.target.cancel();
+        kbx.animate([{opacity:0, transform:'translateY(6px)'}, {opacity:1, transform:'none'}], {duration:300, easing:E}); };
+      kd.animate([{transform:'none'}, {transform:'scale(' + (seq ? 1.06 : 1.04) + ')'}, {transform:'none'}], {duration:seq ? 460 : 420, delay:seq ? 140 : lineEnd - 100, easing:E});
+    };
+    if (anim && !RM.matches && kb.textContent) { if (seq) cmKT[k] = setTimeout(() => { if (cur === 3 && isOpen()) swap(); else put(); }, lineEnd); else swap(); }
+    else put();
   }
   pgs[3].querySelectorAll('.ldcm-o[data-c]').forEach(b => b.addEventListener('click', () => {
     const k = b.closest('.ldcm').dataset.m, c = +b.dataset.c, i = +b.dataset.i;
+    cmAutoStop(k, true);   // 관람객이 직접 고르면 그 모드의 자동 시연만 멈춘다 (덮어쓰지 않음)
     if (cmSel[k][c] === i) return; cmSel[k][c] = i; cmDraw(k, true);
     if (window.steerTrack) steerTrack('logic_combine_select', {page_id:'combine-02', mode:k, step:c + 1, value:b.textContent});
   }));
-  function cmReset(){ cmSel.out = CM.out.def.slice(); cmSel.home = CM.home.def.slice(); pgs[3].querySelectorAll('.ldcm-k b').forEach(b => b.textContent = ''); cmDraw('out', false); cmDraw('home', false); }
+  function cmReset(){ cmAutoStop('out'); cmAutoStop('home'); cmSel.out = CM.out.def.slice(); cmSel.home = CM.home.def.slice(); pgs[3].querySelectorAll('.ldcm-k b').forEach(b => b.textContent = ''); cmDraw('out', false); cmDraw('home', false); }
+  // 자동 조합 시연: 관람객이 조작하기 전까지 미리 정한 유효 조합을 순환한다. 실제 click 대신 cmSel을 바꾸고 cmDraw를 호출하므로 GA4 선택 이벤트로 집계되지 않는다
+  // 이웃한 조합끼리는 시간 · 행동 · 동행이 모두 달라지도록 배열 (3시간 · 머물기 걷기는 비활성이라 제외). 결과 문구는 CM.M 그대로
+  const CM_AUTO = {
+    out:{start:1800, seq:[[1, 2, 0], [0, 0, 1], [1, 3, 2], [0, 1, 3], [1, 4, 0], [0, 3, 1]]},
+    home:{start:5400, seq:[[1, 0], [2, 3], [0, 1], [1, 2], [2, 0], [0, 3]]}};
+  const CM_STEP0 = 400, CM_STEP = 520, CM_GAP = 420, CM_CYCLE = 8000;   // 첫 선택 0.4초 · 선택 간격 0.52초 · 마지막 선택 뒤 0.42초에 연결선 · 조합 하나당 8초
+  const cmA = {out:{tok:0, t:[], n:0, on:false, pend:false}, home:{tok:0, t:[], n:0, on:false, pend:false}};
+  function cmAutoStop(k, sync){
+    const A = cmA[k]; A.tok++; A.t.forEach(clearTimeout); A.t = []; A.on = false;
+    if (sync && A.pend && cur === 3) cmDraw(k, true);   // 선택 도중에 멈추면 화면의 버튼 상태와 경로선을 맞춘다
+    A.pend = false;
+  }
+  function cmPress(k, c, i){
+    const b = pgs[3].querySelector('.ldcm[data-m="' + k + '"] .ldcm-o[data-c="' + c + '"][data-i="' + i + '"]'); if (!b) return;
+    b.parentElement.querySelectorAll('.ldcm-o[data-c]').forEach(x => { const on = x === b; x.classList.toggle('on', on); x.setAttribute('aria-checked', on ? 'true' : 'false'); });
+    b.animate([{transform:'scale(1)'}, {transform:'scale(.92)', offset:.35}, {transform:'scale(1.05)', offset:.7}, {transform:'scale(1)'}], {duration:220, easing:'ease-out'});
+  }
+  function cmAutoRun(k){
+    const A = cmA[k], tok = A.tok, live = () => A.tok === tok && cur === 3 && isOpen();
+    if (!live()) return;
+    const combo = CM_AUTO[k].seq[A.n % CM_AUTO[k].seq.length]; A.n++;
+    const at = (ms, fn) => A.t.push(setTimeout(() => { if (live()) fn(); }, ms));
+    combo.forEach((v, c) => at(CM_STEP0 + c * CM_STEP, () => { A.pend = true; cmSel[k][c] = v; cmPress(k, c, v); }));
+    at(CM_STEP0 + (combo.length - 1) * CM_STEP + CM_GAP, () => { A.pend = false; cmDraw(k, true, true); });
+    at(CM_CYCLE, () => { A.t = []; cmAutoRun(k); });
+  }
+  function cmAutoStart(){
+    ['out', 'home'].forEach(k => { cmAutoStop(k); if (RM.matches) return;
+      const A = cmA[k], tok = A.tok; A.on = true; A.n = 0;
+      A.t.push(setTimeout(() => { if (A.tok === tok && cur === 3 && isOpen()) cmAutoRun(k); }, CM_AUTO[k].start)); });
+  }
   // 03 Explain: 네 단계가 위에서 아래로 차례로 활성화되며 후보 점이 생겼다가 걸러지고, 마지막 카드에서 추천이 확정된다
   // 단계당 1초 · 결과 1.5초 유지 · 0.8초 동안 처음 상태로 = 6.3초 주기. 더보기를 열면 일시 정지, 닫으면 이어서 재생
   const p5 = pgs[4], exCards = [...p5.querySelectorAll('.ldxc')];
@@ -3808,6 +3848,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     if (n !== 4) exStop();
     if (n !== 5) rStop();
     if (n !== 6) wStop();
+    if (n !== 3 && typeof cmAutoStop === 'function') { cmAutoStop('out'); cmAutoStop('home'); }
     nv.classList.toggle('inv', n === 4);   // Explain은 오른쪽이 검정 필드라 내비 글자를 흰색으로
     pgs.forEach((g, i) => { g.classList.toggle('on', i === n); g.toggleAttribute('inert', i !== n); g.setAttribute('aria-hidden', i === n ? 'false' : 'true'); });
     cur = n; chrome(); if (anim) enter(n);
@@ -3831,7 +3872,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     else if (n !== cur) { go(n); return; }
     if (window.steerTrack) steerTrack('logic_detail_view', {page_id:PAGES[n]});
   }
-  function close(){ stop3(); exStop(); rStop(); wStop(); root.classList.remove('open'); root.setAttribute('aria-hidden', 'true'); }
+  function close(){ stop3(); exStop(); rStop(); wStop(); cmAutoStop('out'); cmAutoStop('home'); root.classList.remove('open'); root.setAttribute('aria-hidden', 'true'); }
   const lgx = document.getElementById('lgx');
   // L0에서 진입: 기운을 행동으로 폴더 · '기준'(translate-01) · '번역'(translate-02) 칩
   if (lgx) {
