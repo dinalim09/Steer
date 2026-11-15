@@ -146,7 +146,7 @@ a,button,[role=button],label,select,.pill,#screen:active,body.grabbing,body.grab
 #p6ha .in{transform:translateY(115%);transition:transform 1s cubic-bezier(.2,.7,0,1)}
 #pages6.in #p6ha .in{transform:none}
 #p6hb .in{transform:translateY(115%)}
-.p6d{position:absolute;left:802px;width:524px;margin:0;font:400 18px/1.65 Pret6,var(--font-ui);letter-spacing:-.01em;color:#0A0A0A;word-break:keep-all}
+.p6d{position:absolute;left:802px;width:524px;margin:0;font:400 18px/1.65 Pret6,var(--font-ui);letter-spacing:-.01em;color:#0A0A0A;word-break:normal}
 #p6da{top:122px;opacity:0;transition:opacity .9s ease .35s}
 #pages6.in #p6da{opacity:1}
 #p6db{top:122px;opacity:0}
@@ -232,7 +232,7 @@ a,button,[role=button],label,select,.pill,#screen:active,body.grabbing,body.grab
 #lg{position:absolute;left:0;top:0;width:1366px;height:1024px;z-index:25;background:#fff;opacity:0;visibility:hidden;pointer-events:none;font-family:PretL,Pret6,var(--font-ui)}
 #lg .lg-t{position:absolute;left:40px;top:133px;overflow:hidden;padding-bottom:12px}
 #lg .lg-t svg{display:block}
-#lg .lg-d{position:absolute;left:802px;top:122px;width:524px;margin:0;font:400 18px/1.65 PretL,Pret6,var(--font-ui);letter-spacing:-.01em;color:#0A0A0A;word-break:keep-all}
+#lg .lg-d{position:absolute;left:802px;top:122px;width:524px;margin:0;font:400 18px/1.65 PretL,Pret6,var(--font-ui);letter-spacing:-.01em;color:#0A0A0A;word-break:normal}
 #lg .lg-bar{position:absolute;left:36px;top:262px;width:1285px;height:96px;display:flex}
 #lg .st{box-sizing:border-box;flex:none;width:391px;height:96px;border:2px solid #0A0A0A;border-radius:48px;display:flex;align-items:center;padding:0 28px;background:#fff;color:#0A0A0A;transition:background .45s ease,color .45s ease}
 #lg .st .no{box-sizing:border-box;flex:none;width:32px;height:32px;border-radius:50%;border:1.5px solid #0A0A0A;background:#0A0A0A;color:#fff;display:grid;place-items:center;font:500 14px/1 PretL,Pret6,var(--font-ui);transition:background .45s ease,color .45s ease,border-color .45s ease}
@@ -336,6 +336,18 @@ body.bare .bar>*{pointer-events:auto}
 #lgx .lf .l0kr{width:295.35px;height:38px;font:700 25.159px/37.19px 'Noto Sans KR',var(--font-ui);color:#0A0A0A}
 #lgx .lf .l0ds{width:295.35px;height:25px;font:400 15.314px/24.065px 'Noto Sans KR',var(--font-ui);color:#6E6E73}
 #lgx .lf .l0ob{position:absolute;width:35px;height:35px;border-radius:50%;background:#0A0A0A;pointer-events:none}
+/* L0 최신 Figma 추가 요소 */
+#lgx .l0in{position:absolute;left:703px;top:136px;width:580px;margin:0;font:400 18px/29.7px 'Pretendard',var(--font-ui);letter-spacing:-.01em;color:#0A0A0A;word-break:normal}
+#lgx .l0ps{position:absolute;left:703px;top:213px;height:56px;box-sizing:border-box;display:flex;align-items:center;gap:12px;padding:8px 18px 8px 8px;border-radius:100px;background:#87E6FF}
+#lgx .l0ps img{position:static;width:40px;height:40px;border-radius:50%;object-fit:cover;flex:none}
+#lgx .l0psx{display:flex;flex-direction:column;gap:2px}
+#lgx .l0psn{font:500 11px/13px 'Pretendard',var(--font-ui);color:#7A7A7A}
+#lgx .l0psd{display:flex;align-items:center;gap:2px;font:700 14px/17px 'Pretendard',var(--font-ui);color:#0A0A0A;white-space:nowrap}
+#lgx .l0el{display:block;width:10.2px;height:13.8px;flex:none}
+#lgx .l0cr{position:absolute;display:flex;align-items:center;gap:6px}
+#lgx .l0chip{height:23px;box-sizing:border-box;display:inline-flex;align-items:center;gap:5px;padding:4px 10px 4px 9px;margin:0;border:1px solid rgba(10,10,10,.25);border-radius:100px;background:transparent;cursor:default;-webkit-tap-highlight-color:transparent;white-space:nowrap}
+#lgx .l0chip b{font:700 10px/12px 'Noto Sans KR',var(--font-ui);color:#7A7A7A}
+#lgx .l0chip span{font:500 11px/13px 'Noto Sans KR',var(--font-ui);color:#0A0A0A}
 #lgx .lf .l0ob span{position:absolute;left:0;top:1.09px;width:35px;height:31px;font:500 24.065px/30.63px 'Noto Sans KR',var(--font-ui);color:#fff;text-align:center}
 #lgx .lf.dk .l0ob{background:#fff}
 #lgx .lf.dk .l0ob span{color:#0A0A0A}
@@ -2535,20 +2547,20 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   const FRONT = 'M0 24.0653C0 8.02176 8.02176 0 24.0653 0H271.281C287.325 0 295.347 8.02176 295.347 24.0653V140.016C295.347 156.06 287.325 164.081 271.281 164.081H24.0653C8.02176 164.081 0 156.06 0 140.016V24.0653Z';
   // 좌표는 Figma 프레임 기준. 텍스트 상자(x, y)는 Figma 텍스트 레이어의 위치·크기·행간 그대로
   const F = [
-    {k:'translate', go:'기운을 행동으로', c:'#87E6FF', back:[44.8,376.41], front:[44.8,447.52],
-     lab:'01 TRANSLATE', copy:['What should ', 'I do?'], kr:'기운을 행동으로', ds:'오행과 일상 경험의 연결',
+    {k:'translate', go:'기운을 행동으로', off:[-4.79,58], c:'#87E6FF', back:[44.8,376.41], front:[44.8,447.52],
+     lab:'01 TRANSLATE', copy:['What should ', 'I do?'], kr:'기운을 행동으로', ds:'용신과 일진 · 오행과 다섯 행동',
      t:{lab:[66.67,467.21], copy:[66.67,502.21], open:[283.26,559.09], kr:[44.8,633.48], ds:[44.8,677.23]},
      in:[['earth',196.86,338.13,113.3,85.27],['wood',56.83,353.44,168.89,123.22],['fire',77.84,342.16,160.31,135.68],['metal',75,429.55,82.85,45.25],['water',161.14,395.18,142.98,84.06]]},
-    {k:'combine', go:'오늘의 미션 조합', c:'#C2FF0A', back:[372.96,479.24], front:[372.96,550.34],
-     lab:'02 COMBINE', copy:['MAKE', 'YOUR DAY'], kr:'오늘의 미션 조합', ds:'머물기·나서기와 조건 선택',
+    {k:'combine', go:'오늘의 개운 미션 조합', off:[-4.79,28], c:'#C2FF0A', back:[372.96,479.24], front:[372.96,550.34],
+     lab:'02 COMBINE', copy:['MAKE', 'YOUR DAY'], kr:'오늘의 개운 미션 조합', ds:'조타키와 흔들기 · 머물기와 나서기',
      t:{lab:[394.84,570.03], copy:[394.84,605.04], open:[611.42,661.92], kr:[372.96,736.3], ds:[372.96,780.05]},
      in:[['helm',372.96,375.32,306.93,307.49]]},
-    {k:'explain', go:'미션 추천의 이유', c:'#0A0A0A', dark:1, back:[701.12,372.04], front:[701.12,443.14],
-     lab:'03 EXPLAIN', copy:['WHY', 'THIS ONE?'], kr:'미션 추천의 이유', ds:'추천 기준과 장소의 연결',
+    {k:'explain', go:'미션 추천의 이유', off:[-4.79,58], c:'#0A0A0A', dark:1, back:[701.12,372.04], front:[701.12,443.14],
+     lab:'03 EXPLAIN', copy:['WHY', 'THIS ONE?'], kr:'미션 추천의 이유', ds:'후보에서 장소 한 곳까지',
      t:{lab:[723,462.83], copy:[723,497.84], open:[939.59,554.72], kr:[701.12,629.1], ds:[701.12,672.86]},
      in:[['shotB',817.76,321.32,160.66,183.81],['shotA',721.16,307.9,186.55,210.91]]},
-    {k:'record', go:'기록과 나눔', c:'#87E6FF', back:[1029.28,481.43], front:[1029.28,552.53],
-     lab:'04 RECORD', copy:['KEEP', 'THE MOMENT'], kr:'기록과 나눔', ds:'운세가 쌓이고 이어지는 과정',
+    {k:'record', go:'기록과 나눔', off:[-4.79,28], c:'#87E6FF', back:[1029.28,481.43], front:[1029.28,552.53],
+     lab:'04 RECORD', copy:['KEEP', 'THE MOMENT'], kr:'기록과 나눔', ds:'서비스 구조 · 스티어의 제안',
      t:{lab:[1051.16,572.22], copy:[1051.16,607.22], open:[1267.75,664.11], kr:[1029.28,738.49], ds:[1029.28,782.24]},
      in:[['back2',1021.18,434.28,217.68,246.05],['back1',1014.93,410.31,237.02,245.02],['card',1002.01,404.68,258.18,274.26],['profile',1061.01,424.55,250.94,223.15]]}
   ];
@@ -2584,13 +2596,28 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   // 타이틀 Logic: Megascope 96px · 행간 95% · 자간 4% · (40, 122)
   const title = document.createElement('h1'); title.className = 'l0t'; title.setAttribute('aria-label', 'Logic');
   title.appendChild(mega(['Logic'], 96, 91.2, 78.52, .04, '#0A0A0A')); root.appendChild(title);
+  // 최신 Figma 추가: 서비스 설명(2514:4701) · 페르소나(2514:4702) · 폴더별 상세 안내 칩(2514:4709·4716·4723·4727)
+  const intro = document.createElement('p'); intro.className = 'l0in'; intro.textContent = 'Steer는 타고난 기운을 읽어 오늘 해 볼 행동으로 바꾸고, 하나의 미션으로 조합해 이유와 함께 추천합니다. 네 단계를 한 사람의 하루로 따라가 보세요.'; root.appendChild(intro);
+  const persona = document.createElement('div'); persona.className = 'l0ps'; persona.setAttribute('aria-label', '페르소나 정하영 · 일간 木 · 용신 水');
+  persona.innerHTML = '<img alt="" src="assets/lg0-persona.webp" width="40" height="40"><span class="l0psx" aria-hidden="true"><span class="l0psn">정하영</span><span class="l0psd">일간<svg class="l0el" width="11" height="14" viewBox="0 0 11 14" aria-hidden="true"><path fill="#0A0A0A" stroke="#000" stroke-width=".1" d="M5.26 0.052C5.413 0.052 5.546 0.107 5.655 0.216C5.773 0.324 5.835 0.457 5.835 0.611V1.002C5.835 1.129 5.88 1.241 5.972 1.343C6.072 1.432 6.188 1.476 6.324 1.477H9.58C9.732 1.477 9.864 1.532 9.973 1.64C10.093 1.748 10.154 1.881 10.154 2.036V2.382C10.154 2.537 10.093 2.674 9.975 2.792C9.865 2.901 9.733 2.957 9.58 2.957H6.324C6.189 2.957 6.071 3.005 5.971 3.104C5.879 3.206 5.835 3.32 5.835 3.446V13.347C5.835 13.5 5.773 13.631 5.655 13.739C5.548 13.86 5.415 13.922 5.26 13.922H4.93C4.775 13.922 4.638 13.86 4.52 13.742C4.41 13.633 4.355 13.5 4.354 13.347V3.446C4.354 3.321 4.306 3.208 4.204 3.106C4.102 3.005 3.989 2.957 3.864 2.957H0.609C0.456 2.957 0.323 2.901 0.214 2.792C0.105 2.672 0.05 2.535 0.05 2.382V2.036C0.05 1.883 0.105 1.751 0.214 1.642C0.323 1.532 0.456 1.477 0.609 1.477H3.864C3.99 1.477 4.103 1.432 4.204 1.341C4.306 1.239 4.354 1.127 4.354 1.002V0.611C4.355 0.458 4.41 0.325 4.52 0.216C4.639 0.107 4.776 0.052 4.93 0.052H5.26ZM1.975 3.517C2.138 3.517 2.275 3.577 2.385 3.696L2.457 3.784C2.519 3.877 2.55 3.985 2.55 4.106V11.547C2.55 11.704 2.513 11.876 2.441 12.06C2.368 12.236 2.274 12.374 2.156 12.471L1.801 12.841C1.684 12.957 1.538 13.051 1.363 13.123C1.189 13.195 1.022 13.231 0.864 13.231H0.609C0.455 13.231 0.322 13.17 0.214 13.051C0.105 12.942 0.05 12.81 0.05 12.656V12.312C0.05 12.149 0.104 12.011 0.214 11.901C0.322 11.793 0.45 11.736 0.595 11.736C0.721 11.736 0.828 11.692 0.919 11.602C1.02 11.509 1.069 11.398 1.069 11.262V4.106C1.069 3.953 1.125 3.817 1.232 3.698C1.353 3.578 1.49 3.517 1.645 3.517H1.975ZM8.545 3.517C8.7 3.517 8.837 3.578 8.955 3.696C9.073 3.814 9.135 3.952 9.135 4.106V11.262C9.135 11.399 9.18 11.512 9.27 11.602C9.36 11.692 9.468 11.736 9.595 11.736C9.748 11.736 9.881 11.792 9.99 11.901C10.1 12.011 10.154 12.149 10.154 12.312V12.656C10.154 12.811 10.093 12.945 9.974 13.054C9.865 13.17 9.733 13.231 9.58 13.231H9.34C9.182 13.231 9.01 13.195 8.826 13.123C8.65 13.051 8.505 12.957 8.39 12.842L8.033 12.471L7.949 12.391C7.869 12.303 7.802 12.192 7.748 12.061C7.676 11.876 7.64 11.705 7.64 11.547V4.106C7.64 3.953 7.695 3.817 7.803 3.698C7.924 3.577 8.066 3.517 8.229 3.517H8.545Z"/></svg><span>· 용신</span><svg class="l0el" width="11" height="14" viewBox="0 0 11 14" aria-hidden="true"><path fill="#0A0A0A" stroke="#000" stroke-width=".1" d="M5.425 0.052C5.569 0.052 5.696 0.107 5.804 0.215L5.882 0.301C5.95 0.391 5.984 0.495 5.984 0.611V12.236C5.984 12.385 5.941 12.546 5.86 12.719C5.79 12.901 5.702 13.042 5.596 13.139L5.252 13.527C5.147 13.656 5.004 13.749 4.828 13.812C4.655 13.884 4.488 13.922 4.33 13.922H4.194C4.04 13.922 3.907 13.86 3.799 13.741C3.69 13.632 3.635 13.5 3.635 13.347V13.002C3.635 12.843 3.677 12.706 3.766 12.596C3.865 12.485 3.977 12.427 4.104 12.427C4.209 12.427 4.301 12.384 4.383 12.293C4.463 12.203 4.505 12.09 4.505 11.951V0.611C4.505 0.458 4.56 0.325 4.669 0.216C4.79 0.106 4.932 0.052 5.095 0.052H5.425ZM2.47 1.132C2.623 1.132 2.756 1.187 2.865 1.296C2.975 1.406 3.029 1.545 3.029 1.707V11.951C3.029 12.11 2.988 12.278 2.905 12.453C2.834 12.626 2.746 12.77 2.642 12.885L2.28 13.261C2.151 13.368 2.002 13.455 1.829 13.526C1.665 13.599 1.508 13.637 1.359 13.637H0.609C0.456 13.637 0.323 13.581 0.214 13.472C0.105 13.363 0.05 13.229 0.05 13.076V12.717C0.05 12.564 0.105 12.426 0.213 12.308C0.323 12.197 0.456 12.142 0.609 12.142H1.09C1.227 12.142 1.333 12.096 1.412 12.008C1.504 11.916 1.55 11.804 1.55 11.667V3.102C1.55 2.964 1.504 2.852 1.414 2.762C1.333 2.672 1.227 2.627 1.09 2.627H0.654C0.492 2.627 0.354 2.572 0.244 2.462C0.135 2.353 0.08 2.22 0.08 2.066V1.707C0.08 1.545 0.134 1.406 0.244 1.296C0.354 1.186 0.492 1.132 0.654 1.132H2.47ZM9.564 0.576C9.71 0.576 9.843 0.639 9.96 0.756C10.078 0.864 10.14 0.997 10.14 1.151V1.557C10.14 1.694 10.108 1.854 10.047 2.037C10.001 2.168 9.949 2.282 9.891 2.379L9.83 2.471L9.575 2.828C9.492 2.956 9.38 3.057 9.243 3.131C9.177 3.162 9.118 3.185 9.07 3.201C9.024 3.217 8.982 3.227 8.949 3.227C8.953 3.227 8.945 3.225 8.925 3.249C8.906 3.272 8.885 3.309 8.86 3.362C8.825 3.443 8.805 3.56 8.805 3.717V11.667C8.805 11.804 8.851 11.916 8.94 12.006C9.031 12.097 9.138 12.142 9.265 12.142H9.595C9.739 12.142 9.866 12.198 9.975 12.307C10.093 12.425 10.154 12.562 10.154 12.717V13.076C10.154 13.231 10.093 13.365 9.974 13.474C9.865 13.58 9.738 13.637 9.595 13.637H8.994C8.836 13.637 8.67 13.599 8.495 13.527C8.321 13.456 8.176 13.368 8.061 13.264L7.698 12.886C7.583 12.762 7.486 12.611 7.404 12.438C7.332 12.261 7.295 12.099 7.295 11.951V2.321C7.295 2.159 7.349 2.021 7.459 1.911C7.58 1.801 7.723 1.746 7.885 1.746H8.17C8.307 1.746 8.419 1.701 8.509 1.611C8.611 1.51 8.659 1.397 8.659 1.271V1.151C8.659 0.998 8.715 0.865 8.824 0.756C8.933 0.637 9.071 0.576 9.234 0.576H9.564Z"/></svg></span></span>'; root.appendChild(persona);
+  // 칩: 상세 화면이 아직 없으므로 이동하지 않는다. data-detail(폴더-번호)로 이후 연결, 누르면 steer:logic-detail 이벤트만 보낸다
+  const CHIPS = {translate:[40, 778, ['기준', '번역']], combine:[368, 851, ['고르는 방식', '조합']], explain:[696, 771, ['이유']], record:[1024, 851, ['이후', '발견']]};
+  const chipRows = {};
+  Object.entries(CHIPS).forEach(([k, [x, y, items]]) => { const row = document.createElement('div'); row.className = 'l0cr'; row.dataset.folder = k; row.setAttribute('role', 'list');
+    Object.assign(row.style, {left:x + 'px', top:y + 'px'});
+    items.forEach((t, i) => { const c = document.createElement('button'); c.type = 'button'; c.className = 'l0chip'; c.setAttribute('role', 'listitem'); c.dataset.detail = k + '-0' + (i + 1); c.setAttribute('aria-disabled', 'true');
+      c.innerHTML = '<b>0' + (i + 1) + '</b><span>' + t + '</span>';
+      c.addEventListener('click', e => { e.stopPropagation(); root.dispatchEvent(new CustomEvent('steer:logic-detail', {detail:{folder:k, page:c.dataset.detail, title:t}})); });
+      row.appendChild(c); });
+    root.appendChild(row); chipRows[k] = row; });
 
   const folders = F.map(f => {
     const L = [[f.back[0], f.back[1], 295.35, 224.24], [f.front[0], f.front[1], 295.35, 164.08], [f.t.kr[0], f.t.kr[1], 295.35, 38], [f.t.ds[0], f.t.ds[1], 295.35, 25], ...f.in.map(a => a.slice(1))];
     const x0 = Math.min(...L.map(a => a[0])), y0 = Math.min(...L.map(a => a[1])), x1 = Math.max(...L.map(a => a[0] + a[2])), y1 = Math.max(...L.map(a => a[1] + a[3]));
     const b = document.createElement('button'); b.type = 'button'; b.className = 'lf' + (f.dark ? ' dk' : ''); b.dataset.k = f.k;
     b.setAttribute('aria-label', f.lab + ' · ' + f.copy.join(' ').replace(/\s+/g, ' ').trim() + ' · ' + f.kr + ' · ' + f.ds);
-    Object.assign(b.style, {left:x0 + 'px', top:y0 + 'px', width:(x1 - x0) + 'px', height:(y1 - y0) + 'px'});
+    // 최신 Figma(2368:4060): 폴더 전체를 off만큼 옮긴다(크기·내부 배치·간격은 그대로)
+    Object.assign(b.style, {left:(x0 + f.off[0]) + 'px', top:(y0 + f.off[1]) + 'px', width:(x1 - x0) + 'px', height:(y1 - y0) + 'px'});
     const bd = document.createElement('div'); bd.className = 'bd';
     bd.appendChild(svg(BACK, f.c, f.back[0], f.back[1], 295.35, 224.24, x0, y0, 'bk'));
     const inn = document.createElement('div'); inn.className = 'in'; f.in.forEach(a => inn.appendChild(img(a[0], a[1], a[2], a[3], a[4], x0, y0))); bd.appendChild(inn);
@@ -2610,7 +2637,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   // ---- motion ----
   const E_OUT = 'cubic-bezier(.2,.7,.2,1)', E_IO = 'cubic-bezier(.45,0,.25,1)';
   const kill = el => el.getAnimations().forEach(a => a.cancel());
-  const all = () => [title, ...folders.flatMap(o => [o.b, o.bd, o.inn, o.fr, ...o.parts])];
+  const all = () => [title, intro, persona, ...Object.values(chipRows), ...folders.flatMap(o => [o.b, o.bd, o.inn, o.fr, ...o.parts])];
   let timers = [];
   const later = (fn, t) => timers.push(setTimeout(fn, t));
   function reset(){ timers.forEach(clearTimeout); timers = []; all().forEach(kill); busy = false; }
@@ -2618,9 +2645,12 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   function enter(){
     reset(); if (RM.matches) return;
     title.animate([{opacity:0, transform:'translateY(16px)'}, {opacity:1, transform:'none'}], {duration:300, easing:E_OUT, fill:'backwards'});
+    intro.animate([{opacity:0, transform:'translateY(12px)'}, {opacity:1, transform:'none'}], {duration:500, delay:220, easing:E_OUT, fill:'backwards'});   // 타이틀 직후
+    persona.animate([{opacity:0, transform:'translateY(10px)'}, {opacity:1, transform:'none'}], {duration:450, delay:370, easing:E_OUT, fill:'backwards'});   // 설명 +0.15s
     folders.forEach((o, i) => {
       const t0 = 150 + i*150;
       o.b.animate([{opacity:0, transform:'translateY(30px)'}, {opacity:1, transform:'none'}], {duration:500, delay:t0, easing:E_OUT, fill:'backwards'});
+      const cr = chipRows[o.f.k]; if (cr) cr.animate([{opacity:0, transform:'translateY(8px)'}, {opacity:1, transform:'none'}], {duration:300, delay:t0 + 500, easing:E_OUT, fill:'backwards'});   // 폴더 등장이 끝난 뒤
       o.inn.animate([{transform:'none'}, {transform:'translateY(-12px)', offset:.45}, {transform:'none'}], {duration:700, delay:t0 + 420, easing:E_IO});
       if (o.f.k === 'translate') o.parts.forEach((p, j) => {   // 오행 스티커: 제자리에서 차례로 살짝 들썩
         const r = j % 2 ? 4 : -4;
