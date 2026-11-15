@@ -339,6 +339,15 @@ a,button,[role=button],label,select,.pill,#screen:active,body.grabbing,body.grab
 #cmx .cmnv svg{display:block}
 #cmx .cmhit{position:absolute;top:12px;height:64px;border:0;padding:0;margin:0;background:transparent;border-radius:12px;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 #cmx .cmhit:focus-visible{outline:3px solid #87E6FF;outline-offset:2px}
+/* ===== Team (Figma 3967:3442 · 3967:3331) — 상단 내비 유지, 그 아래는 assets/team/team.js ===== */
+#tmx{position:absolute;inset:0;z-index:74;background:#fff;opacity:0;visibility:hidden;transition:opacity .32s cubic-bezier(.2,.7,.2,1),visibility 0s linear .32s;touch-action:manipulation}
+#tmx.open{opacity:1;visibility:visible;transition:opacity .32s cubic-bezier(.2,.7,.2,1),visibility 0s}
+#tmx:not(.open),#tmx:not(.open) *{pointer-events:none!important}
+#tmx .tmst{position:absolute;inset:0}
+#tmx .tmnv{position:absolute;left:0;top:0;width:1366px;height:88px;color:#0A0A0A;z-index:2;pointer-events:none}
+#tmx .tmnv svg{display:block}
+#tmx .tmhit{position:absolute;top:12px;height:64px;z-index:3;border:0;padding:0;margin:0;background:transparent;border-radius:12px;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+#tmx .tmhit:focus-visible{outline:3px solid #87E6FF;outline-offset:2px}
 #cmx .cmld{position:absolute;left:684px;top:390px;transform:translate(-50%,-50%);color:rgba(255,255,255,.6);font:500 18px Pretendard,'Noto Sans KR',sans-serif}
 </style>
 
@@ -1069,11 +1078,12 @@ body.bare .bar>*{pointer-events:auto}
       <button type="button" id="lgNav" data-nw="logic" aria-label="Service Logic으로 이동"></button>
       <span class="nvx" data-nw="scenario" aria-hidden="true" style="left:1053px;width:95px"></span>
       <button type="button" class="nvx" id="cmNav" data-nw="camera" aria-label="Camera 열기" style="left:1170px;width:86px"></button>
-      <span class="nvx" data-nw="team" aria-hidden="true" style="left:1280px;width:54px"></span>
+      <button type="button" class="nvx" id="tmNav" data-nw="team" aria-label="Team 열기" style="left:1280px;width:54px"></button>
       <button type="button" id="rsHome" aria-label="홈 화면으로"></button>
       <div id="lgx" role="region" aria-label="Logic" aria-hidden="true"></div>
       <div id="lgd" role="region" aria-label="Logic 상세" aria-hidden="true"></div>
       <div id="cmx" role="region" aria-label="Camera · Luck Lens" aria-hidden="true"><div class="cmlz"></div><div class="cmnv"></div></div>
+      <div id="tmx" role="region" aria-label="Team" aria-hidden="true"><div class="tmst"></div><div class="tmnv"></div></div>
       <div id="rsx" role="region" aria-label="Research" aria-hidden="true">
         <div id="rsPages"></div>
         <div id="rsScrim"></div>
@@ -2577,6 +2587,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   // 상단 Logic 탭: Research 위에서도 Logic 메인(L0)으로 (#lgNav는 Research 레이어 아래에 있어 직접 눌리지 않는다)
   const goLogic = () => { const l = document.getElementById('lgNav'); if (l) l.click(); };
   const goCamera = () => { if (window.steerCam) window.steerCam.open('research'); };
+  const goTeam = () => { if (window.steerTeam) window.steerTeam.open(); };
 
   // keep the hero's helm / wheel / tap handlers on #screen from seeing anything that happens in Research
   ['pointerdown','pointermove','pointerup','pointercancel','wheel','touchstart','touchmove','touchend'].forEach(t => {
@@ -2821,7 +2832,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   const CHH = document.createElement('div'); CHH.id = 'rsChromeH';
   CHH.innerHTML = '<div class="xnv">' + steerNav.art('research') + ''
     + '<button type="button" class="rs-hit" data-nw="research" style="left:843px;top:12px;width:95px;height:64px" aria-label="Research 처음으로"></button><button type="button" class="rs-hit rs-lg" data-nw="logic" style="left:956px;top:12px;width:78px;height:64px" aria-label="Logic 열기"></button>'
-    + '<span class="rs-hit" data-nw="scenario" aria-hidden="true" style="left:1053px;top:12px;width:95px;height:64px"></span><button type="button" class="rs-hit rs-cm" data-nw="camera" style="left:1170px;top:12px;width:86px;height:64px" aria-label="Camera 열기"></button><span class="rs-hit" data-nw="team" aria-hidden="true" style="left:1280px;top:12px;width:54px;height:64px"></span></div>'
+    + '<span class="rs-hit" data-nw="scenario" aria-hidden="true" style="left:1053px;top:12px;width:95px;height:64px"></span><button type="button" class="rs-hit rs-cm" data-nw="camera" style="left:1170px;top:12px;width:86px;height:64px" aria-label="Camera 열기"></button><button type="button" class="rs-hit rs-tm" data-nw="team" style="left:1280px;top:12px;width:54px;height:64px" aria-label="Team 열기"></button></div>'
     + '<div class="ci">' + ['00','01','02','03','04','Q'].map((t, i) => '<button type="button" data-k="' + i + '" aria-label="리서치 ' + t + '">' + t + '</button>').join('') + '</div>'
     + '<button type="button" class="arr prv" aria-label="이전 챕터"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.5 3 5.5 9l6 6"/></svg></button>'
     + '<button type="button" class="arr nxt" aria-label="다음 챕터"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 3 12.5 9l-6 6"/></svg><svg class="g2" width="88" height="96" viewBox="0 0 88 96" fill="none" aria-hidden="true"><g filter="url(#f2112_1671)"><rect x="20" y="20" width="56" height="56" rx="28" fill="#0A0A0A"/><path d="M44 39L53 48L44 57" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></g><defs><filter id="f2112_1671" x="0" y="0" width="96" height="96" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset/><feGaussianBlur stdDeviation="10"/><feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0"/><feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/><feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/></filter></defs></svg></button>';
@@ -2834,6 +2845,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   CHH.querySelector('.xnv .rs-hit').addEventListener('click', () => show('land'));
   CHH.querySelector('.xnv .rs-lg').addEventListener('click', goLogic);
   CHH.querySelector('.xnv .rs-cm').addEventListener('click', goCamera);
+  CHH.querySelector('.xnv .rs-tm').addEventListener('click', goTeam);
   const CHX = CHV.getContext('2d'); let chT = 0;
   const NAVI = new Image(); NAVI.decoding = 'async';
   NAVI.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(steerNav.art('research').replace('<svg ', '<svg style="color:#0A0A0A" ').replace('viewBox="0 0 1366 88"', 'viewBox="830 0 536 88"').replace('width="1366"', 'width="536"').replace('fill="none" xmlns', 'fill="none" xmlns').replace(/(<svg[^>]*>)/, '$1<rect x="830" y="0" width="536" height="88" fill="#fff"/>'));
@@ -3079,6 +3091,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     if (!HTM[id]) pg.appendChild(btn({x:843,y:12,w:95,h:64,label:'Research 처음으로'}, () => show('land'))).dataset.nw = 'research';
     if (!HTM[id]) pg.appendChild(btn({x:956,y:12,w:78,h:64,label:'Logic 열기'}, goLogic)).dataset.nw = 'logic';
     if (!HTM[id]) pg.appendChild(btn({x:1170,y:12,w:86,h:64,label:'Camera 열기'}, goCamera)).dataset.nw = 'camera';
+    if (!HTM[id]) pg.appendChild(btn({x:1280,y:12,w:54,h:64,label:'Team 열기'}, goTeam)).dataset.nw = 'team';
     const deck = deckOf(id), def = P[id] || {};
     if (deck && !HTM[id]) { ARROWS.forEach(h => pg.appendChild(btn(h, () => step(h.act)))); index(deck).forEach(h => pg.appendChild(btn(h, () => show(h.go)))); }
     if (def.tog) pg.appendChild(btn({...def.tog[0], label:'더보기 펼치기'}, () => TG[id] ? tgOpen(pg, id, def.tog[0]) : openSheet([def.tog[1]])));
@@ -3399,7 +3412,8 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   hit(843, 12, 95, 64, 'Research 열기', () => { close(); const n = document.getElementById('rsNav'); if (n) n.click(); }).dataset.nw = 'research';
   hit(956, 12, 78, 64, 'Logic 메인 처음부터', () => { t0 = 0; open(); }).dataset.nw = 'logic';
   hit(1170, 12, 86, 64, 'Camera 열기', () => { if (window.steerCam) window.steerCam.open('L0'); }).dataset.nw = 'camera';
-  [['scenario', 1053, 95], ['team', 1280, 54]].forEach(([k, x, w]) => { const e = document.createElement('span'); e.className = 'l0hit'; e.dataset.nw = k; e.setAttribute('aria-hidden', 'true'); Object.assign(e.style, {left:x + 'px', top:'12px', width:w + 'px', height:'64px'}); root.appendChild(e); });
+  hit(1280, 12, 54, 64, 'Team 열기', () => { if (window.steerTeam) window.steerTeam.open(); }).dataset.nw = 'team';
+  [['scenario', 1053, 95]].forEach(([k, x, w]) => { const e = document.createElement('span'); e.className = 'l0hit'; e.dataset.nw = k; e.setAttribute('aria-hidden', 'true'); Object.assign(e.style, {left:x + 'px', top:'12px', width:w + 'px', height:'64px'}); root.appendChild(e); });
   const home = document.getElementById('rsHome'); if (home) home.addEventListener('click', () => { if (isOpen()) close(); });
   ['pointerdown','pointermove','pointerup','pointercancel','wheel','touchstart','touchmove','touchend'].forEach(t => root.addEventListener(t, e => e.stopPropagation(), {passive:true}));
   document.addEventListener('keydown', e => { if (isOpen() && e.key === 'Escape') close(); });
@@ -4137,7 +4151,8 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   hit(843, 12, 95, 64, 'Research 열기', () => { close(); if (window.steerL0) window.steerL0.close(); const n = document.getElementById('rsNav'); if (n) n.click(); }).dataset.nw = 'research';
   hit(956, 12, 78, 64, 'Logic 메인으로', () => toL0(true)).dataset.nw = 'logic';
   hit(1170, 12, 86, 64, 'Camera 열기', () => { if (window.steerCam) window.steerCam.open(PAGES[cur]); }).dataset.nw = 'camera';
-  [['scenario', 1053, 95], ['team', 1280, 54]].forEach(([k, x, w]) => { const e = document.createElement('span'); e.className = 'ldhit'; e.dataset.nw = k; e.setAttribute('aria-hidden', 'true'); Object.assign(e.style, {left:x + 'px', top:'12px', width:w + 'px', height:'64px'}); root.appendChild(e); });
+  hit(1280, 12, 54, 64, 'Team 열기', () => { if (window.steerTeam) window.steerTeam.open(); }).dataset.nw = 'team';
+  [['scenario', 1053, 95]].forEach(([k, x, w]) => { const e = document.createElement('span'); e.className = 'ldhit'; e.dataset.nw = k; e.setAttribute('aria-hidden', 'true'); Object.assign(e.style, {left:x + 'px', top:'12px', width:w + 'px', height:'64px'}); root.appendChild(e); });
   const home = document.getElementById('rsHome'); if (home) home.addEventListener('click', () => { if (isOpen()) close(); });
   ['pointerdown','pointermove','pointerup','pointercancel','wheel','touchstart','touchmove','touchend'].forEach(t => root.addEventListener(t, e => e.stopPropagation(), {passive:true}));
   document.addEventListener('keydown', e => { if (isOpen() && e.key === 'Escape') { e.stopImmediatePropagation(); toL0(false); } }, true);
@@ -4146,6 +4161,68 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   const hs = (location.hash || '').slice(1).toUpperCase();
   const HS = {'LOGIC-T1':'translate-01', 'LOGIC-T2':'translate-02', 'LOGIC-C1':'combine-01', 'LOGIC-C2':'combine-02', 'LOGIC-E1':'explain-01', 'LOGIC-R1':'record-01', 'LOGIC-R2':'record-02'};
   if (HS[hs]) { if (window.steerL0) window.steerL0.open(); open(HS[hs]); }
+})();
+</script>
+<script>
+// ===== Team: 상단 Team 탭 → 시계 메인, 사진·숫자 → 팀원 개인 페이지(#TEAM, #TEAM-1~3). 렌더링·모션은 assets/team/team.js =====
+(() => {
+  const root = document.getElementById('tmx'); if (!root) return;
+  const stage = root.querySelector('.tmst'), nv = root.querySelector('.tmnv');
+  nv.innerHTML = steerNav.art('team');
+  let team = null, loading = null, lock = 0, want = null, entered = false;   // entered: 이 세션에서 메인 사진을 눌러 개인 페이지로 들어왔는지
+  const isOpen = () => root.classList.contains('open');
+  const track = (n, p) => { if (window.steerTrack) steerTrack(n, p || {}); };
+  const hashOf = v => v ? '#TEAM-' + v : '#TEAM';
+  const parse = h => { const m = /^#TEAM(?:-(\d))?$/i.exec(h || ''); return m ? {member:m[1] ? +m[1] : 0} : null; };
+  function load(){
+    if (loading) return loading;
+    loading = import('./assets/team/team.js').then(m => {
+      team = m.createTeam(stage, {onMember:id => { entered = true; go(id, true); }, onBack:back});
+      return team;
+    }).catch(() => { loading = null; stage.innerHTML = '<p style="position:absolute;left:40px;top:160px;font:500 18px Pretendard,sans-serif">Team 화면을 불러오지 못했습니다. 새로고침 후 다시 시도해 주세요.</p>'; });
+    return loading;
+  }
+  function closeOthers(){
+    if (window.steerResearch && window.steerResearch.isOpen()) window.steerResearch.reset();
+    if (window.steerLD && window.steerLD.isOpen()) window.steerLD.close();
+    if (window.steerL0) { const l = document.getElementById('lgx'); if (l && l.classList.contains('open')) window.steerL0.close(); }
+    if (window.steerCam && window.steerCam.isOpen()) window.steerCam.close();
+  }
+  // view: 0 = 메인, 1~3 = 개인 페이지. push: 기록을 남길지(브라우저 뒤로 가기용)
+  function go(view, push){
+    const now = performance.now(); if (now - lock < 450) return; lock = now;   // 빠른 연속 터치로 화면이 두 번 바뀌지 않게
+    closeOthers();
+    if (push && location.hash.toUpperCase() !== hashOf(view)) history.pushState({steerTeam:view}, '', hashOf(view));
+    root.classList.add('open'); root.removeAttribute('aria-hidden'); want = view;
+    load().then(t => { if (!t || want !== view || !isOpen()) return;
+      if (view) { if (!t.showMember(view)) { t.showMain(); view = 0; } } else t.showMain();
+      track('team_view', {view:view ? 'member_' + view : 'main'}); });
+  }
+  function open(view){ lock = 0; go(view || 0, true); }
+  // 개인 페이지 → 메인: 우리가 쌓은 기록이면 브라우저 뒤로 가기와 같게, 아니면(직접 URL 진입) 주소만 바꾼다
+  function back(){ if (entered && history.state && history.state.steerTeam > 0) { entered = false; history.back(); return; }
+    history.replaceState({steerTeam:0}, '', '#TEAM'); lock = 0; go(0, false); }
+  function close(){ want = null; if (team) team.hide(); root.classList.remove('open'); root.setAttribute('aria-hidden', 'true');
+    if (parse(location.hash)) history.replaceState(null, '', location.pathname + location.search); }
+  window.addEventListener('popstate', () => { const r = parse(location.hash);
+    if (r) { lock = 0; go(r.member, false); } else if (isOpen()) { want = null; if (team) team.hide(); root.classList.remove('open'); root.setAttribute('aria-hidden', 'true'); } });
+  // Team 화면의 상단 내비: Research · Logic · Camera · Team(메인으로), Scenario는 기존처럼 누름 피드백만
+  const H = steerNav.HITS;
+  const hit = (k, label, fn) => { const b = document.createElement(fn ? 'button' : 'span'); b.className = 'tmhit'; b.dataset.nw = k;
+    if (fn) { b.type = 'button'; b.setAttribute('aria-label', label); b.addEventListener('click', fn); } else b.setAttribute('aria-hidden', 'true');
+    Object.assign(b.style, {left:H[k][0] + 'px', width:H[k][1] + 'px'}); root.appendChild(b); };
+  hit('research', 'Research 열기', () => { close(); const n = document.getElementById('rsNav'); if (n) n.click(); });
+  hit('logic', 'Logic 열기', () => { close(); const n = document.getElementById('lgNav'); if (n) n.click(); });
+  hit('scenario');
+  hit('camera', 'Camera 열기', () => { close(); if (window.steerCam) window.steerCam.open('team'); });
+  hit('team', 'Team 메인', () => { if (team && team.view() === 'main') return; open(0); });
+  ['pointerdown','pointermove','pointerup','pointercancel','wheel','touchstart','touchmove','touchend'].forEach(t => root.addEventListener(t, e => e.stopPropagation(), {passive:true}));
+  const home = document.getElementById('rsHome'); if (home) home.addEventListener('click', () => { if (isOpen()) close(); });
+  const tn = document.getElementById('tmNav');
+  if (tn) { ['pointerdown','pointermove','pointerup','pointercancel','wheel','touchstart','touchmove','touchend'].forEach(t => tn.addEventListener(t, e => e.stopPropagation(), {passive:true}));
+    tn.addEventListener('click', () => open(0)); tn.addEventListener('pointerup', e => { if (e.pointerType !== 'mouse') open(0); }); }
+  window.steerTeam = {open, close, isOpen, view:() => team ? team.view() : null};
+  const r0 = parse(location.hash); if (r0) { history.replaceState({steerTeam:r0.member}, '', hashOf(r0.member)); lock = 0; go(r0.member, false); }   // 주소로 바로 진입
 })();
 </script>
 <script>
@@ -4168,6 +4245,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     return loading;
   }
   function open(from){
+    if (window.steerTeam && window.steerTeam.isOpen()) window.steerTeam.close();
     if (window.steerResearch && window.steerResearch.isOpen()) window.steerResearch.reset();
     if (window.steerLD && window.steerLD.isOpen()) window.steerLD.close();
     if (window.steerL0) { const l = document.getElementById('lgx'); if (l && l.classList.contains('open')) window.steerL0.close(); }
@@ -4183,7 +4261,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     Object.assign(b.style, {left:H[k][0] + 'px', width:H[k][1] + 'px'}); root.appendChild(b); };
   hit('research', 'Research 열기', () => { close(); const n = document.getElementById('rsNav'); if (n) n.click(); });
   hit('logic', 'Logic 열기', () => { close(); const n = document.getElementById('lgNav'); if (n) n.click(); });
-  hit('scenario'); hit('camera', 'Camera', () => {}); hit('team');
+  hit('scenario'); hit('camera', 'Camera', () => {}); hit('team', 'Team 열기', () => { close(); if (window.steerTeam) window.steerTeam.open(); });
   ['pointerdown','pointermove','pointerup','pointercancel','wheel','touchstart','touchmove','touchend'].forEach(t => root.addEventListener(t, e => e.stopPropagation(), {passive:true}));
   const home = document.getElementById('rsHome'); if (home) home.addEventListener('click', () => { if (isOpen()) close(); });
   const cm = document.getElementById('cmNav');
@@ -4201,13 +4279,14 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   const host = document.getElementById('rsx') && document.getElementById('rsx').parentElement; if (!host) return;
   const veil = document.createElement('div'); veil.id = 'idleVeil'; veil.setAttribute('aria-hidden', 'true'); host.appendChild(veil);
   let t = 0, fading = false, fadeT = 0;
-  const away = () => (window.steerCam && window.steerCam.isOpen()) || (window.steerResearch && window.steerResearch.isOpen()) || (window.steerLD && window.steerLD.isOpen()) || (window.steerL0 && document.getElementById('lgx').classList.contains('open')) || !(window.steerHome && window.steerHome.atTop());
+  const away = () => (window.steerTeam && window.steerTeam.isOpen()) || (window.steerCam && window.steerCam.isOpen()) || (window.steerResearch && window.steerResearch.isOpen()) || (window.steerLD && window.steerLD.isOpen()) || (window.steerL0 && document.getElementById('lgx').classList.contains('open')) || !(window.steerHome && window.steerHome.atTop());
   function arm(){ clearTimeout(t); t = setTimeout(fire, IDLE_MS); }
   function fire(){ t = 0; if (!away()) return;   // 이미 홈 첫 화면이면 아무것도 하지 않고, 다음 조작 전까지 다시 걸지 않는다
     fading = true; veil.classList.add('on'); fadeT = setTimeout(reset, FADE_MS); }
   function reset(){
     fading = false;
-    const from = window.steerCam && window.steerCam.isOpen() ? 'camera' : window.steerResearch && window.steerResearch.isOpen() ? (window.steerResearch.page() || 'research') : (window.steerLD && window.steerLD.isOpen() ? window.steerLD.page() : (document.getElementById('lgx').classList.contains('open') ? 'L0' : 'home'));
+    const from = window.steerTeam && window.steerTeam.isOpen() ? 'team' : window.steerCam && window.steerCam.isOpen() ? 'camera' : window.steerResearch && window.steerResearch.isOpen() ? (window.steerResearch.page() || 'research') : (window.steerLD && window.steerLD.isOpen() ? window.steerLD.page() : (document.getElementById('lgx').classList.contains('open') ? 'L0' : 'home'));
+    if (window.steerTeam) window.steerTeam.close();
     if (window.steerCam) window.steerCam.close();
     if (window.steerResearch) window.steerResearch.reset();
     if (window.steerLD) window.steerLD.close();
@@ -4231,7 +4310,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   const check = () => { const b = nav.querySelector('button.on'); const s = b ? b.dataset.label : 'HERO';
     if (s !== last){ last = s; if (window.steerTrack) steerTrack('section_view', {section:s}); } };
   new MutationObserver(check).observe(nav, {subtree:true, attributes:true, attributeFilter:['class']});
-  [['rsNav','research'],['lgNav','logic'],['cmNav','camera'],['rsHome','home']].forEach(([id, n]) => { const el = document.getElementById(id);
+  [['rsNav','research'],['lgNav','logic'],['cmNav','camera'],['tmNav','team'],['rsHome','home']].forEach(([id, n]) => { const el = document.getElementById(id);
     if (el) el.addEventListener('click', () => window.steerTrack && steerTrack('nav_click', {target:n})); });
   document.querySelectorAll('#lg .st').forEach((s, i) => s.addEventListener('click', () => window.steerTrack && steerTrack('logic_step_tap', {step:i + 1})));
 })();
