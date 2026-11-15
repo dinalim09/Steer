@@ -434,7 +434,8 @@ body.bare .bar>*{pointer-events:auto}
 #lgd .ldtg-in p.w{white-space:normal;word-break:break-all}
 #lgd .ldtg-src p.w{margin-top:7px}
 #lgd .ldfld{position:absolute;left:548px;top:-18px;width:818px;height:1042px;overflow:hidden;transition:background-color .45s cubic-bezier(.2,.7,.2,1);color:#0A0A0A}
-#lgd .ldwm{position:absolute;left:587.68px;top:79.52px;width:213.44px;height:293.76px;fill:rgba(255,255,255,.45);display:block}
+#lgd .ldwm{position:absolute;left:587.68px;top:79.52px;width:213.44px;height:293.76px;fill:rgba(255,255,255,.45);display:block;z-index:0;pointer-events:none}
+#lgd .ldfld .ldhd,#lgd .ldfld .ldrow{z-index:1}
 #lgd .ldhd{position:absolute;top:178px;font:500 12px/14px 'Pretendard',var(--font-ui);color:rgba(10,10,10,.6);white-space:nowrap}
 #lgd .ldrow{position:absolute;left:60px;width:710px;height:148px;border-top:1px solid rgba(10,10,10,.2);box-sizing:border-box}
 #lgd .ldrow>*{position:absolute;margin:0;white-space:nowrap}
@@ -545,7 +546,7 @@ body.bare .bar>*{pointer-events:auto}
 #lgd .ldrdl div:first-child{margin-top:0}
 #lgd .ldrdl dt{width:100px;font:600 16px/19px 'Pretendard',var(--font-ui);color:rgba(10,10,10,.4);padding-top:0}
 #lgd .ldrdl dd{margin:0;font:400 16px/23px 'Noto Sans KR',var(--font-ui);color:#0A0A0A;white-space:nowrap}
-#lgd .ldrc{position:absolute;inset:0;pointer-events:none}
+#lgd .ldrc[role="list"]{position:absolute;inset:0;pointer-events:none}   /* Record 1/2 순환 도식 컨테이너 — Translate 2/2 표의 .ldrc(행동 예시)와 클래스명이 같아 범위를 한정 */
 #lgd .ldrring{position:absolute;left:549px;top:-30px;overflow:visible}
 #lgd .ldrring .rg{fill:none;stroke:rgba(10,10,10,.35);stroke-width:2;stroke-dasharray:6 8}
 #lgd .ldrring .lt{fill:none;stroke:#0A0A0A;stroke-width:3.5;stroke-linecap:round;stroke-dasharray:64 2000;opacity:0;transform:rotate(0deg)}
