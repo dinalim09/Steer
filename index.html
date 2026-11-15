@@ -986,8 +986,8 @@ body.bare .bar>*{pointer-events:auto}
 #home9 .h9wave{position:absolute;left:181.5px;top:667px;width:1003px;height:750px;will-change:transform;transform-origin:501.5px 45px;transform:scale(2)}
 #home9 .h9wave svg{display:block;width:100%;height:100%}
 #h9type{position:absolute;left:271.6px;top:201.8px;width:824px;height:621px;overflow:visible;transform-origin:411.4px 310.7px;will-change:transform}
-/* 조타륜 캔버스: 축(683, 512.5) 중심 600×600만 그린다 */
-#h9wheel{position:absolute;left:383px;top:212.5px;width:600px;height:600px;will-change:transform}
+/* 조타륜 캔버스: 돌리는 동안 축(683, 512.5) 중심 600×600 · 출항 중엔 스크립트가 화면 전체로 넓힌다 */
+#h9wheel{position:absolute;left:383px;top:212.5px;width:600px;height:600px}
 #home9 .h9pill{position:absolute;left:515px;top:886px;width:336px;height:45px;border-radius:300px;background:rgba(0,0,0,.25);overflow:hidden;
   color:#fff;font:500 24px/45px "Pretendard","Apple SD Gothic Neo",system-ui,sans-serif;letter-spacing:.72px;text-align:center;white-space:nowrap}
 #home9 .h9pill i{position:absolute;left:0;top:0;bottom:0;width:100%;background:rgba(255,255,255,.22);transform:scaleX(0);transform-origin:0 50%}
@@ -1572,7 +1572,7 @@ void main(){
   //
   // 성능 원칙 (iPad Safari)
   // · pointermove는 목표 각도만 갱신한다. 계산은 프레임마다 미리 구해 둔 바퀴 면으로 끝내고, DOM은 건드리지 않는다.
-  // · WebGL 캔버스는 화면 전체가 아니라 바퀴 주변 600×600만 그린다. 출항 때 커지는 건 캔버스를 CSS로 키운다.
+  // · WebGL 캔버스는 돌리는 동안 바퀴 주변 600×600만 그린다. 출항(자동 모션) 동안에만 화면 전체로 넓혀 실제 3D로 다가오게 해 선명도를 지킨다.
   // · 돌리는 동안 글씨는 CSS 3D transform만 쓴다. SVG 왜곡(feTurbulence·feDisplacementMap)은 출항 순간에만 켠다.
   // · 스타일은 값이 바뀔 때만 쓴다.
   const H9 = (() => {
@@ -1601,7 +1601,11 @@ void main(){
     const TP = 222*DIST/HALF;                                          // 600 상자 기준 투영 계수
     const PRJ = (() => { const n = .1, f = 100; return [TP,0,0,0, 0,TP,0,0, 0,0,(f+n)/(n-f),-1, 0,0,2*f*n/(n-f),0]; })();
     const VIEW = {pitch:12, yaw:-18};
-    const view = (p, y) => M4([1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,-DIST,1], M4(RXm(R(p)), RYm(R(y))));
+    // 출항 중(화면 전체 캔버스): 이전과 같은 화각 30° 투영 + 카메라 쪽으로 다가오는 실제 3D 줌 → CSS 확대 없이 선명하다
+    const T0 = 1/Math.tan(R(15)), HUB_Y = -(HUB.y - 512)/512*DIST/T0;
+    const PRJF = (() => { const a = 1366/1024, n = .1, f = 100; return [T0/a,0,0,0, 0,T0,0,0, 0,0,(f+n)/(n-f),-1, 0,0,2*f*n/(n-f),0]; })();
+    let full = false, fitS = 1, fitD = 1;
+    const view = (p, y, z = 1) => M4([1,0,0,0, 0,1,0,0, 0,0,1,0, 0, full ? HUB_Y : 0, -DIST/z, 1], M4(RXm(R(p)), RYm(R(y))));
     let V = view(VIEW.pitch, VIEW.yaw);                                // 프레임마다 갱신 — pointermove는 이것만 읽는다
 
     const gl = cv.getContext('webgl', {alpha:true, premultipliedAlpha:true, antialias:true, depth:true, powerPreference:'high-performance'});
@@ -1643,11 +1647,18 @@ void main(){
     const Mw = new Float32Array(16), MVP = new Float32Array(16);
     function draw(th){
       if (!mesh) return;
-      M4(V, RZm(-R(th)), Mw); M4(PRJ, Mw, MVP);
+      M4(V, RZm(-R(th)), Mw); M4(full ? PRJF : PRJ, Mw, MVP);
       gl.viewport(0, 0, cv.width, cv.height); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       gl.uniformMatrix4fv(mesh.uMVP, false, MVP); gl.uniformMatrix4fv(mesh.uM, false, Mw);
       gl.drawElements(gl.TRIANGLES, mesh.n, gl.UNSIGNED_SHORT, 0);
     }
+    function size(){                                                   // 캔버스 크기: 평소 600×600 · 출항 중 화면 전체
+      const w = full ? 1366 : BOX, h = full ? 1024 : BOX, pw = Math.round(w*fitS*fitD), ph = Math.round(h*fitS*fitD);
+      if (cv.width !== pw || cv.height !== ph){ cv.width = pw; cv.height = ph; dTh = NaN; }
+      cv.style.left = (full ? 0 : HUB.x - HALF) + 'px'; cv.style.top = (full ? 0 : HUB.y - HALF) + 'px';
+      cv.style.width = w + 'px'; cv.style.height = h + 'px';
+    }
+    const setFull = f => { if (full !== f){ full = f; size(); } };
     // 화면 좌표 → 기울어진 바퀴 면 위의 각도 (손가락이 손잡이를 잡고 돌리는 느낌). 프레임마다 구한 V만 읽으므로 가볍다.
     function angle(sx, sy){
       const n0 = V[8], n1 = V[9], n2 = V[10], o2 = V[14];
@@ -1672,6 +1683,7 @@ void main(){
       const m = document.createElement('div');
       m.style.cssText = 'position:absolute;left:12px;bottom:12px;z-index:99;padding:8px 10px;border-radius:10px;background:rgba(0,0,0,.72);color:#fff;font:600 13px/1.45 ui-monospace,Menlo,monospace;white-space:pre;pointer-events:none';
       screen.appendChild(m);
+      window.__h9 = () => ({th, tgt, u, full, cw: cv.width, ch: cv.height});   // 측정 모드 전용: 바퀴 각도·목표 각도 확인
       let t0 = performance.now(), n = 0, worst = 0, long = 0, prevF = 0, mv = 0;
       return {move(){ mv++; }, frame(now){
         if (prevF){ const d = now - prevF; worst = Math.max(worst, d); if (d > 25) long++; } prevF = now; n++;
@@ -1683,6 +1695,7 @@ void main(){
       th = tgt = 14; om = hd = 0; p9 = VIEW.pitch; y9 = VIEW.yaw; drag = false; travel = net = 0; u = 0; dir = 0; sailed = false; launched = false; dTh = NaN;
       Object.assign(sea, {roll:0, vr:0, x:0, vx:0, y:0, vy:0, stir:0, om:0});
       if (warpOn){ typePath.removeAttribute('filter'); warpOn = false; }
+      setFull(false);
     }
     function setOn(v){
       on = v; screen.classList.toggle('h9', on); el.hidden = !on; reset();
@@ -1690,7 +1703,7 @@ void main(){
     }
     function sailOut(){
       spinDir = (Math.abs(hd) > 5 ? Math.sign(hd) : Math.sign(net)) || 1;   // 마지막으로 돌리던 방향 그대로 출항
-      spin0 = th; dir = 1; drag = false; launched = false;
+      spin0 = th; dir = 1; drag = false; launched = false; setFull(true);
       if (window.steerTrack) steerTrack('home_sail', {direction: spinDir > 0 ? 'cw' : 'ccw'});
     }
     const free = () => on && version === 6 && !dir && !sailed && !sailing && !arrived && scrollS < 2;
@@ -1698,7 +1711,7 @@ void main(){
     return {
       get on(){ return on; }, setOn, reset,
       atRest: () => !on || (travel === 0 && !dir && !sailed),
-      fit(s, dpr){ const px = Math.round(BOX*s*dpr); if (cv.width !== px){ cv.width = cv.height = px; dTh = NaN; } },
+      fit(s, dpr){ fitS = s; fitD = dpr; size(); },
       down(e){
         if (!free()) return false;
         rect = screen.getBoundingClientRect(); const p = at(e);
@@ -1724,7 +1737,7 @@ void main(){
           tgt = spin0 + spinDir*SPIN*eio(u);                              // 출항: 같은 방향으로 휘몰아 돈다 · 귀항: 되감기
           if (dir > 0 && !launched && u >= SCROLL_AT){ launched = true; sail = 1; sailing = true; trans0 = now; }   // ver 6 스크롤로 두 번째 페이지 진입
           if (dir > 0 && u >= 1){ dir = 0; sailed = true; }
-          if (dir < 0 && u <= 0){ dir = 0; sailed = false; launched = false; travel = net = 0; tgt = th; }
+          if (dir < 0 && u <= 0){ dir = 0; sailed = false; launched = false; travel = net = 0; tgt = th; setFull(false); }
         }
         const shown = scrollS < 1020;
         css(el, 'visibility', shown ? '' : 'hidden');
@@ -1740,13 +1753,11 @@ void main(){
         const sway = reduce ? 0 : Math.sin(t*.9);
         const yT = VIEW.yaw + steer*24 + turn*6 + sway*(2.2 + sea.stir*4), pT = VIEW.pitch + Math.abs(steer)*7 + Math.sin(t*.7 + 1)*(reduce ? 0 : 1.6 + sea.stir*3);
         y9 += (yT - y9)*(1 - Math.exp(-5*dt)); p9 += (pT - p9)*(1 - Math.exp(-5*dt));
-        V = view(p9, y9);
-        // 출항 때 바퀴가 다가오는 줌은 캔버스를 CSS로 키운다 (다시 그리지 않음)
-        const zoom = 1 + 1.9*ein(seg(u, .1, .85));
-        css(cv, 'transform', zoom > 1.0005 ? `scale(${zoom.toFixed(4)})` : '');
+        const zoom = 1 + 1.9*ein(seg(u, .1, .85));                      // 출항: 바퀴가 카메라 쪽으로 다가온다(실제 3D)
+        V = view(p9, y9, full ? zoom : 1);
         if (shown && u < .999){
           // 거의 안 변했으면 다시 그리지 않는다
-          if (!(Math.abs(th - dTh) < .02 && Math.abs(p9 - dP) < .01 && Math.abs(y9 - dY) < .01)){ draw(th); dTh = th; dP = p9; dY = y9; drawn = true; }
+          if (full || !(Math.abs(th - dTh) < .02 && Math.abs(p9 - dP) < .01 && Math.abs(y9 - dY) < .01)){ draw(th); dTh = th; dP = p9; dY = y9; drawn = true; }
         } else if (drawn && gl){ gl.clear(gl.COLOR_BUFFER_BIT); drawn = false; dTh = NaN; }
         if (!shown) return;
         // 바다: 스프링(감쇠 진동)으로 크게 기울고 쓸리고 솟는다 — 놓으면 반대로 한두 번 출렁이다 멈춘다
@@ -2440,7 +2451,9 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   const vs=[...document.querySelectorAll('video')];
   vs.forEach(v=>{v.muted=true;v.defaultMuted=true;v.setAttribute('muted','');v.controls=false;v.removeAttribute('controls');});
   // iPad 저전력 모드 등 자동재생 차단 시: 첫 터치/클릭에서 재생 재시도
-  const kick=()=>{const h9=document.getElementById('home9');if(h9&&!h9.hidden&&h9.style.visibility!=='hidden')return;   // 새 홈이 보이는 동안엔 가려진 영상을 깨우지 않는다
+  const kick=()=>{const h9=document.getElementById('home9');
+    // 새 홈이 보이는 동안엔 가려진 영상을 계속 재생하지 않는다 — 저전력 모드 자동재생 허용만 받도록 한 번 재생했다 바로 멈춘다
+    if(h9&&!h9.hidden&&h9.style.visibility!=='hidden'){vs.forEach(v=>{if(v.paused&&!v.dataset.primed){v.dataset.primed='1';v.play().then(()=>v.pause()).catch(()=>{});}});return;}
     vs.forEach(v=>{const sea=v.id==='seaVid';const want=sea||(v.style.opacity!=='0'&&v.closest('#screen.v6'));if(want&&v.paused)v.play().catch(()=>{});});};
   ['pointerdown','touchstart','keydown','wheel'].forEach(e=>window.addEventListener(e,kick,{passive:true,capture:true}));
 })();
