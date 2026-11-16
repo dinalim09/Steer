@@ -7,11 +7,11 @@ import {PIVOT, PERIOD, HANDS, MEMBERS, SPECIAL_THANKS, CREDIT_PLACEHOLDER_LINES}
 const BASE = new URL('./', import.meta.url).href;
 const NS = 'http://www.w3.org/2000/svg';
 const RM = matchMedia('(prefers-reduced-motion: reduce)');
-const CREDIT_SPEED = 65;      // 크레딧·프로필 사진이 함께 올라가는 속도(px/s, 일정한 선형)
-const CREDIT_DELAY = 1.4;     // 사진·제목이 나온 뒤 크레딧이 움직이기 시작할 때까지(초)
+const CREDIT_SPEED = 65;      // 크레딧과 오른쪽 인물 컷아웃이 함께 올라가는 속도(px/s, 일정한 선형)
+const CREDIT_DELAY = 0;       // 개인 페이지가 보이는 첫 프레임부터 크레딧·컷아웃이 움직인다(초)
 const CREDIT_GAP = 160;       // 반복할 때 마지막 줄(Special Thanks 이름)과 다음 회차 첫 줄 사이 간격(px)
-const PHOTO_PITCH = 170;      // 괄호 창 안에서 이어지는 프로필 사진 사이 간격의 목표값(px) — 크레딧 반복 주기에 맞춰 조정된다
-const SLOT = {x:160, y:563, w:400, h:144};   // 'Who Made ( ) This'의 괄호 안쪽 창(사진이 지나가는 영역). 괄호 글자 높이와 같다
+const CREDIT_LEAD = 120;      // 크레딧 시작 위치를 마스크 맨 아래보다 이만큼 위로(px) → 첫 줄이 화면 아래쪽에서 바로 떠올라 읽힌다
+const CUT_TOP = 244;          // 오른쪽 컷아웃이 위로 사라지는 경계(이름·아이콘 아래). 여기서부터 40px 동안 흐려지며 가려진다
 
 const CSS = `
 #tmx .tms{position:absolute;inset:0;overflow:hidden;background:#fff;color:#0A0A0A}
@@ -35,15 +35,16 @@ const CSS = `
 #tmx .tm-cr{position:absolute;left:683px;top:286px;width:420px;height:738px;overflow:hidden;-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 34px,#000 calc(100% - 48px),transparent);mask-image:linear-gradient(180deg,transparent 0,#000 34px,#000 calc(100% - 48px),transparent)}
 #tmx .tm-cri{position:absolute;left:0;top:0;width:100%;will-change:transform}
 #tmx .tm-crb{position:absolute;left:0;width:100%}
-#tmx .tm-slot{position:absolute;overflow:hidden;-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 12px,#000 calc(100% - 12px),transparent);mask-image:linear-gradient(180deg,transparent 0,#000 12px,#000 calc(100% - 12px),transparent)}
-#tmx .tm-strip{position:absolute;left:0;top:0;width:100%;will-change:transform}
+/* 오른쪽 인물 컷아웃: 크레딧과 같은 속도로 위로 흐르는 층(크레딧보다 아래 레이어, Figma 순서). 위쪽 경계에서만 흐려지고 아래는 화면 끝에서 잘린다 */
+#tmx .tm-cuts{position:absolute;left:683px;width:683px;overflow:hidden;pointer-events:none;-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 40px);mask-image:linear-gradient(180deg,transparent 0,#000 40px)}
+#tmx .tm-cutr{position:absolute;left:0;top:0;width:100%;height:100%;will-change:transform}
 #tmx .tm-st{position:absolute;left:0;margin:0;font:400 24px/52px 'Pretendard',PretT,'Noto Sans KR',sans-serif;white-space:nowrap}
 #tmx .tm-ph{opacity:.26}
 #tmx .tm-icon{position:absolute;width:42px;height:42px;display:block}
 @media (prefers-reduced-motion:reduce){
   #tmx .tm-arm{animation:none!important}
   #tmx .tm-cr{overflow-y:auto;-webkit-overflow-scrolling:touch}
-  #tmx .tm-crb+.tm-crb,#tmx .tm-strip img+img{display:none}
+  #tmx .tm-crb+.tm-crb,#tmx .tm-cutr .tm-dup{display:none}
 }`;
 
 // Megascope 글자: lines 배열을 box 너비 안에 정렬해 SVG 하나로(fs 글자 크기, lh 행간, base 첫 기준선, ls 자간 em)
@@ -119,6 +120,10 @@ export function createTeam(stage, hooks = {}){
     arms[k].style.setProperty('--T', pl.cycle.toFixed(3) + 's'); arms[k].style.setProperty('--spin', 'tmS-' + k);
   }
   const kst = document.getElementById('tm-kf') || document.head.appendChild(Object.assign(document.createElement('style'), {id:'tm-kf'})); kst.textContent = kcss;
+  // 개인 페이지 사진(프로필·오른쪽 컷아웃)을 미리 받아 해독해 둔다 → 개인 페이지 첫 프레임부터 컷아웃이 보이며 함께 움직인다
+  const warm = [];
+  MEMBERS.forEach(m => [m.photo, ...(m.cutouts || []).map(c => c.src)].forEach(src => { if (!src) return;
+    const i = new Image(); i.src = BASE + src; if (i.decode) i.decode().catch(() => {}); warm.push(i); }));
   // 사진·숫자 = 한 버튼(같은 목적지). Figma 위치에 고정, 터치해도 바늘은 계속 돈다
   const btns = MEMBERS.map(m => {
     const lb = m.labelBox, pb = m.photoBox, x0 = Math.min(lb.x, pb.x), y0 = Math.min(lb.y, pb.y), x1 = Math.max(lb.x + lb.w, pb.x + 120), y1 = pb.y + 126;
@@ -154,13 +159,8 @@ export function createTeam(stage, hooks = {}){
     const star = img('star.webp', 113.7, 486.4, 59, 52.5); mem.appendChild(star);
     const who = mega(['Who', 'Made', '(              )', 'This'], 154.918, 138, 123.2, .03, '#000000', 'center', 447);
     who.setAttribute('role', 'img'); who.setAttribute('aria-label', 'Who Made This'); mem.appendChild(at(who, 142.76, 290));
-    // 프로필 사진: 괄호 창(SLOT) 안에서 크레딧과 같은 속도로 위로 흐른다. 같은 사진 2장(원본 + 복제 1장)을 한 번만 만들어 띠로 반복
-    const slot = document.createElement('div'); slot.className = 'tm-slot';
-    Object.assign(slot.style, {left:SLOT.x + 'px', top:SLOT.y + 'px', width:SLOT.w + 'px', height:SLOT.h + 'px'});
-    const strip = document.createElement('div'); strip.className = 'tm-strip'; slot.appendChild(strip);
-    const photo = img(m.photo, 305.77 - SLOT.x, 575 - SLOT.y, 120, 126, (m.name || '팀원 ' + m.id) + ' 프로필 사진'); strip.appendChild(photo);
-    const photo2 = photo.cloneNode(); photo2.alt = ''; photo2.setAttribute('aria-hidden', 'true'); strip.appendChild(photo2);
-    mem.appendChild(slot);
+    // 프로필 사진: 'Who Made ( ) This' 괄호 안 Figma 위치에 고정(등장 팝업만)
+    const photo = img(m.photo, 305.77, 575, 120, 126, (m.name || '팀원 ' + m.id) + ' 프로필 사진'); mem.appendChild(photo);
     // 이름 + 메일 · 비핸스 아이콘(이름 끝에서 29px 뒤, Figma 간격)
     const nm = mega([m.name || 'Name TBD'], 100, 138, 104, .03, '#000000');
     if (!m.name) nm.classList.add('tm-ph'); nm.setAttribute('role', 'img'); nm.setAttribute('aria-label', m.name || '이름 미정');
@@ -173,7 +173,15 @@ export function createTeam(stage, hooks = {}){
       el.style.left = (iconX + i * 49) + 'px'; el.style.top = '150px';
       el.innerHTML = '<img src="' + BASE + src + '" alt="" width="42" height="42" draggable="false">'; mem.appendChild(el);
     });
-    (m.cutouts || []).forEach(c => mem.appendChild(img(c.src, c.x, c.y, c.w, c.h)));
+    // 오른쪽 인물 컷아웃(team-data.js cutouts): Figma 위치·크기 그대로 한 층(cutr)에 담아 크레딧과 함께 위로 흐른다. 없는 팀원은 층을 만들지 않는다
+    let cutr = null, cuts = null;
+    if (m.cutouts && m.cutouts.length) {
+      cuts = document.createElement('div'); cuts.className = 'tm-cuts'; cuts.setAttribute('aria-hidden', 'true');
+      Object.assign(cuts.style, {top:CUT_TOP + 'px', height:(VH - CUT_TOP) + 'px'});
+      cutr = document.createElement('div'); cutr.className = 'tm-cutr'; cuts.appendChild(cutr);
+      m.cutouts.forEach(c => { const o = img(c.src, c.x - 683, c.y - CUT_TOP, c.w, c.h); o.decoding = 'sync'; cutr.appendChild(o); });
+      mem.appendChild(cuts);
+    }
     // 크레딧(역할 → Special Thanks to → 이름들). 마스크 영역 안에서 아래→위로 올라간다
     const cr = document.createElement('div'); cr.className = 'tm-cr'; const ci = document.createElement('div'); ci.className = 'tm-cri'; cr.appendChild(ci);
     const blk = document.createElement('div'); blk.className = 'tm-crb'; ci.appendChild(blk);
@@ -189,9 +197,9 @@ export function createTeam(stage, hooks = {}){
     const pitch = y + CREDIT_GAP; blk.style.height = y + 'px';
     const blk2 = blk.cloneNode(true); blk2.style.top = pitch + 'px'; blk2.setAttribute('aria-hidden', 'true'); ci.appendChild(blk2);
     ci.style.height = (RM.matches ? y : pitch + y) + 'px'; mem.appendChild(cr);   // 움직임 줄이기에서는 복제본 없이 원본만 스크롤
-    // 사진 간격은 크레딧 반복 주기를 정수로 나눈 값 → 두 반복이 같은 주기로 맞물린다
-    const pp = pitch / Math.max(1, Math.round(pitch / PHOTO_PITCH)); photo2.style.top = (575 - SLOT.y + pp) + 'px';
-    return {back, who, photo, strip, nm, star, cr, ci, contentH:y, pitch, photoPitch:pp};
+    // 컷아웃 반복용 복제 1벌(한 번만 생성): 크레딧과 같은 간격(pitch) 아래에 둔다 → 같은 주기로 이음매 없이 반복
+    if (cutr) [...cutr.children].forEach(o => { const d = o.cloneNode(); d.classList.add('tm-dup'); d.style.top = (parseFloat(o.style.top) + pitch) + 'px'; cutr.appendChild(d); });
+    return {back, who, photo, nm, star, cr, ci, cutr, contentH:y, pitch};
   }
   function playMember(p){
     if (RM.matches) return;   // 움직임 줄이기: 크레딧은 제자리(스크롤로 읽기), 사진은 Figma 위치에 고정
@@ -201,13 +209,16 @@ export function createTeam(stage, hooks = {}){
     anims.push(p.photo.animate([{opacity:0, transform:'scale(.6) rotate(-10deg)'}, {opacity:1, transform:'scale(1.08) rotate(4deg)', offset:.65}, {opacity:1, transform:'none'}], {duration:760, delay:260, easing:'ease-out', fill:'backwards'}));
     anims.push(p.star.animate([{opacity:0, transform:'rotate(-90deg) scale(.4)'}, {opacity:1, transform:'none'}], {duration:700, delay:380, easing:E, fill:'backwards'}));
     anims.push(p.nm.animate([{opacity:0, transform:'translateY(-12px)'}, {opacity:p.nm.classList.contains('tm-ph') ? .26 : 1, transform:'none'}], {duration:600, delay:160, easing:E, fill:'backwards'}));
-    // 엔딩 크레딧(무한 반복): ① 마스크 아래에서 출발해 Figma 위치(0)까지 올라오고 ② 이어서 한 벌 간격(pitch)만큼 계속 올라가며 반복한다.
-    // ②의 끝 상태는 복제본이 원본 자리에 온 모습과 같아 이음매 없이 이어진다. 타이머 없이 Web Animations 두 개(진입·반복)만 쓴다.
-    const H = p.cr.clientHeight, v = CREDIT_SPEED / 1000, t0 = CREDIT_DELAY * 1000, entry = H / v;
-    anims.push(p.ci.animate([{transform:'translateY(' + H + 'px)'}, {transform:'translateY(0px)'}], {duration:entry, delay:t0, easing:'linear', fill:'both'}));
-    anims.push(p.ci.animate([{transform:'translateY(0px)'}, {transform:'translateY(' + (-p.pitch) + 'px)'}], {duration:p.pitch / v, delay:t0 + entry, easing:'linear', iterations:Infinity}));
-    // 프로필 사진: 크레딧이 움직이기 시작할 때 같은 속도로 위로 흐르기 시작(괄호 창 밖은 가려짐). 주기는 크레딧 반복 주기의 정수분의 1
-    anims.push(p.strip.animate([{transform:'translateY(0px)'}, {transform:'translateY(' + (-p.photoPitch) + 'px)'}], {duration:p.photoPitch / v, delay:t0, easing:'linear', iterations:Infinity}));
+    // 엔딩 크레딧(무한 반복)과 오른쪽 컷아웃: 첫 프레임부터 같은 속도(65px/s)로 함께 올라간다.
+    //  · 크레딧: 마스크 맨 아래보다 CREDIT_LEAD만큼 위에서 출발해 Figma 위치(0)까지 → 이어서 한 벌 간격(pitch)씩 반복
+    //  · 컷아웃: Figma 위치(0)에서 바로 반복 구간을 시작
+    //  반복 구간의 끝은 복제본이 원본 자리에 온 모습과 같아 이음매가 없다. 모든 애니메이션을 같은 시각(t0)에 같은 타임라인으로 시작한다.
+    const H = p.cr.clientHeight, v = CREDIT_SPEED / 1000, t0 = CREDIT_DELAY * 1000, S = Math.max(0, H - CREDIT_LEAD), entry = S / v, loop = p.pitch / v;
+    const rise = [{transform:'translateY(0px)'}, {transform:'translateY(' + (-p.pitch) + 'px)'}];
+    const run = [p.ci.animate([{transform:'translateY(' + S + 'px)'}, {transform:'translateY(0px)'}], {duration:entry, delay:t0, easing:'linear', fill:'both'}),
+                 p.ci.animate(rise, {duration:loop, delay:t0 + entry, easing:'linear', iterations:Infinity})];
+    if (p.cutr) run.push(p.cutr.animate(rise, {duration:loop, delay:t0, easing:'linear', iterations:Infinity}));
+    const st = document.timeline.currentTime; run.forEach(a => { a.startTime = st; anims.push(a); });   // 시작 시각을 하나로 고정
   }
 
   // ---------- 화면 전환 ----------
