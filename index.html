@@ -4267,7 +4267,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   const track = (n, p) => { if (window.steerTrack) steerTrack(n, p || {}); };
   function load(){
     if (loading) return loading;
-    loading = import('./assets/scenario/scenario.js?v=20261117-1').then(m => {
+    loading = import('./assets/scenario/scenario.js?v=20261117-2').then(m => {
       scn = m.createScenario(stage, {event:(n, d) => track(n, d)});
       return scn;
     }).catch(() => { loading = null; stage.innerHTML = '<p class="scld">Scenario 화면을 불러오지 못했습니다. 새로고침 후 다시 시도해 주세요.</p>'; });

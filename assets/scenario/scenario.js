@@ -60,8 +60,9 @@ const CSS = `
 #scx .sc-cnt{position:absolute;left:560px;top:233px;display:flex;align-items:flex-end;gap:12px;height:76px}
 #scx .sc-cnt svg{display:block}
 #scx .sc-tot{padding-bottom:14px;font:500 14px/1.2 Pretendard,sans-serif;letter-spacing:.28px;color:#7A7A7A}
-#scx .sc-vid{position:absolute;left:560px;top:337px;width:766px;height:431px;border-radius:30px;overflow:hidden;background:#263038;transform:translateZ(0)}
-#scx .sc-vid video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .38s ease;pointer-events:none}
+/* 영상 칸: 어두운 배경을 두면 iPad Safari에서 둥근 모서리 경계에 배경색이 1px 선처럼 비친다 → 배경 없이 clip-path로 자르고, 영상은 1px 크게 덮는다 */
+#scx .sc-vid{position:absolute;left:560px;top:337px;width:766px;height:431px;border-radius:30px;overflow:hidden;-webkit-clip-path:inset(0 round 30px);clip-path:inset(0 round 30px);background:transparent;transform:translateZ(0)}
+#scx .sc-vid video{position:absolute;left:-1px;top:-1px;width:calc(100% + 2px);height:calc(100% + 2px);background:transparent;object-fit:cover;opacity:0;transition:opacity .38s ease;pointer-events:none}
 #scx .sc-vid video.on{opacity:1}
 #scx .sc-vid video::-webkit-media-controls-start-playback-button{display:none!important;-webkit-appearance:none}
 #scx .sc-bar{position:absolute;left:560px;top:796px;width:766px;height:3px;display:flex;gap:5.667px}
