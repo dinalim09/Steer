@@ -50,6 +50,10 @@ const CSS = `
 .llz .ll-f canvas{position:absolute;inset:0;width:100%;height:100%;border-radius:50%;display:block;transition:opacity .2s}
 .llz:not(.live) .ll-f canvas{opacity:0}
 .llz .ll-f i{position:absolute;inset:0;border-radius:50%;box-sizing:border-box;border:5px solid var(--c);opacity:var(--ring,0)}
+/* 왼쪽 필터 그래픽(Figma 2583:20524 Sticker/火 Fire: 247.6×140.1 @ 76,312 → 중심 200,382). 선택한 필터의 스티커로 교차 페이드 */
+.llz .ll-side{position:absolute;left:0;top:88px;width:393px;height:600px;pointer-events:none}
+.llz .ll-side img{position:absolute;left:200px;top:294px;height:150.3px;width:auto;transform:translate(-50%,-50%) scale(.9) rotate(-4deg);opacity:0;transition:opacity .28s ease,transform .38s cubic-bezier(.2,.9,.3,1.25)}
+.llz .ll-side img.on{opacity:1;transform:translate(-50%,-50%)}
 .llz .ll-ptr{position:absolute;left:675px;top:768px;width:16px;height:12px;color:var(--accent);transition:color .25s ease}
 .llz .ll-ptr svg{display:block}
 .llz .ll-name{position:absolute;left:633px;top:906px;width:100px;margin:0;text-align:center;font-size:13px;font-weight:500;line-height:normal;letter-spacing:.52px;white-space:pre;color:var(--accent);transition:color .25s ease}
@@ -110,6 +114,7 @@ export function createLens(root, hooks = {}){
     <div class="ll-dial" role="group" aria-label="오행 필터 다이얼 — 좌우로 돌려 필터를 고르세요">
       ${ORDER.map(e => `<button class="ll-f" type="button" data-element="${e}" aria-pressed="${e < 0}" aria-label="${e < 0 ? '기본(ALL)' : NAMES[e]} 필터" style="--c:${e < 0 ? HELM : COLORS[e]}"><canvas class="filter-preview"></canvas><i></i></button>`).join('')}
     </div>
+    <div class="ll-side" aria-hidden="true">${ORDER.map(e => `<img src="${BASE}st-${keyOf(e)}.webp" alt="" decoding="async" data-element="${e}"${e < 0 ? ' class="on"' : ''}>`).join('')}</div>
     <span class="ll-ptr">${POINTER}</span><p class="ll-name" aria-hidden="true">${LABEL[-1]}</p>
     <button class="ll-shutter" type="button" aria-label="3초 뒤 촬영" disabled>${SHUTTER}</button>
     <div class="ll-actions"><button class="ll-retake" type="button">다시 찍기</button><a class="ll-save" download="Steer-Luck-Lens.png" href="#">사진 저장</a></div>
@@ -119,6 +124,7 @@ export function createLens(root, hooks = {}){
   const $ = s => root.querySelector(s);
   const video = $('.ll-video'), out = $('.ll-out'), hint = $('.ll-hint'), shutter = $('.ll-shutter');
   const stateH = $('.ll-state h3'), stateP = $('.ll-state p'), spin = $('.ll-spin'), retry = $('.ll-retry');
+  const sides = [...root.querySelectorAll('.ll-side img')];
   const count = $('.ll-count'), flash = $('.ll-flash'), save = $('.ll-save'), buttons = [...root.querySelectorAll('.ll-f')];
   const qr = $('.ll-qr'), qrCanvas = $('.ll-qr-box canvas'), qrH = $('.ll-qr h4'), qrP = $('.ll-qr p'), qrRetry = $('.ll-qr-retry');
   const SHARE_ON = shareEnabled();
@@ -144,6 +150,7 @@ export function createLens(root, hooks = {}){
     if (e === settings.element) return;
     settings.from = settings.element; settings.element = e; settings.t = 0; fadeStart = performance.now();
     root.style.setProperty('--accent', e < 0 ? HELM : COLORS[e]);
+    sides.forEach(im => im.classList.toggle('on', Number(im.dataset.element) === e));
     buttons.forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.element) === e)));
     if (!quiet) emit('filter');
   }
@@ -376,7 +383,7 @@ export function createLens(root, hooks = {}){
       if (raf) { cancelAnimationFrame(raf); raf = 0; }
       busy = false; result = false; root.classList.remove('busy', 'result'); setShown(false); setState('connecting');
       count.classList.remove('on'); count.textContent = ''; clearShare(); if (saveURL) { URL.revokeObjectURL(saveURL); saveURL = ''; } save.removeAttribute('href');
-      settings.element = settings.from = -1; settings.t = 1; root.style.setProperty('--accent', HELM); buttons.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.element === '-1'))); lastPreview = 0;
+      settings.element = settings.from = -1; settings.t = 1; root.style.setProperty('--accent', HELM); sides.forEach(im => im.classList.toggle('on', im.dataset.element === '-1')); buttons.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.element === '-1'))); lastPreview = 0;
       cancelAnimationFrame(anim); anim = 0; drag = null; pos = 0; settledAt = -1; layout(); root.classList.add('settled');
     },
     isLive:() => live, isActive:() => active, element:() => settings.element, choose:e => choose(e, true), renderer
