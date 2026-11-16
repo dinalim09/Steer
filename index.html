@@ -406,10 +406,14 @@ body.bare .bar>*{pointer-events:auto}
 #lgd .ldnv svg{display:block}
 #lgd button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
 #lgd .ldhit{position:absolute;border:0;padding:0;margin:0;background:transparent;border-radius:12px;cursor:pointer}
-#lgd .lda{position:absolute;top:483px;width:88px;height:96px;padding:0;margin:0;border:0;background:transparent;cursor:pointer}
+/* 좌우 화살표: Research와 같은 공통 규격(지름 56 · 중심 (40,531)/(1326,531) · 터치 72×72 · A형 검은 그림자 / B형 흰 테두리+광택) */
+#lgd .lda{position:absolute;z-index:5;top:503px;width:56px;height:56px;padding:0;margin:0;border:0;border-radius:50%;background:#0A0A0A;display:grid;place-items:center;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.12);transition:transform .15s ease;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+#lgd .lda::before{content:'';position:absolute;inset:-8px}
+#lgd .lda:active{transform:scale(.94)}
 #lgd .lda svg{display:block}
-#lgd .lda.prv{left:0}
-#lgd .lda.nxt{left:1278px}
+#lgd .lda.prv{left:12px}
+#lgd .lda.nxt{left:1298px}
+#lgd.ob .lda{box-shadow:inset 0 0 0 1.5px #fff,0 0 20px rgba(255,255,255,.55)}
 #lgd .lda[aria-disabled="true"]{cursor:default}
 #lgd .ldeb{position:absolute;left:40px;top:128px;margin:0;font:500 14px/17px 'Noto Sans KR',var(--font-ui);color:#35D1FB;white-space:pre}
 #lgd .ldh{position:absolute;left:40px;top:156px;width:480px;margin:0;font:700 48px/57.6px 'Pretendard',var(--font-ui);letter-spacing:-.03em;white-space:nowrap}
@@ -848,12 +852,12 @@ body.bare .bar>*{pointer-events:auto}
 #rsx .ie-pg{position:absolute;left:583px;top:904px;width:200px;margin:0;font:500 15px/22px 'Pretendard',var(--font-ui);color:#6E6E73;text-align:center;font-variant-numeric:tabular-nums;pointer-events:none}
 #rsChromeH.ie .xnv{background:transparent}
 #rsx #rs-I1.htm .h2{line-height:58px;letter-spacing:0}   /* Figma 4042:13390: 48/58, 자간 0 */
-#rsChromeH .arr{box-shadow:0 4px 16px rgba(0,0,0,.12)}
-#rsChromeH .arr.prv{box-shadow:inset 0 0 0 1px #fff,0 4px 16px rgba(0,0,0,.12)}
-#rsChromeH .arr.nxt .g2{display:none;position:absolute;left:-20px;top:-20px;pointer-events:none}
-#rsChromeH.r2 .arr.nxt{background:transparent;box-shadow:none;overflow:visible}
-#rsChromeH.r2 .arr.nxt>svg:first-child{display:none}
-#rsChromeH.r2 .arr.nxt .g2{display:block}
+/* 좌우 화살표 공통 규격(STEER 좌우 화살표 가이드): 지름 56 · #0A0A0A · 18px 셰브런(선 2.2) · 중심 (40,531)/(1326,531) · 터치 72×72.
+   A형(밝은 배경) = 검은 그림자, B형(배경 명도 L* 40 미만 · 영상 배경) = 흰 테두리 1.5 + 흰 광택 20px. 좌우는 늘 같은 유형 */
+#rsChromeH .arr{box-shadow:0 4px 16px rgba(0,0,0,.12);transition:transform .15s ease;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+#rsChromeH .arr::before{content:'';position:absolute;inset:-8px}
+#rsChromeH .arr:active{transform:scale(.94)}
+#rsChromeH.ob .arr{box-shadow:inset 0 0 0 1.5px #fff,0 0 20px rgba(255,255,255,.55)}
 #rsChromeH.q .arr.nxt{display:none}
 /* R3 · E */
 #rsx .htm .r3l b{display:block;font:700 18px/27px 'Noto Sans KR',var(--font-ui);color:#0A0A0A}
@@ -2874,10 +2878,11 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     + '<button type="button" class="rs-hit rs-sc" data-nw="scenario" style="left:1053px;top:12px;width:95px;height:64px" aria-label="Scenario 열기"></button><button type="button" class="rs-hit rs-cm" data-nw="camera" style="left:1170px;top:12px;width:86px;height:64px" aria-label="Camera 열기"></button><button type="button" class="rs-hit rs-tm" data-nw="team" style="left:1280px;top:12px;width:54px;height:64px" aria-label="Team 열기"></button></div>'
     + '<div class="ci">' + ['00','01','02','03','04','Q'].map((t, i) => '<button type="button" data-k="' + i + '" aria-label="리서치 ' + t + '">' + t + '</button>').join('') + '</div>'
     + '<button type="button" class="arr prv" aria-label="이전 챕터"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.5 3 5.5 9l6 6"/></svg></button>'
-    + '<button type="button" class="arr nxt" aria-label="다음 챕터"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 3 12.5 9l-6 6"/></svg><svg class="g2" width="88" height="96" viewBox="0 0 88 96" fill="none" aria-hidden="true"><g filter="url(#f2112_1671)"><rect x="20" y="20" width="56" height="56" rx="28" fill="#0A0A0A"/><path d="M44 39L53 48L44 57" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></g><defs><filter id="f2112_1671" x="0" y="0" width="96" height="96" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset/><feGaussianBlur stdDeviation="10"/><feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0"/><feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/><feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/></filter></defs></svg></button>';
+    + '<button type="button" class="arr nxt" aria-label="다음 챕터"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 3 12.5 9l-6 6"/></svg></button>';
   CHV.after(CHH);
   const CHI = [...CHH.querySelectorAll('.ci button')];
   CHI.forEach((b, k) => b.addEventListener('click', () => show((deckOf(cur) || DESK)[k])));
+  const ARR_B = new Set(['R2', 'R3', 'R5', 'R6', 'I5']);   // 좌우 화살표 B형(어두운 배경·영상) 화면 — 가이드 4장 적용표
   const CHL = {D:['00','01','02','03','04','Q'], I:['I1','I2','I3','I4','I5']};
   CHH.querySelector('.prv').addEventListener('click', () => step(-1));
   CHH.querySelector('.nxt').addEventListener('click', () => step(1));
@@ -2903,7 +2908,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     return true;
   }
   function chromeOn(id){
-    if (HTM[id]){ CHV.style.visibility = 'hidden'; CHH.style.display = 'block'; CHH.classList.remove('dk'); CHH.classList.toggle('landing', id === 'land'); CHH.classList.toggle('ph', PHB.has(id)); CHH.classList.toggle('r2', id === 'R2'); CHH.classList.toggle('q', id === 'R6'); CHH.classList.toggle('ie', id === 'I3');
+    if (HTM[id]){ CHV.style.visibility = 'hidden'; CHH.style.display = 'block'; CHH.classList.remove('dk'); CHH.classList.toggle('landing', id === 'land'); CHH.classList.toggle('ph', PHB.has(id)); CHH.classList.toggle('r2', id === 'R2'); CHH.classList.toggle('q', id === 'R6'); CHH.classList.toggle('ie', id === 'I3'); CHH.classList.toggle('ob', ARR_B.has(id));
       const dk = deckOf(id) || DESK, lb = CHL[dk === INT ? 'I' : 'D'];
       CHH.classList.toggle('n5', dk.length === 5);
       CHI.forEach((b, k) => { b.hidden = k >= dk.length; if (b.hidden) return; b.classList.toggle('cur', dk[k] === id); if (b.textContent !== lb[k]) { b.textContent = lb[k]; b.setAttribute('aria-label', (dk === INT ? '인터뷰 ' : '리서치 ') + lb[k]); } }); return; }
@@ -3474,9 +3479,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   const ARW = '<svg width="36" height="16" viewBox="0 0 36 16" aria-hidden="true"><path d="M0.640625 8H33.498M30.2121 2L34.0692 8L30.2121 14" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>';
   const PLUS = '<svg width="23" height="24" viewBox="0 0 22.572 23.32" aria-hidden="true"><path fill="rgba(255,255,255,.5)" d="M11.286 23.32C9.96162 23.32 8.888 22.2464 8.888 20.922V13.992H2.31C1.03422 13.992 0 12.9578 0 11.682C0 10.4062 1.03422 9.372 2.31 9.372H8.888V2.398C8.888 1.07362 9.96162 0 11.286 0C12.6104 0 13.684 1.07362 13.684 2.398V9.372H20.262C21.5378 9.372 22.572 10.4062 22.572 11.682C22.572 12.9578 21.5378 13.992 20.262 13.992H13.684V20.922C13.684 22.2464 12.6104 23.32 11.286 23.32Z"/></svg>';
   const EQ = '<svg width="23" height="14" viewBox="0 0 22.6 13.24" aria-hidden="true"><rect width="22.6" height="4.62" rx="2.31" fill="#848484"/><rect y="8.62" width="22.6" height="4.62" rx="2.31" fill="#848484"/></svg>';
-  const ARC = (d, ring) => '<svg width="88" height="96" viewBox="0 0 88 96" aria-hidden="true"><defs><filter id="ldg' + (ring ? 'p' : 'n') + '" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur in="SourceAlpha" stdDeviation="10" result="b"/><feFlood flood-color="#fff"/><feComposite operator="in" in2="b"/></filter></defs>'
-    + '<circle cx="' + (ring ? 40 : 48) + '" cy="48" r="27" fill="#fff" filter="url(#ldg' + (ring ? 'p' : 'n') + ')"/><circle cx="' + (ring ? 40 : 48) + '" cy="48" r="27" fill="#0A0A0A"' + (ring ? ' stroke="#fff" stroke-width="1"' : '') + '/>'
-    + '<path d="' + d + '" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>';
+  const ARC = d => '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + d + '"/></svg>';   // 공통 셰브런(Research와 같음)
   const card = (x, w, date, title, chips) => '<div class="ldm" style="left:' + x + 'px;width:' + w + 'px"><img alt="" src="assets/lgd-avatar.webp" width="44" height="44"><div class="ldm-b"><div><small>' + date + '</small><strong>' + title + '</strong></div><div class="ldm-c">' + chips.map(c => '<span>' + c + '</span>').join('') + '</div></div></div>';
   const at = (x, y) => ' style="left:' + x + 'px;top:' + y + 'px"';
   // 2/2 번역: 오행 다섯(木火土金水)과 다섯 행동. 글리프는 WDXL Lubrifont SC를 Figma에서 외곽선으로 추출한 경로
@@ -3735,8 +3738,8 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   + '<div class="ldpg" data-p="5">' + page6 + '</div>'
   + '<div class="ldpg" data-p="6">' + page7 + '</div>'
   + '<div class="ldnv"></div>'
-  + '<button type="button" class="lda prv">' + ARC('M44 39L35 48L44 57', true) + '</button>'
-  + '<button type="button" class="lda nxt">' + ARC('M44 39L53 48L44 57', false) + '</button>'
+  + '<button type="button" class="lda prv">' + ARC('M11.5 3 5.5 9l6 6') + '</button>'
+  + '<button type="button" class="lda nxt">' + ARC('M6.5 3 12.5 9l-6 6') + '</button>'
   + '<nav class="ldci" aria-label="Logic 챕터">' + CHK.map(k => '<button type="button" data-ch="' + k + '">0' + CH[k][0] + (CH[k][2] > 1 ? '<i aria-hidden="true">' + '<b></b>'.repeat(CH[k][2]) + '</i>' : '') + '</button>').join('') + '</nav>';
   // 오늘의 일진 문구는 Figma에서 흰색이다: <i> 강조는 결과 문구의 '개운 미션'에만 쓴다
   root.querySelector('.ldpg[data-p="0"] .ldf2 .ldt i').outerHTML = '오늘의 일진';
@@ -4135,7 +4138,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     const last = cur === PAGES.length - 1;
     nxt.setAttribute('aria-label', last ? 'Logic 메인으로' : '다음: ' + plabel(PAGES[cur + 1]));
     nxt.removeAttribute('aria-disabled');   // 마지막 페이지도 막지 않는다: 우측 화살표 → Logic 메인(L0)
-    root.querySelectorAll('.lda circle').forEach(c => c.setAttribute('r', cur === 0 ? '27' : '28'));   // Figma 01 1/2는 지름 54, 나머지는 56
+    root.classList.toggle('ob', PAGES[cur] === 'translate-01' || PAGES[cur] === 'explain-01');   // 좌우 화살표 B형(검은 도형·배경 위) — 가이드 4장
     cis.forEach(b => { const k = b.dataset.ch, on = k === q.k, has = !!first(k);
       b.classList.toggle('cur', on); if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
       if (has || on) b.removeAttribute('aria-disabled'); else b.setAttribute('aria-disabled', 'true');
@@ -4214,7 +4217,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   const parse = h => { const m = /^#TEAM(?:-(\d))?$/i.exec(h || ''); return m ? {member:m[1] ? +m[1] : 0} : null; };
   function load(){
     if (loading) return loading;
-    loading = import('./assets/team/team.js?v=20261116-3')   /* ?v= : 배포마다 올려 iPad·CDN의 이전 모듈 캐시와 섞이지 않게 */.then(m => {
+    loading = import('./assets/team/team.js?v=20261117-1')   /* ?v= : 배포마다 올려 iPad·CDN의 이전 모듈 캐시와 섞이지 않게 */.then(m => {
       team = m.createTeam(stage, {onMember:id => { entered = true; go(id, true); }, onBack:back});
       return team;
     }).catch(() => { loading = null; stage.innerHTML = '<p style="position:absolute;left:40px;top:160px;font:500 18px Pretendard,sans-serif">Team 화면을 불러오지 못했습니다. 새로고침 후 다시 시도해 주세요.</p>'; });

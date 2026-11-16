@@ -1,8 +1,8 @@
 // STEER Team — 메인(시계 · Figma 3967:3442)과 팀원 개인 페이지(엔딩 크레딧 · Figma 2548:5219 · 2543:19422 · 2543:19530)
 // 시계는 CSS transform 애니메이션만 쓴다(매 프레임 JS 계산·rAF 없음). 사진·숫자 버튼은 Figma 위치에 고정되고,
 // 바늘 3개만 피벗을 기준으로 돌며 사진 위를 가로질러 지나간다(바늘은 pointer-events:none이라 터치를 가로채지 않는다).
-import MEGA from './mega.js?v=20261116-3';
-import {PIVOT, PERIOD, HANDS, MEMBERS} from './team-data.js?v=20261116-3';
+import MEGA from './mega.js?v=20261117-1';
+import {PIVOT, PERIOD, HANDS, MEMBERS} from './team-data.js?v=20261117-1';
 
 const BASE = new URL('./', import.meta.url).href;
 const NS = 'http://www.w3.org/2000/svg';
@@ -44,7 +44,8 @@ const CSS = `
 #tmx .tm-kr{font:500 16px/20px 'Noto Sans KR','Pretendard',sans-serif;letter-spacing:-.01em;color:#9C9C9C}
 #tmx .tm-kr.pt{font-family:'Pretendard',PretT,'Noto Sans KR',sans-serif}
 #tmx .tm-arr{position:absolute;top:503px;width:56px;height:56px;border:0;padding:0;margin:0;border-radius:50%;background:#0A0A0A;display:grid;place-items:center;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.12);-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:transform .15s ease;z-index:2}
-#tmx .tm-arr.prv{left:12px;box-shadow:inset 0 0 0 1px #fff,0 4px 16px rgba(0,0,0,.12)}
+#tmx .tm-arr::before{content:'';position:absolute;inset:-8px}   /* 터치 72×72 (STEER 좌우 화살표 가이드, 흰 배경 = A형) */
+#tmx .tm-arr.prv{left:12px}
 #tmx .tm-arr.nxt{left:1298px}
 #tmx .tm-arr.press{transform:scale(.94)}
 #tmx .tm-arr:focus-visible{outline:3px solid #87E6FF;outline-offset:3px}

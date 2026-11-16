@@ -17,9 +17,9 @@ export const HANDS = {
 //  (30m) 사진 → 분침 끝 · (1h) 사진 → 시침 끝 · (3h) 사진 → 초침 끝
 //  Team 배치 순서: 1 임채은 → 2 김수민 → 3 윤영실. 개인 페이지 내용(이름·크레딧·컷아웃)은 members/*.js에 팀원별로 분리
 //  메인 사진(m1-blur · sumin-blur · yeongsil-blur)은 각 팀원 개인 페이지 프로필 사진(Figma)을 2배로 놓고 흐림(Gaussian 4px · 2배 기준)을 준 것 — m1과 같은 방식
-import CHAEEUN from './members/chaeeun.js?v=20261116-3';
-import SUMIN from './members/sumin.js?v=20261116-3';
-import YEONGSIL from './members/yeongsil.js?v=20261116-3';
+import CHAEEUN from './members/chaeeun.js?v=20261117-1';
+import SUMIN from './members/sumin.js?v=20261117-1';
+import YEONGSIL from './members/yeongsil.js?v=20261117-1';
 export const MEMBERS = [
   {id:1, hand:'minute', label:'(3om)',              // Figma 표기 그대로('3o' — Megascope 숫자 0 대신 o)
    photoBlur:'m1-blur.webp', labelBox:{x:385, y:323, w:72, align:'left'}, photoBox:{x:361, y:371}, ...CHAEEUN},
