@@ -330,7 +330,7 @@ a,button,[role=button],label,select,.pill,#screen:active,body.grabbing,body.grab
 #p15h i b{display:block;width:8px;height:8px;border-radius:50%;background:#D9D9D9;transition:background .3s ease,transform .3s ease}
 #p15h i b.on{background:#0A0A0A;transform:scale(1.25)}
 
-/* ===== Camera · Luck Lens (Figma 2416:11609) — 상단 내비 유지, 그 아래는 assets/lens/lens.js가 그린다 ===== */
+/* ===== Camera · Luck Lens (Figma 2416:11609 · 다이얼 2576:20451) — 상단 내비 유지, 그 아래는 assets/lens/lens.js가 그린다 ===== */
 #cmx{position:absolute;inset:0;z-index:74;background:#0A0A0A;opacity:0;visibility:hidden;transition:opacity .32s cubic-bezier(.2,.7,.2,1),visibility 0s linear .32s;touch-action:manipulation}
 #cmx.open{opacity:1;visibility:visible;transition:opacity .32s cubic-bezier(.2,.7,.2,1),visibility 0s}
 #cmx:not(.open),#cmx:not(.open) *{pointer-events:none!important}
@@ -4324,7 +4324,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   function load(){
     if (loading) return loading;
     stage.innerHTML = '<p class="cmld">카메라를 준비하고 있어요</p>';
-    loading = import('./assets/lens/lens.js').then(m => {
+    loading = import('./assets/lens/lens.js?v=20261117-1').then(m => {
       stage.innerHTML = '';
       lens = m.createLens(stage, {event:(type, d) => track('lens_' + type, d)});
       return lens;
