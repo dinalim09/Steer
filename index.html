@@ -4337,7 +4337,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   function load(){
     if (loading) return loading;
     stage.innerHTML = '<p class="cmld">카메라를 준비하고 있어요</p>';
-    loading = import('./assets/lens/lens.js').then(m => {
+    loading = import('./assets/lens/lens.js?v=20261117-1').then(m => {
       stage.innerHTML = '';
       lens = m.createLens(stage, {event:(type, d) => track('lens_' + type, d)});
       return lens;

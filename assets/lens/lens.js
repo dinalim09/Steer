@@ -167,6 +167,12 @@ export function createLens(root, hooks = {}){
     if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; emit('camera_stop'); }
     video.pause(); video.srcObject = null; live = false; palm.clear(); setShown(false); lastPreview = 0;
   }
+  // 화면을 떠날 때(Camera 닫기 · 90초 비활동 복귀)는 스트림을 끊지 않고 쉬게만 한다.
+  // iPad 홈 화면 웹앱 · Safari(묻기)는 getUserMedia를 다시 부를 때마다 권한을 다시 물으므로, 한 번 받은 스트림을 페이지가 살아 있는 동안 재사용한다
+  function parkCamera(){
+    request++; video.pause(); live = false; palm.clear(); setShown(false); lastPreview = 0;
+    if (stream) emit('camera_park');
+  }
   // 카메라 권한 진단: 요청 직전 권한 상태(granted · prompt · denied · unknown), 실행 방식(홈 화면 웹앱 app · Safari browser),
   // 요청부터 영상 수신까지 걸린 시간(wait_ms — 허용창이 떴다면 길어진다)을 이벤트와 window.steerLensCam에 남긴다. 권한 자체를 바꾸지는 않는다
   const APP_MODE = (() => { try { return navigator.standalone === true || matchMedia('(display-mode: standalone)').matches || matchMedia('(display-mode: fullscreen)').matches; } catch { return false; } })();
@@ -176,7 +182,17 @@ export function createLens(root, hooks = {}){
   let camInfo = {};
   function fail(k, reason){ stopCamera(); setState(k); emit(k === 'denied' ? 'camera_denied' : 'camera_error', {reason, ...camInfo}); }
   async function openCamera(){
-    if (stream) return;   // 이미 연결된 스트림은 그대로 쓴다(필터 변경 · 다시 찍기에서 재시작하지 않음)
+    if (stream) {   // 이미 받은 스트림은 그대로 다시 쓴다(권한을 다시 묻지 않음). 트랙이 끝났으면 새로 요청
+      if (live) return;
+      if (stream.getVideoTracks().some(t => t.readyState === 'live')) {
+        const token = ++request; setShown(false); setState('connecting');
+        try { await video.play(); } catch {}
+        if (token !== request || !active) return;
+        live = true; lastPreview = 0; setHint('loading'); loop(); palm.start(); emit('camera_resume', {mode:camDiag.mode});
+        return;
+      }
+      stopCamera();
+    }
     const token = ++request; setShown(false); setState('connecting');
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.isSecureContext) { fail('unsupported', 'unsupported'); return; }
     const perm = await permState(); if (token !== request || !active) return;
@@ -284,7 +300,7 @@ export function createLens(root, hooks = {}){
   return {
     open(){ if (active) return; active = true; setHint('searching'); openCamera(); },
     close(){
-      if (!active) return; active = false; clearTimers(); stopCamera(); resumeLive = false;
+      if (!active) return; active = false; clearTimers(); parkCamera(); resumeLive = false;
       if (raf) { cancelAnimationFrame(raf); raf = 0; }
       busy = false; result = false; root.classList.remove('busy', 'result'); setShown(false); setState('connecting');
       count.classList.remove('on'); count.textContent = ''; clearShare(); if (saveURL) { URL.revokeObjectURL(saveURL); saveURL = ''; } save.removeAttribute('href');
