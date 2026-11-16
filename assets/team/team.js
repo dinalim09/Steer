@@ -168,10 +168,11 @@ export function createTeam(stage, hooks = {}){
     back.addEventListener('pointerdown', () => back.classList.add('press')); ['pointerup', 'pointercancel', 'pointerleave'].forEach(t => back.addEventListener(t, () => back.classList.remove('press')));
     back.addEventListener('click', () => hooks.onBack && hooks.onBack());
     mem.appendChild(back);
-    // 좌우 검은 원형 화살표(Figma arrow · 이전/다음): Team 배치 순서(임채은 → 김수민 → 윤영실) 안에서 이전·다음 팀원(처음·끝은 순환)
+    // 좌우 검은 원형 화살표(Figma arrow · 이전/다음): Team 배치 순서(임채은 → 김수민 → 윤영실) 안에서 이전·다음 팀원
+    // 순환하지 않는다: 첫 팀원은 왼쪽, 마지막 팀원은 오른쪽 화살표를 그리지 않는다
     const idx = MEMBERS.indexOf(m);
     [['prv', -1, '이전 팀원', 'M11.5 3 5.5 9l6 6'], ['nxt', 1, '다음 팀원', 'M6.5 3 12.5 9l-6 6']].forEach(([cls, d, lab, path]) => {
-      const to = MEMBERS[(idx + d + MEMBERS.length) % MEMBERS.length];
+      const to = MEMBERS[idx + d]; if (!to) return;
       const a = document.createElement('button'); a.type = 'button'; a.className = 'tm-arr ' + cls; a.setAttribute('aria-label', lab + ' · ' + (to.display || to.name));
       a.innerHTML = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + path + '"/></svg>';
       a.addEventListener('pointerdown', () => a.classList.add('press')); ['pointerup', 'pointercancel', 'pointerleave'].forEach(t => a.addEventListener(t, () => a.classList.remove('press')));
