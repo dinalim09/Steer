@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit-media-controls-overlay-play-button,video::-webkit-media-controls-start-playback-button{display:none!important;-webkit-appearance:none!important;opacity:0!important}
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Steer"><link rel="apple-touch-icon" href="assets/app/icon-180.png"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit-media-controls-overlay-play-button,video::-webkit-media-controls-start-playback-button{display:none!important;-webkit-appearance:none!important;opacity:0!important}
 </style></head><body class="bare">
 
 <!-- Google Analytics 4: put the measurement ID (G-…) below; until then nothing is sent -->
@@ -4321,6 +4321,23 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   const kick = () => { const p = v.play(); if (p && p.catch) p.catch(() => {}); };
   kick(); ['touchstart','pointerdown','wheel','keydown'].forEach(t => window.addEventListener(t, kick, {once:true, passive:true}));
   document.addEventListener('visibilitychange', () => { if (!document.hidden) kick(); });
+})();
+</script>
+<script>
+/* 전시용 전체 화면 — iPad Safari에서 화면을 한 번 탭하면(손을 뗄 때) 주소창·상태 막대 없이 전체 화면으로 바뀐다.
+   · 사용자가 전체 화면을 빠져나가도 다음 탭에서 다시 들어간다 · 데스크톱(마우스)에서는 동작하지 않는다
+   · 끄기: 주소 뒤에 ?fs=0 · 홈 화면에 추가한 앱으로 열면 이미 브라우저 화면이 없으므로 동작하지 않는다 */
+(() => {
+  if (new URLSearchParams(location.search).get('fs') === '0') return;
+  const standalone = navigator.standalone || matchMedia('(display-mode: standalone), (display-mode: fullscreen)').matches;
+  if (standalone || !(navigator.maxTouchPoints > 1)) return;
+  const el = document.documentElement, req = el.requestFullscreen || el.webkitRequestFullscreen;
+  if (!req) return;
+  const isFs = () => document.fullscreenElement || document.webkitFullscreenElement;
+  addEventListener('pointerup', e => {
+    if (e.pointerType === 'mouse' || isFs()) return;
+    try { const r = req.call(el); if (r && r.catch) r.catch(() => {}); } catch (err) {}
+  }, true);
 })();
 </script>
 </body></html>
