@@ -10,7 +10,6 @@ const RM = matchMedia('(prefers-reduced-motion: reduce)');
 const CREDIT_SPEED = 65;      // 크레딧과 오른쪽 인물 컷아웃이 함께 올라가는 속도(px/s, 일정한 선형)
 const CREDIT_DELAY = 0;       // 개인 페이지가 보이는 첫 프레임부터 크레딧·컷아웃이 움직인다(초)
 const CREDIT_GAP = 160;       // 반복할 때 마지막 줄(Special Thanks 이름)과 다음 회차 첫 줄 사이 간격(px)
-const CREDIT_LEAD = 120;      // 크레딧 시작 위치를 마스크 맨 아래보다 이만큼 위로(px) → 첫 줄이 화면 아래쪽에서 바로 떠올라 읽힌다
 const CUT_TOP = 244;          // 오른쪽 컷아웃이 위로 사라지는 경계(이름·아이콘 아래). 여기서부터 40px 동안 흐려지며 가려진다
 
 const CSS = `
@@ -209,15 +208,13 @@ export function createTeam(stage, hooks = {}){
     anims.push(p.photo.animate([{opacity:0, transform:'scale(.6) rotate(-10deg)'}, {opacity:1, transform:'scale(1.08) rotate(4deg)', offset:.65}, {opacity:1, transform:'none'}], {duration:760, delay:260, easing:'ease-out', fill:'backwards'}));
     anims.push(p.star.animate([{opacity:0, transform:'rotate(-90deg) scale(.4)'}, {opacity:1, transform:'none'}], {duration:700, delay:380, easing:E, fill:'backwards'}));
     anims.push(p.nm.animate([{opacity:0, transform:'translateY(-12px)'}, {opacity:p.nm.classList.contains('tm-ph') ? .26 : 1, transform:'none'}], {duration:600, delay:160, easing:E, fill:'backwards'}));
-    // 엔딩 크레딧(무한 반복)과 오른쪽 컷아웃: 첫 프레임부터 같은 속도(65px/s)로 함께 올라간다.
-    //  · 크레딧: 마스크 맨 아래보다 CREDIT_LEAD만큼 위에서 출발해 Figma 위치(0)까지 → 이어서 한 벌 간격(pitch)씩 반복
-    //  · 컷아웃: Figma 위치(0)에서 바로 반복 구간을 시작
-    //  반복 구간의 끝은 복제본이 원본 자리에 온 모습과 같아 이음매가 없다. 모든 애니메이션을 같은 시각(t0)에 같은 타임라인으로 시작한다.
-    const H = p.cr.clientHeight, v = CREDIT_SPEED / 1000, t0 = CREDIT_DELAY * 1000, S = Math.max(0, H - CREDIT_LEAD), entry = S / v, loop = p.pitch / v;
-    const rise = [{transform:'translateY(0px)'}, {transform:'translateY(' + (-p.pitch) + 'px)'}];
-    const run = [p.ci.animate([{transform:'translateY(' + S + 'px)'}, {transform:'translateY(0px)'}], {duration:entry, delay:t0, easing:'linear', fill:'both'}),
-                 p.ci.animate(rise, {duration:loop, delay:t0 + entry, easing:'linear', iterations:Infinity})];
-    if (p.cutr) run.push(p.cutr.animate(rise, {duration:loop, delay:t0, easing:'linear', iterations:Infinity}));
+    // 엔딩 크레딧(무한 반복)과 오른쪽 컷아웃 = 하나의 시퀀스: 둘 다 Figma 좌표 그대로 두고 같은 이동량(translateY)만 공통으로 준다.
+    //  첫 프레임은 Figma 배치(이동량 0) — 사진과 첫 크레딧이 바로 보이며, 65px/s로 함께 한 벌 간격(pitch)씩 올라가며 반복한다.
+    //  크레딧·컷아웃 모두 같은 pitch 아래에 복제 1벌이 있어, 반복 끝 상태 = 복제본이 원본 자리에 온 모습(이음매 없음).
+    //  두 애니메이션은 키프레임·길이·시작 시각이 같아 반복해도 상대 위치가 변하지 않는다.
+    const v = CREDIT_SPEED / 1000, t0 = CREDIT_DELAY * 1000, loop = p.pitch / v;
+    const rise = [{transform:'translateY(0px)'}, {transform:'translateY(' + (-p.pitch) + 'px)'}], timing = {duration:loop, delay:t0, easing:'linear', iterations:Infinity};
+    const run = [p.ci, p.cutr].filter(Boolean).map(el => el.animate(rise, timing));
     const st = document.timeline.currentTime; run.forEach(a => { a.startTime = st; anims.push(a); });   // 시작 시각을 하나로 고정
   }
 
