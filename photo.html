@@ -5,42 +5,51 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <meta name="referrer" content="no-referrer">
-<meta name="theme-color" content="#0A0A0A">
+<meta name="theme-color" content="#ffffff">
 <title>Steer · Luck Lens 사진</title>
 <link rel="icon" href="assets/favicon.svg">
 <link rel="stylesheet" href="assets/fonts/pretendard/pretendard.css">
 <style>
-  /* Luck Lens 촬영 결과 저장 페이지(관람객 스마트폰). 사진 ID는 주소의 # 뒤에만 있다 */
+  /* Luck Lens 촬영 결과 저장 페이지(관람객 스마트폰). 사진 ID는 주소의 # 뒤에만 있다.
+     레이아웃: Figma 2026 채으닝 2566:20154 카드(968×1214)를 화면 폭에 맞춰 비율 그대로 축소한다. --w = 카드 실제 폭, --u = 1 Figma px
+     · 카드 0,0 968×1214 #0A0A0A, 모서리 140 · 원형 사진(Ellipse) 134,105 699×699 · Steer 로고 292,847 384.719×281.141
+     · 촬영 사진(900×900)의 렌즈 원(중심 450,440 · 반지름 400 + 테두리 6)을 Figma 원 699에 정확히 맞춰 원형 영역 안에 배치 */
   *{box-sizing:border-box}
-  html,body{margin:0;background:#0A0A0A;color:#fff}
-  body{min-height:100vh;min-height:100dvh;font-family:Pretendard,'Noto Sans KR',system-ui,-apple-system,sans-serif;-webkit-text-size-adjust:100%;display:flex;flex-direction:column;align-items:center;padding:calc(28px + env(safe-area-inset-top)) 24px calc(32px + env(safe-area-inset-bottom));word-break:keep-all}
-  header{width:100%;max-width:420px;display:flex;align-items:baseline;justify-content:space-between}
-  header b{font-size:20px;font-weight:700;letter-spacing:-.01em}
-  header span{font-size:13px;color:rgba(255,255,255,.55)}
-  main{width:100%;max-width:420px;flex:1;display:flex;flex-direction:column;align-items:center;margin-top:28px}
-  .ph{position:relative;width:100%;aspect-ratio:1;border-radius:24px;background:#141414;overflow:hidden;display:flex;align-items:center;justify-content:center}
-  .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity .3s ease;-webkit-touch-callout:default}
+  html,body{margin:0;background:#fff;color:#0A0A0A}
+  body{--w:min(calc(100vw - 40px), calc((100vh - 210px) * 968 / 1214), 460px);--u:calc(var(--w) / 968);min-height:100vh;min-height:100dvh;font-family:Pretendard,'Noto Sans KR',system-ui,-apple-system,sans-serif;-webkit-text-size-adjust:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:calc(20px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom));word-break:keep-all}
+  @supports (height:100dvh){body{--w:min(calc(100vw - 40px), calc((100dvh - 210px) * 968 / 1214), 460px)}}
+  main{display:flex;flex-direction:column;align-items:center;width:var(--w)}
+  .card{position:relative;width:var(--w);height:calc(var(--u) * 1214);border-radius:calc(var(--u) * 140);background:#0A0A0A;overflow:hidden;color:#fff;flex:none}
+  /* 원형 사진 영역(기존 .ph 재사용) */
+  .ph{position:absolute;left:calc(var(--u) * 134);top:calc(var(--u) * 105);width:calc(var(--u) * 699);height:calc(var(--u) * 699);border-radius:50%;overflow:hidden;background:#141414;box-shadow:inset 0 0 0 calc(var(--u) * 10.33) #ff8778;display:flex;align-items:center;justify-content:center}
+  .ready .ph{background:#0A0A0A;box-shadow:none}
+  /* 사진 900px → 원 699px: 배율 699/812, 사진 원 중심(450,440)을 Figma 원 중심에 맞춤 */
+  .ph img{position:absolute;left:calc(var(--u) * -37.88);top:calc(var(--u) * -29.27);width:calc(var(--u) * 774.75);height:calc(var(--u) * 774.75);max-width:none;opacity:0;transition:opacity .3s ease;-webkit-touch-callout:default}
   .ready .ph img{opacity:1}
-  .spin{width:40px;height:40px;border-radius:50%;border:4px solid rgba(255,255,255,.16);border-top-color:#87E6FF;animation:sp .9s linear infinite}
+  .logo{position:absolute;left:calc(var(--u) * 292);top:calc(var(--u) * 847);width:calc(var(--u) * 384.719);height:calc(var(--u) * 281.141)}
+  .logo img{position:absolute;left:0;top:0;width:101.04%;height:101.422%;max-width:none;display:block}
+  .spin{width:calc(var(--u) * 72);height:calc(var(--u) * 72);border-radius:50%;border:calc(var(--u) * 7) solid rgba(255,255,255,.16);border-top-color:#ff8778;animation:sp .9s linear infinite}
   .ready .spin,.gone .spin{display:none}
   @keyframes sp{to{transform:rotate(360deg)}}
-  .msg{display:none;padding:0 28px;text-align:center}
-  .msg h1{margin:0;font-size:20px;font-weight:600;line-height:1.45}
-  .msg p{margin:10px 0 0;font-size:15px;line-height:1.6;color:rgba(255,255,255,.6)}
+  .msg{display:none;padding:0 calc(var(--u) * 70);text-align:center}
+  .msg h1{margin:0;font-size:calc(var(--u) * 46);font-weight:600;line-height:1.4;letter-spacing:-.01em}
+  .msg p{margin:calc(var(--u) * 18) 0 0;font-size:calc(var(--u) * 32);line-height:1.5;color:rgba(255,255,255,.6)}
   .gone .msg{display:block}
-  .save{margin-top:24px;width:100%;height:58px;border:0;border-radius:29px;background:#87E6FF;color:#0A0A0A;font:600 18px/58px Pretendard,'Noto Sans KR',system-ui,sans-serif;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .15s ease,opacity .2s ease}
+  .save{margin-top:20px;width:100%;height:56px;border:0;border-radius:28px;background:#0A0A0A;color:#fff;font:600 18px/56px Pretendard,'Noto Sans KR',system-ui,sans-serif;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .15s ease,opacity .2s ease}
   .save:active{transform:scale(.97)}
-  .save:disabled{opacity:.35}
+  .save:disabled{opacity:.3}
   .gone .save,.gone .tip{display:none}
-  .tip{margin:14px 0 0;font-size:13px;line-height:1.6;color:rgba(255,255,255,.55);text-align:center}
-  footer{margin-top:28px;font-size:12px;color:rgba(255,255,255,.35);text-align:center}
+  .tip{margin:12px 0 0;font-size:13px;line-height:1.5;color:rgba(10,10,10,.55);text-align:center}
+  footer{margin-top:14px;font-size:12px;line-height:1.5;color:rgba(10,10,10,.4);text-align:center}
   @media (prefers-reduced-motion:reduce){.spin{animation-duration:2.5s}.ph img{transition:none}}
 </style>
 </head>
 <body>
-<header><b>Steer</b><span>Luck Lens</span></header>
 <main id="m" aria-busy="true">
-  <div class="ph"><span class="spin" aria-hidden="true"></span><img id="img" alt="Luck Lens로 촬영한 오행 필터 사진"><div class="msg" role="alert"><h1 id="mh"></h1><p id="mp"></p></div></div>
+  <div class="card">
+    <div class="ph"><span class="spin" aria-hidden="true"></span><img id="img" alt="Luck Lens로 촬영한 오행 필터 사진"><div class="msg" role="alert"><h1 id="mh"></h1><p id="mp"></p></div></div>
+    <div class="logo"><img src="assets/lens/photo-steer-logo.svg" alt="Steer"></div>
+  </div>
   <button class="save" id="save" type="button" disabled>사진 저장</button>
   <p class="tip" id="tip">저장이 되지 않으면 사진을 길게 눌러 저장해 주세요.</p>
 </main>
