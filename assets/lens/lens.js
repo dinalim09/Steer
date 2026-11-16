@@ -54,6 +54,7 @@ const CSS = `
 .llz .ll-side{position:absolute;left:0;top:88px;width:393px;height:600px;pointer-events:none}
 .llz .ll-side img{position:absolute;left:200px;top:294px;height:150.3px;width:auto;transform:translate(-50%,-50%) scale(.9) rotate(-4deg);opacity:0;transition:opacity .28s ease,transform .38s cubic-bezier(.2,.9,.3,1.25)}
 .llz .ll-side img.on{opacity:1;transform:translate(-50%,-50%)}
+.llz .ll-side img[data-element="-1"]{height:360px}   /* ALL(helm) 이미지는 여백이 커서(그림 279/551px) 크게 잡아 그림 높이 약 182px로 맞춘다 */
 .llz .ll-ptr{position:absolute;left:675px;top:768px;width:16px;height:12px;color:var(--accent);transition:color .25s ease}
 .llz .ll-ptr svg{display:block}
 .llz .ll-name{position:absolute;left:633px;top:906px;width:100px;margin:0;text-align:center;font-size:13px;font-weight:500;line-height:normal;letter-spacing:.52px;white-space:pre;color:var(--accent);transition:color .25s ease}
