@@ -51,6 +51,13 @@ const CSS = `
 #tmx .tm-arr:focus-visible{outline:3px solid #87E6FF;outline-offset:3px}
 #tmx .tm-ph{opacity:.26}
 #tmx .tm-icon{position:absolute;width:42px;height:42px;display:block}
+/* 개인 페이지 블랙 버전 (Figma 4099:46656): 배경 #000 · 제목·이름·항목 흰색 · 섹션 제목 #C3C3C3 · 한글 #616161 · 좌우 화살표 #525252 */
+#tmx .tm-mem{background:#000;color:#fff}
+#tmx .tm-mem .tm-back{color:#fff}
+#tmx .tm-mem .tm-en{color:#fff}
+#tmx .tm-mem .tm-kr{color:#616161}
+#tmx .tm-mem .tm-arr{background:#525252;box-shadow:none}
+#tmx .tm-mem .tm-icon img,#tmx .tm-mem .tm-star{filter:invert(1)}
 @media (prefers-reduced-motion:reduce){
   #tmx .tm-arm{animation:none!important}
   #tmx .tm-roll{overflow-y:auto;-webkit-overflow-scrolling:touch}
@@ -164,7 +171,7 @@ export function createTeam(stage, hooks = {}){
     stopMember(); mem.textContent = ''; mem.setAttribute('aria-label', label + ' 개인 페이지');
     // ← 뒤로(Figma 좌측 상단 chevron 자리). 화면 낭독용 이름은 aria-label 'Back to Team'
     const back = document.createElement('button'); back.type = 'button'; back.className = 'tm-back'; back.setAttribute('aria-label', 'Back to Team');
-    back.innerHTML = '<svg width="22" height="38" viewBox="-3 -3 22 38" fill="none" aria-hidden="true"><path d="M16 0L0 16L16 32" stroke="#0A0A0A" stroke-width="5.333" stroke-linecap="round" stroke-linejoin="round"/></svg>';   // 글자 없이 화살표만(위치·크기 그대로, 터치 영역 63×64)
+    back.innerHTML = '<svg width="22" height="38" viewBox="-3 -3 22 38" fill="none" aria-hidden="true"><path d="M16 0L0 16L16 32" stroke="currentColor" stroke-width="5.333" stroke-linecap="round" stroke-linejoin="round"/></svg>';   // 글자 없이 화살표만(위치·크기 그대로, 터치 영역 63×64)
     back.addEventListener('pointerdown', () => back.classList.add('press')); ['pointerup', 'pointercancel', 'pointerleave'].forEach(t => back.addEventListener(t, () => back.classList.remove('press')));
     back.addEventListener('click', () => hooks.onBack && hooks.onBack());
     mem.appendChild(back);
@@ -180,13 +187,13 @@ export function createTeam(stage, hooks = {}){
       mem.appendChild(a);
     });
     const L = m.left || {whoY:290, starY:486.4};
-    const star = img('star.webp', 113.7, L.starY, 59, 52.5); mem.appendChild(star);
-    const who = mega(['Who', 'Made', '(              )', 'This'], 154.918, 138, 123.2, .03, '#000000', 'center', 447);
+    const star = img('star.webp', 113.7, L.starY, 59, 52.5); star.classList.add('tm-star'); mem.appendChild(star);
+    const who = mega(['Who', 'Made', '(              )', 'This'], 154.918, 138, 123.2, .03, '#FFFFFF', 'center', 447);
     who.setAttribute('role', 'img'); who.setAttribute('aria-label', 'Who Made This'); mem.appendChild(at(who, 142.76, L.whoY));
     // 프로필 사진: 'Who Made ( ) This' 괄호 안 Figma 위치(306, 571)에 고정(등장 팝업만)
     const photo = img(m.photo, 306, 571, 120, 126, label + ' 프로필 사진'); mem.appendChild(photo);
     // 이름 + 메일 · 비핸스 아이콘(팀원별 Figma 좌표)
-    const nm = mega([m.name], 100, 138, 104, .03, '#000000'); nm.setAttribute('role', 'img'); nm.setAttribute('aria-label', label);
+    const nm = mega([m.name], 100, 138, 104, .03, '#FFFFFF'); nm.setAttribute('role', 'img'); nm.setAttribute('aria-label', label);
     mem.appendChild(at(nm, m.nameBox.x, m.nameBox.y));
     [['mail', 'ic-mail.webp', '메일'], ['behance', 'ic-be.webp', 'Behance']].forEach(([k, src, lab]) => {
       const url = m.links && m.links[k], pos = m.icons[k];
@@ -195,7 +202,7 @@ export function createTeam(stage, hooks = {}){
       el.style.left = pos.x + 'px'; el.style.top = pos.y + 'px';
       el.innerHTML = '<img src="' + BASE + src + '" alt="" width="42" height="42" draggable="false">'; mem.appendChild(el);
     });
-    // 엔딩 크레딧 층: 섹션 제목(Megascope 20 · 자간 8% · #67676B) → 항목(Inter Medium 28/34 · 한글 16/20 #9C9C9C) · 감사 인사 이름.
+    // 엔딩 크레딧 층: 섹션 제목(Megascope 20 · 자간 8% · #C3C3C3) → 항목(Inter Medium 28/34 흰색 · 한글 16/20 #616161) · 감사 인사 이름.
     // 컷아웃은 Figma 레이어 순서대로 크레딧 아래(over:false) · 위(over:true)에 둔다. 모두 Figma 좌표에서 층 원점(ROLL_X, CUT_TOP)만 뺀 위치
     const roll = document.createElement('div'); roll.className = 'tm-roll';
     const rolli = document.createElement('div'); rolli.className = 'tm-rolli'; roll.appendChild(rolli);
@@ -207,7 +214,7 @@ export function createTeam(stage, hooks = {}){
     const C = m.credits, words = [];
     const txt = (cls, y, s) => { const p = document.createElement('p'); p.className = cls; p.textContent = s; p.style.left = X(C.x); p.style.top = Y(y); blk.appendChild(p); return p; };
     C.sections.forEach(sec => {
-      const h = mega([sec.head], 20, 20, 17, .08, '#67676B'); h.setAttribute('aria-hidden', 'true'); blk.appendChild(at(h, C.x - ROLL_X, sec.y - CUT_TOP)); span(sec.y, sec.y + 20); words.push(sec.head);
+      const h = mega([sec.head], 20, 20, 17, .08, '#C3C3C3'); h.setAttribute('aria-hidden', 'true'); blk.appendChild(at(h, C.x - ROLL_X, sec.y - CUT_TOP)); span(sec.y, sec.y + 20); words.push(sec.head);
       (sec.items || []).forEach(([y, en, kr, font]) => { txt('tm-en', y, en); const k = txt('tm-kr' + ((font || C.krFont) === 'pretendard' ? ' pt' : ''), y + 38, kr); span(y, y + 58); words.push(en + ' (' + kr + ')'); });
       (sec.names || []).forEach(([y, n]) => { txt('tm-en', y, n); span(y, y + 34); words.push(n); });
     });

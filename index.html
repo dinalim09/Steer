@@ -354,6 +354,8 @@ a,button,[role=button],label,select,.pill,#screen:active,body.grabbing,body.grab
 #tmx .tmst{position:absolute;inset:0}
 #tmx .tmnv{position:absolute;left:0;top:0;width:1366px;height:88px;color:#0A0A0A;z-index:2;pointer-events:none}
 #tmx .tmnv svg{display:block}
+#tmx.tmdark{background:#000}
+#tmx.tmdark .tmnv{color:#fff}   /* 개인 페이지 블랙 버전: 내비 글자·밑줄 흰색 */
 #tmx .tmhit{position:absolute;top:12px;height:64px;z-index:3;border:0;padding:0;margin:0;background:transparent;border-radius:12px;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 #tmx .tmhit:focus-visible{outline:3px solid #87E6FF;outline-offset:2px}
 /* ===== Scenario (Figma 4218:4386 S1-1~S3-5) — 상단 내비 유지, 그 아래는 assets/scenario/scenario.js ===== */
@@ -4223,7 +4225,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   const parse = h => { const m = /^#TEAM(?:-(\d))?$/i.exec(h || ''); return m ? {member:m[1] ? +m[1] : 0} : null; };
   function load(){
     if (loading) return loading;
-    loading = import('./assets/team/team.js?v=20261117-4')   /* ?v= : 배포마다 올려 iPad·CDN의 이전 모듈 캐시와 섞이지 않게 */.then(m => {
+    loading = import('./assets/team/team.js?v=20261117-5')   /* ?v= : 배포마다 올려 iPad·CDN의 이전 모듈 캐시와 섞이지 않게 */.then(m => {
       team = m.createTeam(stage, {onMember:id => { entered = true; go(id, true); }, onBack:back});
       return team;
     }).catch(() => { loading = null; stage.innerHTML = '<p style="position:absolute;left:40px;top:160px;font:500 18px Pretendard,sans-serif">Team 화면을 불러오지 못했습니다. 새로고침 후 다시 시도해 주세요.</p>'; });
@@ -4246,6 +4248,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     root.classList.add('open'); root.removeAttribute('aria-hidden'); want = view;
     load().then(t => { if (!t || want !== view || !isOpen()) return;
       if (view) { if (!t.showMember(view)) { t.showMain(); view = 0; } } else t.showMain();
+      root.classList.toggle('tmdark', !!view);
       track('team_view', {view:view ? 'member_' + view : 'main'}); });
   }
   function open(view){ lock = 0; go(view || 0, true); }
@@ -4253,10 +4256,10 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   function back(){ if (APP_MODE) { lock = 0; go(0, false); return; }
     if (entered && history.state && history.state.steerTeam > 0) { entered = false; history.back(); return; }
     history.replaceState({steerTeam:0}, '', '#TEAM'); lock = 0; go(0, false); }
-  function close(){ want = null; if (team) team.hide(); root.classList.remove('open'); root.setAttribute('aria-hidden', 'true');
+  function close(){ want = null; if (team) team.hide(); root.classList.remove('open', 'tmdark'); root.setAttribute('aria-hidden', 'true');
     if (!APP_MODE && parse(location.hash)) history.replaceState(null, '', location.pathname + location.search); }
   window.addEventListener('popstate', () => { const r = parse(location.hash);
-    if (r) { lock = 0; go(r.member, false); } else if (isOpen()) { want = null; if (team) team.hide(); root.classList.remove('open'); root.setAttribute('aria-hidden', 'true'); } });
+    if (r) { lock = 0; go(r.member, false); } else if (isOpen()) { want = null; if (team) team.hide(); root.classList.remove('open', 'tmdark'); root.setAttribute('aria-hidden', 'true'); } });
   // Team 화면의 상단 내비: Research · Logic · Scenario · Camera · Team(메인으로)
   const H = steerNav.HITS;
   const hit = (k, label, fn) => { const b = document.createElement(fn ? 'button' : 'span'); b.className = 'tmhit'; b.dataset.nw = k;
