@@ -4122,8 +4122,8 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     const q = pinfo(PAGES[cur]);
     prv.setAttribute('aria-label', cur === 0 ? 'Logic 메인으로' : '이전: ' + plabel(PAGES[cur - 1]));
     const last = cur === PAGES.length - 1;
-    nxt.setAttribute('aria-label', last ? '다음 (준비 중)' : '다음: ' + plabel(PAGES[cur + 1]));
-    if (last) nxt.setAttribute('aria-disabled', 'true'); else nxt.removeAttribute('aria-disabled');
+    nxt.setAttribute('aria-label', last ? 'Logic 메인으로' : '다음: ' + plabel(PAGES[cur + 1]));
+    nxt.removeAttribute('aria-disabled');   // 마지막 페이지도 막지 않는다: 우측 화살표 → Logic 메인(L0)
     root.querySelectorAll('.lda circle').forEach(c => c.setAttribute('r', cur === 0 ? '27' : '28'));   // Figma 01 1/2는 지름 54, 나머지는 56
     cis.forEach(b => { const k = b.dataset.ch, on = k === q.k, has = !!first(k);
       b.classList.toggle('cur', on); if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
@@ -4174,7 +4174,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   }
   const toL0 = replay => { close(); if (window.steerL0 && (replay || !lgx.classList.contains('open'))) window.steerL0.open(); };
   prv.addEventListener('click', () => cur === 0 ? toL0(false) : go(cur - 1));
-  nxt.addEventListener('click', () => go(cur + 1));
+  nxt.addEventListener('click', () => cur === PAGES.length - 1 ? toL0(false) : go(cur + 1));   // 처음의 좌측과 대칭으로 끝의 우측도 L0
   hit(843, 12, 95, 64, 'Research 열기', () => { close(); if (window.steerL0) window.steerL0.close(); const n = document.getElementById('rsNav'); if (n) n.click(); }).dataset.nw = 'research';
   hit(956, 12, 78, 64, 'Logic 메인으로', () => toL0(true)).dataset.nw = 'logic';
   hit(1170, 12, 86, 64, 'Camera 열기', () => { if (window.steerCam) window.steerCam.open(PAGES[cur]); }).dataset.nw = 'camera';
