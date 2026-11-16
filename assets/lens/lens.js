@@ -167,21 +167,31 @@ export function createLens(root, hooks = {}){
     if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; emit('camera_stop'); }
     video.pause(); video.srcObject = null; live = false; palm.clear(); setShown(false); lastPreview = 0;
   }
-  function fail(k, reason){ stopCamera(); setState(k); emit(k === 'denied' ? 'camera_denied' : 'camera_error', {reason}); }
+  // 카메라 권한 진단: 요청 직전 권한 상태(granted · prompt · denied · unknown), 실행 방식(홈 화면 웹앱 app · Safari browser),
+  // 요청부터 영상 수신까지 걸린 시간(wait_ms — 허용창이 떴다면 길어진다)을 이벤트와 window.steerLensCam에 남긴다. 권한 자체를 바꾸지는 않는다
+  const APP_MODE = (() => { try { return navigator.standalone === true || matchMedia('(display-mode: standalone)').matches || matchMedia('(display-mode: fullscreen)').matches; } catch { return false; } })();
+  const camDiag = window.steerLensCam = {mode:APP_MODE ? 'app' : 'browser', requests:0, last:null};
+  const permState = () => !navigator.permissions || !navigator.permissions.query ? Promise.resolve('unknown')
+    : Promise.race([navigator.permissions.query({name:'camera'}).then(r => r.state, () => 'unknown'), new Promise(r => setTimeout(() => r('unknown'), 300))]);
+  let camInfo = {};
+  function fail(k, reason){ stopCamera(); setState(k); emit(k === 'denied' ? 'camera_denied' : 'camera_error', {reason, ...camInfo}); }
   async function openCamera(){
     if (stream) return;   // 이미 연결된 스트림은 그대로 쓴다(필터 변경 · 다시 찍기에서 재시작하지 않음)
     const token = ++request; setShown(false); setState('connecting');
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.isSecureContext) { fail('unsupported', 'unsupported'); return; }
+    const perm = await permState(); if (token !== request || !active) return;
+    const t0 = performance.now(); camDiag.requests++; camInfo = {perm, mode:camDiag.mode};
     try {
       const s = await navigator.mediaDevices.getUserMedia({audio:false, video:{facingMode:{ideal:'user'}, width:{ideal:1280}, height:{ideal:720}}});
+      camInfo.wait_ms = Math.round(performance.now() - t0); camDiag.last = {...camInfo, at:new Date().toISOString()};
       if (token !== request || !active) { s.getTracks().forEach(t => t.stop()); return; }
       stream = s; video.srcObject = s; try { await video.play(); } catch {}
       s.getVideoTracks().forEach(t => t.addEventListener('ended', () => { if (stream === s && active) fail('ended', 'track_ended'); }));
       live = true; lastPreview = 0; setHint('loading'); loop();
-      palm.start(); emit('camera_start');
+      palm.start(); emit('camera_start', camInfo);
     } catch (err) {
       if (token !== request) return;
-      const n = err && err.name;
+      const n = err && err.name; camInfo.wait_ms = Math.round(performance.now() - t0); camDiag.last = {...camInfo, error:n || 'error', at:new Date().toISOString()};
       fail(n === 'NotAllowedError' || n === 'SecurityError' ? 'denied' : n === 'NotFoundError' || n === 'OverconstrainedError' ? 'notfound' : n === 'NotReadableError' || n === 'AbortError' ? 'busy' : 'error', n || 'error');
     }
   }
