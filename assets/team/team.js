@@ -228,12 +228,15 @@ export function createTeam(stage, hooks = {}){
     anims.push(p.star.animate([{opacity:0, transform:'rotate(-90deg) scale(.4)'}, {opacity:1, transform:'none'}], {duration:700, delay:380, easing:E, fill:'backwards'}));
     anims.push(p.nm.animate([{opacity:0, transform:'translateY(-12px)'}, {opacity:p.nm.classList.contains('tm-ph') ? .26 : 1, transform:'none'}], {duration:600, delay:160, easing:E, fill:'backwards'}));
     // 엔딩 크레딧(무한 반복)과 오른쪽 컷아웃 = 하나의 시퀀스: 둘 다 Figma 좌표 그대로 두고 같은 이동량(translateY)만 공통으로 준다.
-    //  첫 프레임은 Figma 배치(이동량 0) — 사진과 첫 크레딧이 바로 보이며, 65px/s로 함께 한 벌 간격(pitch)씩 올라가며 반복한다.
+    //  화면 아래에서 들어와 Figma 배치(이동량 0)를 지난 뒤 65px/s로 함께 한 벌 간격(pitch)씩 올라가며 반복한다.
     //  크레딧과 컷아웃은 한 층(tm-rolli)에 함께 들어 있어 애니메이션 하나로 움직인다 → 속도·상대 위치가 항상 같다.
     //  층 안에 같은 pitch 아래 복제 1벌이 있어, 반복 끝 상태 = 복제본이 원본 자리에 온 모습(이음매 없음).
+    //  시작: 맨 위 요소(p.top)가 화면 아래 끝(1024)에서 출발해 같은 속도로 Figma 배치(이동량 0)까지 올라온 뒤, 이어서 반복 구간으로 넘어간다
     const v = CREDIT_SPEED / 1000, t0 = CREDIT_DELAY * 1000, loop = p.pitch / v;
-    const rise = [{transform:'translateY(0px)'}, {transform:'translateY(' + (-p.pitch) + 'px)'}], timing = {duration:loop, delay:t0, easing:'linear', iterations:Infinity};
-    const run = [p.ci, p.cutr].filter(Boolean).map(el => el.animate(rise, timing));
+    const D = Math.max(0, 1024 - p.top), intro = D / v;
+    const rise = [{transform:'translateY(0px)'}, {transform:'translateY(' + (-p.pitch) + 'px)'}], timing = {duration:loop, delay:t0 + intro, easing:'linear', iterations:Infinity};
+    const enter = [{transform:'translateY(' + D + 'px)'}, {transform:'translateY(0px)'}], etiming = {duration:intro, delay:t0, easing:'linear', fill:'backwards'};
+    const run = [p.ci, p.cutr].filter(Boolean).flatMap(el => [el.animate(enter, etiming), el.animate(rise, timing)]);
     const st = document.timeline.currentTime; run.forEach(a => { a.startTime = st; anims.push(a); });   // 시작 시각을 하나로 고정
   }
 
