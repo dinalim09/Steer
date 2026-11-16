@@ -1,8 +1,8 @@
-// STEER Team — 메인(시계 · Figma 3967:3442)과 팀원 개인 페이지(엔딩 크레딧 · Figma 3967:3331)
+// STEER Team — 메인(시계 · Figma 3967:3442)과 팀원 개인 페이지(엔딩 크레딧 · Figma 2548:5219 · 2543:19422 · 2543:19530)
 // 시계는 CSS transform 애니메이션만 쓴다(매 프레임 JS 계산·rAF 없음). 사진·숫자 버튼은 Figma 위치에 고정되고,
 // 바늘 3개만 피벗을 기준으로 돌며 사진 위를 가로질러 지나간다(바늘은 pointer-events:none이라 터치를 가로채지 않는다).
 import MEGA from './mega.js';
-import {PIVOT, PERIOD, HANDS, MEMBERS, SPECIAL_THANKS, CREDIT_PLACEHOLDER_LINES} from './team-data.js';
+import {PIVOT, PERIOD, HANDS, MEMBERS} from './team-data.js';
 
 const BASE = new URL('./', import.meta.url).href;
 const NS = 'http://www.w3.org/2000/svg';
@@ -10,9 +10,11 @@ const RM = matchMedia('(prefers-reduced-motion: reduce)');
 const CREDIT_SPEED = 65;      // 크레딧과 오른쪽 인물 컷아웃이 함께 올라가는 속도(px/s, 일정한 선형)
 const CREDIT_DELAY = 0;       // 개인 페이지가 보이는 첫 프레임부터 크레딧·컷아웃이 움직인다(초)
 const CREDIT_GAP = 160;       // 반복할 때 마지막 줄(Special Thanks 이름)과 다음 회차 첫 줄 사이 간격(px)
-const CUT_TOP = 244;          // 오른쪽 컷아웃이 위로 사라지는 경계(이름·아이콘 아래). 여기서부터 40px 동안 흐려지며 가려진다
+const CUT_TOP = 244;          // 크레딧·컷아웃이 위로 사라지는 경계(이름·아이콘 아래). 여기서부터 40px 동안 흐려지며 가려진다
+const ROLL_X = 640;           // 크레딧·컷아웃 층의 왼쪽 경계(크레딧 x 667 · 683보다 왼쪽, 'Who Made' 오른쪽)
 
 const CSS = `
+@font-face{font-family:InterT;font-style:normal;font-weight:500;font-display:swap;src:url(${BASE}fonts/inter-500.woff2) format('woff2')}
 #tmx .tms{position:absolute;inset:0;overflow:hidden;background:#fff;color:#0A0A0A}
 #tmx .tm-v{position:absolute;inset:0;visibility:hidden}
 #tmx .tm-v.on{visibility:visible}
@@ -31,19 +33,27 @@ const CSS = `
 #tmx .tm-back.press{transform:scale(.96)}
 #tmx .tm-back:focus-visible{outline:3px solid #87E6FF;outline-offset:2px}
 #tmx .tm-back svg{display:block;flex:none}
-#tmx .tm-cr{position:absolute;left:683px;top:286px;width:420px;height:738px;overflow:hidden;-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 34px,#000 calc(100% - 48px),transparent);mask-image:linear-gradient(180deg,transparent 0,#000 34px,#000 calc(100% - 48px),transparent)}
-#tmx .tm-cri{position:absolute;left:0;top:0;width:100%;will-change:transform}
-#tmx .tm-crb{position:absolute;left:0;width:100%}
-/* 오른쪽 인물 컷아웃: 크레딧과 같은 속도로 위로 흐르는 층(크레딧보다 아래 레이어, Figma 순서). 위쪽 경계에서만 흐려지고 아래는 화면 끝에서 잘린다 */
-#tmx .tm-cuts{position:absolute;left:683px;width:683px;overflow:hidden;pointer-events:none;-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 40px);mask-image:linear-gradient(180deg,transparent 0,#000 40px)}
-#tmx .tm-cutr{position:absolute;left:0;top:0;width:100%;height:100%;will-change:transform}
-#tmx .tm-st{position:absolute;left:0;margin:0;font:400 24px/52px 'Pretendard',PretT,'Noto Sans KR',sans-serif;white-space:nowrap}
+/* 엔딩 크레딧 층: 크레딧 글자와 오른쪽 인물 컷아웃을 Figma 좌표 그대로 한 층(tm-rolli)에 담아 같은 이동량으로 올린다.
+   위쪽 경계(CUT_TOP)에서만 40px 동안 흐려지고, 아래는 화면 끝에서 잘린다(Figma 프레임이 1024 아래로 이어지는 구성) */
+#tmx .tm-roll{position:absolute;left:${ROLL_X}px;top:${CUT_TOP}px;width:${1366 - ROLL_X}px;height:${1024 - CUT_TOP}px;overflow:hidden;-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 40px);mask-image:linear-gradient(180deg,transparent 0,#000 40px)}
+#tmx .tm-rolli{position:absolute;left:0;top:0;width:100%;will-change:transform}
+#tmx .tm-rollb{position:absolute;left:0;top:0;width:100%}
+#tmx .tm-rollb .tm-abs{pointer-events:none;-webkit-user-drag:none}
+#tmx .tm-en,#tmx .tm-kr{position:absolute;margin:0;width:570px;white-space:nowrap}
+#tmx .tm-en{font:500 28px/34px InterT,'Pretendard',PretT,sans-serif;letter-spacing:-.02em;color:#0A0A0A}
+#tmx .tm-kr{font:500 16px/20px 'Noto Sans KR','Pretendard',sans-serif;letter-spacing:-.01em;color:#9C9C9C}
+#tmx .tm-kr.pt{font-family:'Pretendard',PretT,'Noto Sans KR',sans-serif}
+#tmx .tm-arr{position:absolute;top:503px;width:56px;height:56px;border:0;padding:0;margin:0;border-radius:50%;background:#0A0A0A;display:grid;place-items:center;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.12);-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:transform .15s ease;z-index:2}
+#tmx .tm-arr.prv{left:12px;box-shadow:inset 0 0 0 1px #fff,0 4px 16px rgba(0,0,0,.12)}
+#tmx .tm-arr.nxt{left:1298px}
+#tmx .tm-arr.press{transform:scale(.94)}
+#tmx .tm-arr:focus-visible{outline:3px solid #87E6FF;outline-offset:3px}
 #tmx .tm-ph{opacity:.26}
 #tmx .tm-icon{position:absolute;width:42px;height:42px;display:block}
 @media (prefers-reduced-motion:reduce){
   #tmx .tm-arm{animation:none!important}
-  #tmx .tm-cr{overflow-y:auto;-webkit-overflow-scrolling:touch}
-  #tmx .tm-crb+.tm-crb,#tmx .tm-cutr .tm-dup{display:none}
+  #tmx .tm-roll{overflow-y:auto;-webkit-overflow-scrolling:touch}
+  #tmx .tm-rollb+.tm-rollb{display:none}
 }`;
 
 // Megascope 글자: lines 배열을 box 너비 안에 정렬해 SVG 하나로(fs 글자 크기, lh 행간, base 첫 기준선, ls 자간 em)
@@ -89,6 +99,7 @@ const img = (src, x, y, w, h, alt = '') => { const i = new Image(); i.src = BASE
 
 export function createTeam(stage, hooks = {}){
   if (!document.getElementById('tm-css')) { const st = document.createElement('style'); st.id = 'tm-css'; st.textContent = CSS; document.head.appendChild(st); }
+  if (document.fonts && document.fonts.load) document.fonts.load('500 28px InterT').catch(() => {});   // 크레딧 영문 글꼴을 미리 받아 둔다
   stage.classList.add('tms');
   const main = document.createElement('div'), mem = document.createElement('div');
   main.className = 'tm-v tm-main'; mem.className = 'tm-v tm-mem';
@@ -127,7 +138,7 @@ export function createTeam(stage, hooks = {}){
   const btns = MEMBERS.map(m => {
     const lb = m.labelBox, pb = m.photoBox, x0 = Math.min(lb.x, pb.x), y0 = Math.min(lb.y, pb.y), x1 = Math.max(lb.x + lb.w, pb.x + 120), y1 = pb.y + 126;
     const b = document.createElement('button'); b.type = 'button'; b.className = 'tm-mb'; b.dataset.id = m.id;
-    b.setAttribute('aria-label', (m.name || '팀원 ' + m.id) + ' 개인 페이지 ' + m.label.replace('3o', '30'));
+    b.setAttribute('aria-label', (m.display || m.name) + ' 개인 페이지 ' + m.label.replace('3o', '30'));
     Object.assign(b.style, {left:x0 + 'px', top:y0 + 'px', width:(x1 - x0) + 'px', height:(y1 - y0) + 'px'});
     const inner = document.createElement('span'); inner.className = 'tm-mbi';
     const ph = new Image(); ph.src = BASE + m.photoBlur; ph.alt = ''; ph.decoding = 'async'; ph.draggable = false;
@@ -148,57 +159,63 @@ export function createTeam(stage, hooks = {}){
   let anims = [];
   const stopMember = () => { anims.forEach(a => a.cancel()); anims = []; };
   function buildMember(m){
-    stopMember(); mem.textContent = ''; mem.setAttribute('aria-label', (m.name || '팀원 ' + m.id) + ' 개인 페이지');
+    const label = m.display || m.name;
+    stopMember(); mem.textContent = ''; mem.setAttribute('aria-label', label + ' 개인 페이지');
     // ← 뒤로(Figma 좌측 상단 chevron 자리). 화면 낭독용 이름은 aria-label 'Back to Team'
     const back = document.createElement('button'); back.type = 'button'; back.className = 'tm-back'; back.setAttribute('aria-label', 'Back to Team');
     back.innerHTML = '<svg width="22" height="38" viewBox="-3 -3 22 38" fill="none" aria-hidden="true"><path d="M16 0L0 16L16 32" stroke="#0A0A0A" stroke-width="5.333" stroke-linecap="round" stroke-linejoin="round"/></svg>';   // 글자 없이 화살표만(위치·크기 그대로, 터치 영역 63×64)
     back.addEventListener('pointerdown', () => back.classList.add('press')); ['pointerup', 'pointercancel', 'pointerleave'].forEach(t => back.addEventListener(t, () => back.classList.remove('press')));
     back.addEventListener('click', () => hooks.onBack && hooks.onBack());
     mem.appendChild(back);
-    const star = img('star.webp', 113.7, 486.4, 59, 52.5); mem.appendChild(star);
+    // 좌우 검은 원형 화살표(Figma arrow · 이전/다음): Team 배치 순서(임채은 → 김수민 → 윤영실) 안에서 이전·다음 팀원(처음·끝은 순환)
+    const idx = MEMBERS.indexOf(m);
+    [['prv', -1, '이전 팀원', 'M11.5 3 5.5 9l6 6'], ['nxt', 1, '다음 팀원', 'M6.5 3 12.5 9l-6 6']].forEach(([cls, d, lab, path]) => {
+      const to = MEMBERS[(idx + d + MEMBERS.length) % MEMBERS.length];
+      const a = document.createElement('button'); a.type = 'button'; a.className = 'tm-arr ' + cls; a.setAttribute('aria-label', lab + ' · ' + (to.display || to.name));
+      a.innerHTML = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + path + '"/></svg>';
+      a.addEventListener('pointerdown', () => a.classList.add('press')); ['pointerup', 'pointercancel', 'pointerleave'].forEach(t => a.addEventListener(t, () => a.classList.remove('press')));
+      a.addEventListener('click', () => hooks.onMember && hooks.onMember(to.id));
+      mem.appendChild(a);
+    });
+    const L = m.left || {whoY:290, starY:486.4};
+    const star = img('star.webp', 113.7, L.starY, 59, 52.5); mem.appendChild(star);
     const who = mega(['Who', 'Made', '(              )', 'This'], 154.918, 138, 123.2, .03, '#000000', 'center', 447);
-    who.setAttribute('role', 'img'); who.setAttribute('aria-label', 'Who Made This'); mem.appendChild(at(who, 142.76, 290));
-    // 프로필 사진: 'Who Made ( ) This' 괄호 안 Figma 위치에 고정(등장 팝업만)
-    const photo = img(m.photo, 305.77, 575, 120, 126, (m.name || '팀원 ' + m.id) + ' 프로필 사진'); mem.appendChild(photo);
-    // 이름 + 메일 · 비핸스 아이콘(이름 끝에서 29px 뒤, Figma 간격)
-    const nm = mega([m.name || 'Name TBD'], 100, 138, 104, .03, '#000000');
-    if (!m.name) nm.classList.add('tm-ph'); nm.setAttribute('role', 'img'); nm.setAttribute('aria-label', m.name || '이름 미정');
-    mem.appendChild(at(nm, 683, 102));
-    const iconX = 683 + parseFloat(nm.dataset.w) + 29;
-    [['mail', 'ic-mail.webp', '메일'], ['behance', 'ic-be.webp', 'Behance']].forEach(([k, src, lab], i) => {
-      const url = m.links && m.links[k];
+    who.setAttribute('role', 'img'); who.setAttribute('aria-label', 'Who Made This'); mem.appendChild(at(who, 142.76, L.whoY));
+    // 프로필 사진: 'Who Made ( ) This' 괄호 안 Figma 위치(306, 571)에 고정(등장 팝업만)
+    const photo = img(m.photo, 306, 571, 120, 126, label + ' 프로필 사진'); mem.appendChild(photo);
+    // 이름 + 메일 · 비핸스 아이콘(팀원별 Figma 좌표)
+    const nm = mega([m.name], 100, 138, 104, .03, '#000000'); nm.setAttribute('role', 'img'); nm.setAttribute('aria-label', label);
+    mem.appendChild(at(nm, m.nameBox.x, m.nameBox.y));
+    [['mail', 'ic-mail.webp', '메일'], ['behance', 'ic-be.webp', 'Behance']].forEach(([k, src, lab]) => {
+      const url = m.links && m.links[k], pos = m.icons[k];
       const el = url ? Object.assign(document.createElement('a'), {href:url, target:'_blank', rel:'noopener'}) : document.createElement('span');
       el.className = 'tm-icon'; el.setAttribute('aria-label', lab + (url ? '' : ' (주소 미정)'));
-      el.style.left = (iconX + i * 49) + 'px'; el.style.top = '150px';
+      el.style.left = pos.x + 'px'; el.style.top = pos.y + 'px';
       el.innerHTML = '<img src="' + BASE + src + '" alt="" width="42" height="42" draggable="false">'; mem.appendChild(el);
     });
-    // 오른쪽 인물 컷아웃(team-data.js cutouts): Figma 위치·크기 그대로 한 층(cutr)에 담아 크레딧과 함께 위로 흐른다. 없는 팀원은 층을 만들지 않는다
-    let cutr = null, cuts = null;
-    if (m.cutouts && m.cutouts.length) {
-      cuts = document.createElement('div'); cuts.className = 'tm-cuts'; cuts.setAttribute('aria-hidden', 'true');
-      Object.assign(cuts.style, {top:CUT_TOP + 'px', height:(VH - CUT_TOP) + 'px'});
-      cutr = document.createElement('div'); cutr.className = 'tm-cutr'; cuts.appendChild(cutr);
-      m.cutouts.forEach(c => { const o = img(c.src, c.x - 683, c.y - CUT_TOP, c.w, c.h); o.decoding = 'sync'; cutr.appendChild(o); });
-      mem.appendChild(cuts);
-    }
-    // 크레딧(역할 → Special Thanks to → 이름들). 마스크 영역 안에서 아래→위로 올라간다
-    const cr = document.createElement('div'); cr.className = 'tm-cr'; const ci = document.createElement('div'); ci.className = 'tm-cri'; cr.appendChild(ci);
-    const blk = document.createElement('div'); blk.className = 'tm-crb'; ci.appendChild(blk);
-    const OFF = 303 - 286; let y = OFF;
-    const lines = m.credits && m.credits.length ? m.credits : Array.from({length:CREDIT_PLACEHOLDER_LINES}, () => 'Credit TBD');
-    const roles = mega(lines, 50, 60, 47.5, .03, '#000000'); if (!(m.credits && m.credits.length)) roles.classList.add('tm-ph');
-    roles.setAttribute('role', 'img'); roles.setAttribute('aria-label', m.credits && m.credits.length ? m.credits.join(', ') : '크레딧 미정');
-    blk.appendChild(at(roles, 0, y)); y += lines.length * 60 + 30;
-    const st = document.createElement('p'); st.className = 'tm-st'; st.textContent = 'Special Thanks to'; st.style.top = y + 'px'; blk.appendChild(st); y += 52 + 10;
-    const th = mega(SPECIAL_THANKS, 40, 45, 36.5, .03, '#000000'); th.setAttribute('role', 'img'); th.setAttribute('aria-label', SPECIAL_THANKS.join(', '));
-    blk.appendChild(at(th, 0, y)); y += SPECIAL_THANKS.length * 45 + 24;
-    // 반복용 복제 1벌(한 번만 생성): 원본 바로 아래 CREDIT_GAP 뒤에 둔다
-    const pitch = y + CREDIT_GAP; blk.style.height = y + 'px';
-    const blk2 = blk.cloneNode(true); blk2.style.top = pitch + 'px'; blk2.setAttribute('aria-hidden', 'true'); ci.appendChild(blk2);
-    ci.style.height = (RM.matches ? y : pitch + y) + 'px'; mem.appendChild(cr);   // 움직임 줄이기에서는 복제본 없이 원본만 스크롤
-    // 컷아웃 반복용 복제 1벌(한 번만 생성): 크레딧과 같은 간격(pitch) 아래에 둔다 → 같은 주기로 이음매 없이 반복
-    if (cutr) [...cutr.children].forEach(o => { const d = o.cloneNode(); d.classList.add('tm-dup'); d.style.top = (parseFloat(o.style.top) + pitch) + 'px'; cutr.appendChild(d); });
-    return {back, who, photo, nm, star, cr, ci, cutr, contentH:y, pitch};
+    // 엔딩 크레딧 층: 섹션 제목(Megascope 20 · 자간 8% · #67676B) → 항목(Inter Medium 28/34 · 한글 16/20 #9C9C9C) · 감사 인사 이름.
+    // 컷아웃은 Figma 레이어 순서대로 크레딧 아래(over:false) · 위(over:true)에 둔다. 모두 Figma 좌표에서 층 원점(ROLL_X, CUT_TOP)만 뺀 위치
+    const roll = document.createElement('div'); roll.className = 'tm-roll';
+    const rolli = document.createElement('div'); rolli.className = 'tm-rolli'; roll.appendChild(rolli);
+    const blk = document.createElement('div'); blk.className = 'tm-rollb'; rolli.appendChild(blk);
+    const X = v => (v - ROLL_X) + 'px', Y = v => (v - CUT_TOP) + 'px';
+    let top = Infinity, bottom = 0; const span = (y0, y1) => { top = Math.min(top, y0); bottom = Math.max(bottom, y1); };
+    const addCut = c => { const o = img(c.src, c.x - ROLL_X, c.y - CUT_TOP, c.w, c.h); o.decoding = 'sync'; o.setAttribute('aria-hidden', 'true'); blk.appendChild(o); span(c.y, c.y + c.h); };
+    (m.cutouts || []).filter(c => !c.over).forEach(addCut);
+    const C = m.credits, words = [];
+    const txt = (cls, y, s) => { const p = document.createElement('p'); p.className = cls; p.textContent = s; p.style.left = X(C.x); p.style.top = Y(y); blk.appendChild(p); return p; };
+    C.sections.forEach(sec => {
+      const h = mega([sec.head], 20, 20, 17, .08, '#67676B'); h.setAttribute('aria-hidden', 'true'); blk.appendChild(at(h, C.x - ROLL_X, sec.y - CUT_TOP)); span(sec.y, sec.y + 20); words.push(sec.head);
+      (sec.items || []).forEach(([y, en, kr, font]) => { txt('tm-en', y, en); const k = txt('tm-kr' + ((font || C.krFont) === 'pretendard' ? ' pt' : ''), y + 38, kr); span(y, y + 58); words.push(en + ' (' + kr + ')'); });
+      (sec.names || []).forEach(([y, n]) => { txt('tm-en', y, n); span(y, y + 34); words.push(n); });
+    });
+    (m.cutouts || []).filter(c => c.over).forEach(addCut);
+    blk.setAttribute('role', 'list'); blk.setAttribute('aria-label', label + ' 크레딧: ' + words.join(', '));
+    // 반복: 내용 전체 높이 + 간격(CREDIT_GAP)마다 같은 층을 한 벌 복제해 아래에 둔다 → 복제본이 원본 자리에 오면 처음과 같은 모습(이음매 없음)
+    const pitch = bottom - top + CREDIT_GAP;
+    const blk2 = blk.cloneNode(true); blk2.style.top = pitch + 'px'; blk2.setAttribute('aria-hidden', 'true'); blk2.removeAttribute('role'); blk2.removeAttribute('aria-label'); rolli.appendChild(blk2);
+    rolli.style.height = (RM.matches ? bottom - CUT_TOP : pitch + bottom - CUT_TOP) + 'px'; mem.appendChild(roll);
+    return {back, who, photo, nm, star, roll, ci:rolli, cutr:null, top, bottom, pitch};
   }
   function playMember(p){
     if (RM.matches) return;   // 움직임 줄이기: 크레딧은 제자리(스크롤로 읽기), 사진은 Figma 위치에 고정
@@ -210,8 +227,8 @@ export function createTeam(stage, hooks = {}){
     anims.push(p.nm.animate([{opacity:0, transform:'translateY(-12px)'}, {opacity:p.nm.classList.contains('tm-ph') ? .26 : 1, transform:'none'}], {duration:600, delay:160, easing:E, fill:'backwards'}));
     // 엔딩 크레딧(무한 반복)과 오른쪽 컷아웃 = 하나의 시퀀스: 둘 다 Figma 좌표 그대로 두고 같은 이동량(translateY)만 공통으로 준다.
     //  첫 프레임은 Figma 배치(이동량 0) — 사진과 첫 크레딧이 바로 보이며, 65px/s로 함께 한 벌 간격(pitch)씩 올라가며 반복한다.
-    //  크레딧·컷아웃 모두 같은 pitch 아래에 복제 1벌이 있어, 반복 끝 상태 = 복제본이 원본 자리에 온 모습(이음매 없음).
-    //  두 애니메이션은 키프레임·길이·시작 시각이 같아 반복해도 상대 위치가 변하지 않는다.
+    //  크레딧과 컷아웃은 한 층(tm-rolli)에 함께 들어 있어 애니메이션 하나로 움직인다 → 속도·상대 위치가 항상 같다.
+    //  층 안에 같은 pitch 아래 복제 1벌이 있어, 반복 끝 상태 = 복제본이 원본 자리에 온 모습(이음매 없음).
     const v = CREDIT_SPEED / 1000, t0 = CREDIT_DELAY * 1000, loop = p.pitch / v;
     const rise = [{transform:'translateY(0px)'}, {transform:'translateY(' + (-p.pitch) + 'px)'}], timing = {duration:loop, delay:t0, easing:'linear', iterations:Infinity};
     const run = [p.ci, p.cutr].filter(Boolean).map(el => el.animate(rise, timing));
