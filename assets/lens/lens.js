@@ -1,7 +1,7 @@
 // STEER Camera — Luck Lens 오행 포토부스(실시간 카메라 전용, 샘플 사진 모드 없음). 카메라 영상 · 손 위치는 기기 안에서만 처리한다.
 // 촬영한 최종 사진만 QR 저장을 위해 임시 스토리지에 올리고(share-config.js가 설정된 경우), 24시간 뒤 자동 삭제된다.
 import {createFisheye} from './fisheye.js';
-import {createFilterPreviews} from './filter-previews.js?v=20261117-1';
+import {createFilterPreviews} from './filter-previews.js?v=20261117-2';
 import {createPalmOverlay} from './palm-overlay.js';
 import {shareEnabled, shareConfig, newId, upload, pageURL} from './share.js';
 
