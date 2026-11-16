@@ -2,7 +2,7 @@
 // 시계는 CSS transform 애니메이션만 쓴다(매 프레임 JS 계산·rAF 없음). 사진·숫자 버튼은 Figma 위치에 고정되고,
 // 바늘 3개만 피벗을 기준으로 돌며 사진 위를 가로질러 지나간다(바늘은 pointer-events:none이라 터치를 가로채지 않는다).
 import MEGA from './mega.js?v=20261117-1';
-import {PIVOT, PERIOD, HANDS, MEMBERS} from './team-data.js?v=20261117-1';
+import {PIVOT, PERIOD, HANDS, MEMBERS} from './team-data.js?v=20261117-3';
 
 const BASE = new URL('./', import.meta.url).href;
 const NS = 'http://www.w3.org/2000/svg';

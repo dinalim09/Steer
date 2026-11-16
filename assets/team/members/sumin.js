@@ -22,6 +22,6 @@ export default {
     {src:'sumin-cut1.webp', x:1143, y:151, w:124, h:453, over:true},
     {src:'sumin-cut2.webp', x:1155, y:725, w:211, h:217, over:true},
     {src:'sumin-cut3.webp', x:1201, y:1400, w:165, h:251, over:true},
-    {src:'sumin-cut4.webp', x:1120, y:1881, w:134, h:283, over:true}
+    {src:'sumin-cut4.webp', x:1120, y:1881, w:134, h:279, over:true}
   ]
 };
