@@ -1,6 +1,6 @@
 // STEER Team — 메인(시계 · Figma 3967:3442)과 팀원 개인 페이지(엔딩 크레딧 · Figma 3967:3331)
-// 시계는 CSS transform 애니메이션만 쓴다(매 프레임 JS 계산·rAF 없음). 바늘을 담은 팔(arm)이 피벗을 기준으로 돌고,
-// 팔에 붙은 사진·숫자 버튼은 같은 주기로 반대로 돌아 항상 똑바로 보인다.
+// 시계는 CSS transform 애니메이션만 쓴다(매 프레임 JS 계산·rAF 없음). 사진·숫자 버튼은 Figma 위치에 고정되고,
+// 바늘 3개만 피벗을 기준으로 돌며 사진 위를 가로질러 지나간다(바늘은 pointer-events:none이라 터치를 가로채지 않는다).
 import MEGA from './mega.js';
 import {PIVOT, PERIOD, HANDS, MEMBERS, SPECIAL_THANKS, CREDIT_PLACEHOLDER_LINES} from './team-data.js';
 
@@ -15,17 +15,16 @@ const CSS = `
 #tmx .tm-v{position:absolute;inset:0;visibility:hidden}
 #tmx .tm-v.on{visibility:visible}
 #tmx .tm-abs{position:absolute;display:block;max-width:none}
-#tmx .tm-arm{position:absolute;width:0;height:0;will-change:transform}
+#tmx .tm-clock{position:absolute;inset:0;pointer-events:none}
+#tmx .tm-arm{position:absolute;width:0;height:0;will-change:transform;pointer-events:none}
 #tmx .tm-hand{position:absolute;display:block;pointer-events:none}
-#tmx .tm-mb{position:absolute;padding:0;margin:0;border:0;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;will-change:transform}
+#tmx .tm-mb{position:absolute;padding:0;margin:0;border:0;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 #tmx .tm-mb:focus-visible{outline:3px solid #87E6FF;outline-offset:4px;border-radius:6px}
 #tmx .tm-mbi{position:absolute;inset:0;transition:transform .15s ease}
 #tmx .tm-mb.press .tm-mbi{transform:scale(.96)}
 #tmx .tm-mb img{position:absolute;display:block;max-width:none;pointer-events:none;-webkit-user-drag:none}
 #tmx .tm-mb svg{position:absolute;display:block;pointer-events:none}
 #tmx .tm-run .tm-arm{animation:var(--spin) var(--T) linear infinite}
-#tmx .tm-run .tm-arm .tm-mb{animation:var(--un) var(--T) linear infinite}
-#tmx .tm-arm.hold,#tmx .tm-arm.hold .tm-mb{animation-play-state:paused}
 #tmx .tm-back{position:absolute;left:28px;top:139px;height:64px;padding:0 18px 0 23px;border:0;margin:0;background:none;display:flex;align-items:center;gap:14px;cursor:pointer;color:#0A0A0A;font:500 16px/1 'Pretendard',PretT,'Noto Sans KR',sans-serif;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:transform .15s ease;border-radius:14px}
 #tmx .tm-back.press{transform:scale(.96)}
 #tmx .tm-back:focus-visible{outline:3px solid #87E6FF;outline-offset:2px}
@@ -36,7 +35,7 @@ const CSS = `
 #tmx .tm-ph{opacity:.26}
 #tmx .tm-icon{position:absolute;width:42px;height:42px;display:block}
 @media (prefers-reduced-motion:reduce){
-  #tmx .tm-arm,#tmx .tm-arm .tm-mb{animation:none!important}
+  #tmx .tm-arm{animation:none!important}
   #tmx .tm-cr{overflow-y:auto;-webkit-overflow-scrolling:touch}
 }`;
 
@@ -55,26 +54,28 @@ function mega(lines, fs, lh, base, ls, color, align = 'left', boxW = 0){
   svg.setAttribute('width', Math.ceil(W)); svg.setAttribute('height', Math.ceil(base + (lines.length - 1) * lh + .3 * fs));
   svg.innerHTML = html; svg.dataset.w = maxW.toFixed(1); return svg;
 }
-// 화면 밖 빠른 통과: 사진·숫자 상자(흐림 여백 8px 포함)가 화면(1366×1024) 밖에 완전히 나가 있는 팔 각도 구간을
-// Figma 피벗과 상자 위치로 미리 계산하고, 그 구간만 1.2~1.5초에 지나가도록 keyframes 시간을 나눈다.
+// 화면 밖 빠른 통과: 각 바늘 끝점(피벗에서 along + length/2, 바늘 폭의 양 모서리)이 화면(1366×1024) 밖에 완전히 나가 있는
+// 회전 각도 구간을 Figma 피벗·바늘 길이·초기 각도로 미리 계산하고, 그 구간만 1.2~1.5초에 지나가도록 keyframes 시간을 나눈다.
 // 구간 양 끝 속도는 평소 속도와 같게(cubic-bezier 끝 기울기 = 평소 속도) 해서 가속·감속이 끊김 없이 이어진다.
-const VW = 1366, VH = 1024, PAD = 0;   // 판정 상자 = 버튼(사진·숫자). 흐림 번짐(8px)은 거의 투명해 제외
-function offRange(box){
-  const cx = (box.x0 + box.x1) / 2 - PIVOT.x, cy = (box.y0 + box.y1) / 2 - PIVOT.y, hw = (box.x1 - box.x0) / 2 + PAD, hh = (box.y1 - box.y0) / 2 + PAD;
-  const off = d => { const r = d * Math.PI / 180, c = Math.cos(r), s = Math.sin(r), X = PIVOT.x + cx * c - cy * s, Y = PIVOT.y + cx * s + cy * c;
-    return X + hw < 0 || X - hw > VW || Y - hh > VH || Y + hh < 0; };
+const VW = 1366, VH = 1024;
+function tipOffRange(h){
+  const R = h.along + h.length / 2, hw = h.width / 2;
+  const out = (x, y) => x < 0 || x > VW || y < 0 || y > VH;
+  const off = d => { const r = (h.angle + d) * Math.PI / 180, s = Math.sin(r), c = Math.cos(r);   // 끝 방향 = (sin, -cos)
+    const X = PIVOT.x + R * s, Y = PIVOT.y - R * c;
+    return out(X + hw * c, Y + hw * s) && out(X - hw * c, Y - hw * s); };
   let a = null, b = null;
   for (let i = 0; i <= 3600; i++) { const d = i / 10, o = off(d); if (o && a === null) a = d; if (!o && a !== null && b === null) { b = d; break; } }
-  return a !== null && b !== null ? [a, b] : null;   // 시작 각도(0)는 Figma 배치라 화면 안
+  return a !== null && b !== null ? [a, b] : null;   // 회전 0°(Figma 배치)는 바늘 끝이 화면 안
 }
-function spinPlan(k, box){
-  const T = PERIOD[k], w = 360 / T, r = offRange(box);
+function spinPlan(k){
+  const T = PERIOD[k], w = 360 / T, r = tipOffRange(HANDS[k]);
   const fast = 1.2 + .3 * (T - 30) / 150;              // 화면 밖 구간 통과 시간(초): 초침 1.2 · 분침 1.32 · 시침 1.5
-  if (!r || (r[1] - r[0]) / w <= fast) return {T, css:'@keyframes tmS-' + k + '{to{transform:rotate(360deg)}}@keyframes tmU-' + k + '{to{transform:rotate(-360deg)}}', range:r, cycle:T};
+  if (!r || (r[1] - r[0]) / w <= fast) return {T, css:'@keyframes tmS-' + k + '{to{transform:rotate(360deg)}}', range:r, cycle:T};
   const [a, b] = r, D = b - a, cycle = T - D / w + fast, ta = (a / w) / cycle * 100, tb = (a / w + fast) / cycle * 100;
   const kk = w * fast / D, ez = 'cubic-bezier(.33,' + (.33 * kk).toFixed(4) + ',.67,' + (1 - .33 * kk).toFixed(4) + ')';
-  const kf = sign => '0%{transform:rotate(0deg);animation-timing-function:linear}' + ta.toFixed(4) + '%{transform:rotate(' + (sign * a) + 'deg);animation-timing-function:' + ez + '}' + tb.toFixed(4) + '%{transform:rotate(' + (sign * b) + 'deg);animation-timing-function:linear}100%{transform:rotate(' + (sign * 360) + 'deg)}';
-  return {T, range:r, cycle, css:'@keyframes tmS-' + k + '{' + kf(1) + '}@keyframes tmU-' + k + '{' + kf(-1) + '}'};
+  const kf = '0%{transform:rotate(0deg);animation-timing-function:linear}' + ta.toFixed(4) + '%{transform:rotate(' + a + 'deg);animation-timing-function:' + ez + '}' + tb.toFixed(4) + '%{transform:rotate(' + b + 'deg);animation-timing-function:linear}100%{transform:rotate(360deg)}';
+  return {T, range:r, cycle, css:'@keyframes tmS-' + k + '{' + kf + '}'};
 }
 const at = (el, x, y, extra) => { el.classList.add('tm-abs'); Object.assign(el.style, {left:x + 'px', top:y + 'px'}, extra || {}); return el; };
 const img = (src, x, y, w, h, alt = '') => { const i = new Image(); i.src = BASE + src; i.alt = alt; i.decoding = 'async'; i.draggable = false; return at(i, x, y, {width:w + 'px', height:h + 'px'}); };
@@ -90,7 +91,9 @@ export function createTeam(stage, hooks = {}){
   // ---------- 메인 ----------
   const title = mega(['Team ‘Steer’'], 96, 91.2, 78.52, .04, '#0A0A0A');
   main.appendChild(at(title, 40, 122)); title.setAttribute('role', 'img'); title.setAttribute('aria-label', 'Team ‘Steer’');
-  const clock = document.createElement('div'); clock.className = 'tm-clock'; main.appendChild(clock);
+  // 쌓임: 사진·숫자 버튼(아래) → 바늘(위). 바늘이 사진 위를 지나가도 터치는 아래 버튼에 전달된다
+  const mbs = document.createElement('div'); mbs.className = 'tm-mbs'; main.appendChild(mbs);
+  const clock = document.createElement('div'); clock.className = 'tm-clock'; clock.setAttribute('aria-hidden', 'true'); main.appendChild(clock);
   const arms = {};
   // 쌓임 순서는 Figma 레이어 순서(짧은 검정 → 긴 검정 → 하늘색이 맨 위)
   for (const k of ['hour', 'minute', 'second']) { const h = HANDS[k];
@@ -102,35 +105,31 @@ export function createTeam(stage, hooks = {}){
       transformOrigin:(h.width / 2) + 'px ' + top + 'px', transform:'rotate(' + h.angle + 'deg)'});
     arm.appendChild(hand); clock.appendChild(arm); arms[k] = arm;
   }
-  // 바늘별 회전 계획(화면 밖 구간 가속) — 한 번만 계산해 keyframes로 넣는다
+  // 바늘별 회전 계획(바늘 끝이 화면 밖인 구간 가속) — 한 번만 계산해 keyframes로 넣는다
   const plans = {}; let kcss = '';
   for (const k of Object.keys(HANDS)) {
-    const m = MEMBERS.find(x => x.hand === k);
-    const box = m ? {x0:Math.min(m.labelBox.x, m.photoBox.x), y0:Math.min(m.labelBox.y, m.photoBox.y), x1:Math.max(m.labelBox.x + m.labelBox.w, m.photoBox.x + 120), y1:m.photoBox.y + 126} : null;
-    const pl = box ? spinPlan(k, box) : {cycle:PERIOD[k], css:'@keyframes tmS-' + k + '{to{transform:rotate(360deg)}}@keyframes tmU-' + k + '{to{transform:rotate(-360deg)}}'};
-    plans[k] = pl; kcss += pl.css;
-    arms[k].style.setProperty('--T', pl.cycle.toFixed(3) + 's'); arms[k].style.setProperty('--spin', 'tmS-' + k); arms[k].style.setProperty('--un', 'tmU-' + k);
+    const pl = spinPlan(k); plans[k] = pl; kcss += pl.css;
+    arms[k].style.setProperty('--T', pl.cycle.toFixed(3) + 's'); arms[k].style.setProperty('--spin', 'tmS-' + k);
   }
   const kst = document.getElementById('tm-kf') || document.head.appendChild(Object.assign(document.createElement('style'), {id:'tm-kf'})); kst.textContent = kcss;
-  // 사진·숫자 = 한 버튼(같은 목적지). 팔과 같은 주기로 반대 회전해 기울지 않는다
+  // 사진·숫자 = 한 버튼(같은 목적지). Figma 위치에 고정, 터치해도 바늘은 계속 돈다
   const btns = MEMBERS.map(m => {
     const lb = m.labelBox, pb = m.photoBox, x0 = Math.min(lb.x, pb.x), y0 = Math.min(lb.y, pb.y), x1 = Math.max(lb.x + lb.w, pb.x + 120), y1 = pb.y + 126;
     const b = document.createElement('button'); b.type = 'button'; b.className = 'tm-mb'; b.dataset.id = m.id;
     b.setAttribute('aria-label', (m.name || '팀원 ' + m.id) + ' 개인 페이지 ' + m.label.replace('3o', '30'));
-    Object.assign(b.style, {left:(x0 - PIVOT.x) + 'px', top:(y0 - PIVOT.y) + 'px', width:(x1 - x0) + 'px', height:(y1 - y0) + 'px', transformOrigin:'50% 50%'});
+    Object.assign(b.style, {left:x0 + 'px', top:y0 + 'px', width:(x1 - x0) + 'px', height:(y1 - y0) + 'px'});
     const inner = document.createElement('span'); inner.className = 'tm-mbi';
     const ph = new Image(); ph.src = BASE + m.photoBlur; ph.alt = ''; ph.decoding = 'async'; ph.draggable = false;
     Object.assign(ph.style, {left:(pb.x - x0 - 8) + 'px', top:(pb.y - y0 - 8) + 'px', width:'136px', height:'142px'});   // 흐림 번짐 여백 8px 포함
     const lab = mega([m.label], 30, 37, 28.8, .04, '#000000', lb.align, lb.w);
     Object.assign(lab.style, {left:(lb.x - x0) + 'px', top:(lb.y - y0) + 'px'});
-    inner.append(ph, lab); b.appendChild(inner); arms[m.hand].appendChild(b);
-    const arm = arms[m.hand];
-    const release = () => { b.classList.remove('press'); arm.classList.remove('hold'); };
-    b.addEventListener('pointerdown', e => { arm.classList.add('hold'); b.classList.add('press'); try { b.setPointerCapture(e.pointerId); } catch {} });
+    inner.append(ph, lab); b.appendChild(inner); mbs.appendChild(b);
+    const release = () => b.classList.remove('press');
+    b.addEventListener('pointerdown', e => { b.classList.add('press'); try { b.setPointerCapture(e.pointerId); } catch {} });
     b.addEventListener('pointerup', () => b.classList.remove('press'));
     b.addEventListener('pointercancel', release);
     b.addEventListener('lostpointercapture', () => setTimeout(() => { if (!b.classList.contains('nav')) release(); }, 0));
-    b.addEventListener('click', () => { b.classList.add('nav'); setTimeout(() => { b.classList.remove('nav'); release(); }, 400); hooks.onMember && hooks.onMember(m.id); });
+    b.addEventListener('click', () => { if (b.classList.contains('nav')) return; b.classList.add('nav'); setTimeout(() => { b.classList.remove('nav'); release(); }, 400); hooks.onMember && hooks.onMember(m.id); });
     return b;
   });
 
@@ -192,7 +191,7 @@ export function createTeam(stage, hooks = {}){
 
   // ---------- 화면 전환 ----------
   let view = null;
-  const restartClock = () => { clock.classList.remove('tm-run'); Object.values(arms).forEach(a => a.classList.remove('hold')); btns.forEach(b => b.classList.remove('press', 'nav')); void clock.offsetWidth; clock.classList.add('tm-run'); };
+  const restartClock = () => { clock.classList.remove('tm-run'); btns.forEach(b => b.classList.remove('press', 'nav')); void clock.offsetWidth; clock.classList.add('tm-run'); };
   return {
     showMain(){ stopMember(); mem.classList.remove('on'); main.classList.add('on'); restartClock(); view = 'main'; },
     showMember(id){
