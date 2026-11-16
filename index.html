@@ -533,7 +533,7 @@ body.bare .bar>*{pointer-events:auto}
 #lgd .ldcm-kb span{font:400 12px/16.8px 'Noto Sans KR',var(--font-ui);color:#7A7A7A}
 #lgd .ldcm-k em{display:flex;align-items:center;justify-content:center;height:28px;border-radius:100px;background:#0A0A0A;color:#fff;font:normal 700 12px/14px 'Noto Sans KR',var(--font-ui)}
 #lgd .ldnv.inv svg{color:#fff}
-#lgd .ldnv.inv svg path:first-child{color:#0A0A0A}
+#lgd .ldnv.inv svg > path{color:#0A0A0A}   /* 로고(왼쪽 흰 면)만 검정 유지 — 메뉴 글자 path는 <g> 안에 있어 흰색 */
 #lgd .ldxf{position:absolute;left:549px;top:-19px;width:817px;height:1043px;background:#0A0A0A}
 #lgd .ldxc{position:absolute;box-sizing:border-box;border-radius:20px;background:rgba(255,255,255,var(--a));color:#fff;transform-origin:50% 50%}
 #lgd .ldxc4{background:#87E6FF;color:#0A0A0A}
@@ -648,6 +648,11 @@ body.bare .bar>*{pointer-events:auto}
 #lgd .ldci button:not(.cur) i{display:none}
 #lgd .ldci i b{display:block;width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.35)}
 #lgd .ldci i b.on{background:#fff}
+/* Explain(검정 필드) · 하단 챕터: 현재 칩은 흰 배경, 나머지는 반투명으로 대비 확보 */
+#lgd.ldinv .ldci button{background:rgba(255,255,255,.12);color:rgba(255,255,255,.55)}
+#lgd.ldinv .ldci button.cur{background:#fff;color:#0A0A0A}
+#lgd.ldinv .ldci i b{background:rgba(10,10,10,.25)}
+#lgd.ldinv .ldci i b.on{background:#0A0A0A}
 /* L0 최신 Figma 추가 요소 */
 #lgx .l0in{position:absolute;left:703px;top:136px;width:580px;margin:0;font:400 18px/29.7px 'Pretendard',var(--font-ui);letter-spacing:-.01em;color:#0A0A0A;word-break:normal}
 #lgx .l0ps{position:absolute;left:703px;top:213px;height:56px;box-sizing:border-box;display:flex;align-items:center;gap:12px;padding:8px 18px 8px 8px;border-radius:100px;background:#87E6FF}
@@ -4142,7 +4147,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     if (n !== 5) rStop();
     if (n !== 6) wStop();
     if (n !== 3 && typeof cmAutoStop === 'function') { cmAutoStop('out'); cmAutoStop('home'); }
-    nv.classList.toggle('inv', n === 4);   // Explain은 오른쪽이 검정 필드라 내비 글자를 흰색으로
+    nv.classList.toggle('inv', n === 4); root.classList.toggle('ldinv', n === 4);   // Explain은 오른쪽이 검정 필드라 내비 글자를 흰색으로
     pgs.forEach((g, i) => { g.classList.toggle('on', i === n); g.toggleAttribute('inert', i !== n); g.setAttribute('aria-hidden', i === n ? 'false' : 'true'); });
     cur = n; chrome(); if (anim) enter(n);
   }
