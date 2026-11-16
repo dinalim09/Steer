@@ -185,6 +185,13 @@ a,button,[role=button],label,select,.pill,#screen:active,body.grabbing,body.grab
 #p6side video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 #p6sideBg{position:absolute;inset:0;background:rgba(135,230,255,.2);opacity:0}
 .p6hj{position:absolute;opacity:0}
+/* 홈 2페이지 運(움직일 운): 숨 쉬듯 커졌다 작아지며 브랜드 하늘색(#87E6FF)으로 물들었다 돌아온다.
+   스크롤 연출이 쓰는 transform은 건드리지 않도록 별도 scale 속성으로 키운다 */
+#p6un{overflow:visible;transform-origin:50% 50%;animation:unPulse 2.8s cubic-bezier(.45,0,.25,1) infinite}
+#p6un path{animation:unTint 2.8s cubic-bezier(.45,0,.25,1) infinite}
+@keyframes unPulse{0%,100%{scale:1}42%,58%{scale:1.24}}
+@keyframes unTint{0%,100%{fill:#0A0A0A}42%,58%{fill:#87E6FF}}
+@media (prefers-reduced-motion:reduce){#p6un,#p6un path{animation:none}}
 .p6cap{position:absolute;top:262px;margin:0;font:400 18px/1.65 Pret6,var(--font-ui);color:#383838;opacity:0;white-space:nowrap}
 #p6spl{position:absolute;left:435px;top:405px;width:520px;height:520px;overflow:visible;pointer-events:none;opacity:0}
 .p6f{position:absolute;left:40px;top:972px;margin:0;font:500 14px/1.2 Pret6,var(--font-ui);letter-spacing:.02em;color:#0A0A0A;white-space:nowrap;opacity:0;transition:opacity .8s ease .5s}
