@@ -9,8 +9,4 @@ drop policy if exists "lens anon upload" on storage.objects;
 create policy "lens anon upload" on storage.objects for insert to anon
 with check (bucket_id = 'lens' and name ~ '^[A-Za-z0-9_-]{22}\.jpg$');
 
--- 3) 매시 7분 정리 함수 호출(24시간 지난 사진 삭제 → 최대 약 25시간 보관)
---    Integrations › Cron, Integrations › pg_net(Database › Extensions의 pg_cron · pg_net)을 켠 뒤 실행한다
-select cron.schedule('lens-cleanup', '7 * * * *', $$
-  select net.http_post(url := 'https://tqswusyecsfgwryzkybb.supabase.co/functions/v1/lens-cleanup', body := '{}'::jsonb);
-$$);
+-- 3) 정리 함수 예약은 secure-cron.sql로 등록한다(예약 실행 전용 secret 포함)

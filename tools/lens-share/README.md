@@ -8,16 +8,20 @@ iPad의 Luck Lens 결과 사진을 Supabase Storage에 임시로 올리고, 관�
 - `assets/lens/vendor/qrcode.mjs` — QR 생성(qrcode-generator 1.4.4, MIT, 로컬 포함)
 - `photo.html` — 관람객 스마트폰용 저장 페이지
 - `tools/lens-share/setup.sql` — 버킷 · 업로드 정책 · 정리 예약
-- `tools/lens-share/lens-cleanup/index.ts` — 24시간 지난 사진 삭제 함수
+- `tools/lens-share/lens-cleanup/index.ts` — 24시간 지난 사진 삭제 함수(예약 실행 전용 secret 검증)
+- `tools/lens-share/secure-cron.sql` — Vault secret 생성 · 예약 재등록
+- `tools/lens-share/verify.sql` — 예약 · 실행 · 응답 · 정책 점검
 
 ## 설정 순서
 1. supabase.com에서 프로젝트 생성(리전: Northeast Asia (Seoul)).
 2. Database › Extensions에서 `pg_cron`, `pg_net` 활성화.
-3. Edge Functions에 `lens-cleanup` 배포(`--no-verify-jwt`). 대시보드 편집기에 `index.ts` 내용을 붙여 넣어도 된다.
-4. SQL Editor에서 `setup.sql` 실행(`<PROJECT_REF>` 교체).
+3. SQL Editor에서 `setup.sql` 실행(버킷 · 업로드 정책).
+4. 정리 함수 보안: `secure-cron.sql`의 [A]·[B] 실행 → [B] 값을 Edge Functions › Secrets에 `LENS_CLEANUP_SECRET`으로 저장 → `lens-cleanup/index.ts` 배포(Verify JWT 끔) → [C] 실행.
+   함수는 `x-lens-cleanup-secret` 헤더가 맞을 때만 실행되고, pg_cron은 실행 시점에 Vault에서 값을 읽어 보낸다.
 5. Project Settings › API Keys에서 Project URL과 anon(publishable) 키를 `share-config.js`에 입력.
 
 ## 확인 항목
 - 업로드: 결과 화면에 QR이 뜨는지, Storage › lens에 `22자.jpg`가 생기는지
 - 보안: anon 키로 목록 조회(`POST /storage/v1/object/list/lens`)가 빈 결과 또는 거부인지
-- 정리: Edge Functions › lens-cleanup › Logs에서 매시 7분 호출 기록
+- 정리: `verify.sql`로 예약 등록 · 실행 이력 · HTTP 응답 확인. Edge Functions › lens-cleanup › Logs에서 매시 7분 호출 기록
+- 외부 호출 차단: 브라우저로 함수 주소를 열면 405, secret 없이 POST하면 401이어야 한다
