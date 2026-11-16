@@ -6,7 +6,10 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 const BUCKET = 'lens', TTL_MS = 24 * 60 * 60 * 1000, PAGE = 1000;
 
 Deno.serve(async () => {
-  const sb = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
+  // 새 secret 키(SUPABASE_SECRET_KEYS)를 우선 쓰고, 없으면 기존 service_role 키를 쓴다
+  let key = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+  try { key = JSON.parse(Deno.env.get('SUPABASE_SECRET_KEYS') ?? '{}').default || key; } catch { /* 기존 키 사용 */ }
+  const sb = createClient(Deno.env.get('SUPABASE_URL')!, key);
   const cutoff = Date.now() - TTL_MS, old: string[] = [];
   for (let offset = 0; ; offset += PAGE) {
     const { data, error } = await sb.storage.from(BUCKET).list('', { limit: PAGE, offset, sortBy: { column: 'created_at', order: 'asc' } });

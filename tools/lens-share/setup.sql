@@ -11,7 +11,6 @@ with check (bucket_id = 'lens' and name ~ '^[A-Za-z0-9_-]{22}\.jpg$');
 
 -- 3) 매시 7분 정리 함수 호출(24시간 지난 사진 삭제 → 최대 약 25시간 보관)
 --    Integrations › Cron, Integrations › pg_net(Database › Extensions의 pg_cron · pg_net)을 켠 뒤 실행한다
---    <PROJECT_REF>를 프로젝트 주소의 앞부분으로 바꾼다
 select cron.schedule('lens-cleanup', '7 * * * *', $$
-  select net.http_post(url := 'https://<PROJECT_REF>.supabase.co/functions/v1/lens-cleanup', body := '{}'::jsonb);
+  select net.http_post(url := 'https://tqswusyecsfgwryzkybb.supabase.co/functions/v1/lens-cleanup', body := '{}'::jsonb);
 $$);
