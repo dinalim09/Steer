@@ -1,7 +1,8 @@
 // 필터 썸네일: 지금 카메라(또는 샘플) 프레임에 각 오행 색보정을 적용해 보여준다 — 렌즈와 같은 gradeColor
 import {gradeColor} from './color-grade.js';
-const W = 160, H = 132, N = 160;
-export function createFilterPreviews(buttons, strength = .92){
+const N = 160;
+// W×H: 썸네일 캔버스 크기(Camera 다이얼은 160×160 원형)
+export function createFilterPreviews(buttons, strength = .92, W = 160, H = 132){
   const A = strength * 1.2, TA = Math.tan(A);   // 렌즈와 같은 어안 곡선
   const input = document.createElement('canvas'); input.width = input.height = N; const ctx = input.getContext('2d', {willReadFrequently:true}), graded = new Float64Array(3);
   const views = [...buttons].map(button => { let canvas = button.querySelector('canvas.filter-preview');
