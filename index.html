@@ -825,18 +825,11 @@ body.bare .bar>*{pointer-events:auto}
 #rsx .ie-td{top:404px;font-weight:400;font-size:17px;line-height:26px}
 #rsx .ie-ts{top:494px;font-weight:400;font-size:12px;line-height:18px}
 #rsx .ie-c:focus-visible{outline:3px solid #35D1FB;outline-offset:4px;border-radius:24px}
-/* 캐러셀 좌우 화살표(Figma 4042:15185 · 15187 — 40·1270, y651, 56px)와 페이지 표시 01 / 03(Figma 4042:15189 — 583·949).
-   I3 챕터 이동은 기존 STEER 하단 인덱스(I1–I5)를 그대로 쓰되, 01 / 03(y949–971) 아래 y984로 내려 겹치지 않게 둔다.
-   측면 챕터 화살표(y503)는 캐러셀 화살표(y651)와 같은 검은 원형이라 혼동되므로 I3에서는 숨긴다 */
-#rsx .ie-ar{position:absolute;top:651px;width:56px;height:56px;padding:0;margin:0;border:0;border-radius:50%;background:#0A0A0A;display:grid;place-items:center;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;box-shadow:0 4px 16px rgba(0,0,0,.12);transition:transform .15s ease}
-#rsx .ie-ar.press{transform:scale(.94)}
-#rsx .ie-pv{left:40px}
-#rsx .ie-nx{left:1270px}
-#rsx .ie-ar:focus-visible{outline:3px solid #35D1FB;outline-offset:3px}
-#rsx .ie-pg{position:absolute;left:583px;top:949px;width:200px;margin:0;font:500 15px/22px 'Pretendard',var(--font-ui);color:#6E6E73;text-align:center;font-variant-numeric:tabular-nums;pointer-events:none}
+/* 페이지 표시 01 / 03(Figma 4042:15189, x583): 캐러셀 상태 표시로 하단 Interview 인덱스(y960–990)와 별개 요소다.
+   I3도 좌우 검은 챕터 화살표·하단 인덱스는 다른 Interview 페이지와 같은 공통 컴포넌트·위치를 쓴다(I3 전용 좌표 없음).
+   인덱스와 겹치지 않도록 페이지 표시만 중앙 카드 아래 y904로 올린다(카드 크기·배치는 그대로) */
+#rsx .ie-pg{position:absolute;left:583px;top:904px;width:200px;margin:0;font:500 15px/22px 'Pretendard',var(--font-ui);color:#6E6E73;text-align:center;font-variant-numeric:tabular-nums;pointer-events:none}
 #rsChromeH.ie .xnv{background:transparent}
-#rsChromeH.ie .arr{display:none}
-#rsChromeH.ie .ci{top:984px}
 #rsx #rs-I1.htm .h2{line-height:58px;letter-spacing:0}   /* Figma 4042:13390: 48/58, 자간 0 */
 #rsChromeH .arr{box-shadow:0 4px 16px rgba(0,0,0,.12)}
 #rsChromeH .arr.prv{box-shadow:inset 0 0 0 1px #fff,0 4px 16px rgba(0,0,0,.12)}
@@ -2754,7 +2747,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     R3:[{host:'r3n', x:0, y:4, w:425, s:1.746, c:'#0A0A0A', to:41.2, f:v => '+' + v.toFixed(1) + '%'}]
   };
   // 전문가 자문 캐러셀(Figma 4042:15176 · 15196 · 15216 구도): 카드 내용은 Figma 4203:12308 '내용 컴포넌트'(사진·라벨·문구)를 HTML로 그리고, 양옆은 CSS perspective·rotateY
-  HTM.I3 = '<div class="ie" role="group" aria-roledescription="carousel" aria-label="전문가 자문"><p class="ie-eb" data-g="d">전문가 자문</p><h2 class="ie-h" data-g="d">자문을 통해 세운 큐레이션 기준</h2><div class="ie-top" data-g="d"><div class="ie-bub"><span>개운의 기준은 항상 ‘용신’이에요</span></div><svg class="ie-tl" width="31" height="26" viewBox="0 0 31 26" fill="none" aria-hidden="true"><path d="M13.655 24.1194C14.5189 25.4661 16.4869 25.4661 17.3509 24.1194L30.6546 3.38093C31.5919 1.91971 30.5427 0 28.8066 0H2.19922C0.46318 0 -0.586086 1.91971 0.351287 3.38093L13.655 24.1194Z" fill="#0A0A0A"/></svg><p class="ie-nm" aria-live="polite">홍성민 교수 · 명리학</p></div><div class="ie-st"><button type="button" class="ie-c" data-i="0" aria-label="홍성민 교수 · 명리학 · 개운의 기준은, 나에게 필요한 용신"><span class="ie-cd" aria-hidden="true"><img class="ie-ph" alt="" decoding="async" draggable="false" src="assets/ie-photo-yongsin.webp" style="left:31px;top:20px;width:387px;height:265px"><span class="ie-lc"></span><span class="ie-lt pt">용신</span><span class="ie-tt">개운의 기준은,<br>나에게 필요한 용신</span><span class="ie-td">사주 균형에 필요한 기운을 읽고,<br>그 기운을 장소와 행동 추천의<br>기본 기준으로 삼았습니다.</span><span class="ie-ts">명리 전문가 홍성민 교수</span></span></button><button type="button" class="ie-c" data-i="1" aria-label="초명 · 명리 상담가 · 같은 장소도, 행동에 따라 달라지는 기운"><span class="ie-cd" aria-hidden="true"><img class="ie-ph" alt="" decoding="async" draggable="false" src="assets/ie-photo-action.webp" style="left:31px;top:20px;width:387px;height:265px"><span class="ie-lc"></span><span class="ie-lt">행동</span><span class="ie-tt">같은 장소도,<br>행동에 따라 달라지는 기운</span><span class="ie-td">같은 카페도 커피를 마실 때와<br>책을 읽을 때의 기운이 다르듯,<br>장소와 할 일을 함께 제안합니다.</span><span class="ie-ts">명리 전문가 초명</span></span></button><button type="button" class="ie-c" data-i="2" aria-label="김두규 교수 · 풍수지리 · 먼 곳의 기운을 찾기보다, 가까운 일상에서 자주"><span class="ie-cd" aria-hidden="true"><img class="ie-ph" alt="" decoding="async" draggable="false" src="assets/ie-photo-living.webp" style="left:40px;top:25px;width:371px;height:255px"><span class="ie-lc"></span><span class="ie-lt">생활권</span><span class="ie-tt">먼 곳의 기운을 찾기보다,<br>가까운 일상에서 자주</span><span class="ie-td">사는 곳을 기준으로 풍수를 살피고,<br>생활권 안에서 반복할 수 있는<br>작은 실천으로 연결했습니다.</span><span class="ie-ts">풍수 전문가 김두규 교수</span></span></button></div><button type="button" class="ie-ar ie-pv" aria-label="이전 전문가"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.5 3 5.5 9l6 6"/></svg></button><button type="button" class="ie-ar ie-nx" aria-label="다음 전문가"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 3l6 6-6 6"/></svg></button><p class="ie-pg" aria-live="polite"><span class="ie-pn">01</span> / 03</p><span class="ie-ms" aria-hidden="true"></span></div>';
+  HTM.I3 = '<div class="ie" role="group" aria-roledescription="carousel" aria-label="전문가 자문"><p class="ie-eb" data-g="d">전문가 자문</p><h2 class="ie-h" data-g="d">자문을 통해 세운 큐레이션 기준</h2><div class="ie-top" data-g="d"><div class="ie-bub"><span>개운의 기준은 항상 ‘용신’이에요</span></div><svg class="ie-tl" width="31" height="26" viewBox="0 0 31 26" fill="none" aria-hidden="true"><path d="M13.655 24.1194C14.5189 25.4661 16.4869 25.4661 17.3509 24.1194L30.6546 3.38093C31.5919 1.91971 30.5427 0 28.8066 0H2.19922C0.46318 0 -0.586086 1.91971 0.351287 3.38093L13.655 24.1194Z" fill="#0A0A0A"/></svg><p class="ie-nm" aria-live="polite">홍성민 교수 · 명리학</p></div><div class="ie-st"><button type="button" class="ie-c" data-i="0" aria-label="홍성민 교수 · 명리학 · 개운의 기준은, 나에게 필요한 용신"><span class="ie-cd" aria-hidden="true"><img class="ie-ph" alt="" decoding="async" draggable="false" src="assets/ie-photo-yongsin.webp" style="left:31px;top:20px;width:387px;height:265px"><span class="ie-lc"></span><span class="ie-lt pt">용신</span><span class="ie-tt">개운의 기준은,<br>나에게 필요한 용신</span><span class="ie-td">사주 균형에 필요한 기운을 읽고,<br>그 기운을 장소와 행동 추천의<br>기본 기준으로 삼았습니다.</span><span class="ie-ts">명리 전문가 홍성민 교수</span></span></button><button type="button" class="ie-c" data-i="1" aria-label="초명 · 명리 상담가 · 같은 장소도, 행동에 따라 달라지는 기운"><span class="ie-cd" aria-hidden="true"><img class="ie-ph" alt="" decoding="async" draggable="false" src="assets/ie-photo-action.webp" style="left:31px;top:20px;width:387px;height:265px"><span class="ie-lc"></span><span class="ie-lt">행동</span><span class="ie-tt">같은 장소도,<br>행동에 따라 달라지는 기운</span><span class="ie-td">같은 카페도 커피를 마실 때와<br>책을 읽을 때의 기운이 다르듯,<br>장소와 할 일을 함께 제안합니다.</span><span class="ie-ts">명리 전문가 초명</span></span></button><button type="button" class="ie-c" data-i="2" aria-label="김두규 교수 · 풍수지리 · 먼 곳의 기운을 찾기보다, 가까운 일상에서 자주"><span class="ie-cd" aria-hidden="true"><img class="ie-ph" alt="" decoding="async" draggable="false" src="assets/ie-photo-living.webp" style="left:40px;top:25px;width:371px;height:255px"><span class="ie-lc"></span><span class="ie-lt">생활권</span><span class="ie-tt">먼 곳의 기운을 찾기보다,<br>가까운 일상에서 자주</span><span class="ie-td">사는 곳을 기준으로 풍수를 살피고,<br>생활권 안에서 반복할 수 있는<br>작은 실천으로 연결했습니다.</span><span class="ie-ts">풍수 전문가 김두규 교수</span></span></button></div><p class="ie-pg" aria-live="polite"><span class="ie-pn">01</span> / 03</p><span class="ie-ms" aria-hidden="true"></span></div>';
   P.I3 = {};   // 기존 I3 이미지 화면의 더보기 영역은 쓰지 않는다 (#IE 주소는 I3로 연결)
   const PHB = new Set(['R3','R5','R6','I5']);
   function buildHtm(pg, id){
@@ -3141,7 +3134,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     : {t:'translateX(' + (Math.abs(o) > 1 ? (o < 0 ? -560 : 560) : (o < 0 ? -371 : 346)) + 'px) translateY(-6px) rotateY(' + (o < 0 ? 1 : -1)*(Math.abs(o) > 1 ? 72 : 54.19) + 'deg) scale(' + (Math.abs(o) > 1 ? .62 : .795) + ')', o:Math.abs(o) > 1 ? 0 : .8, z:Math.abs(o) > 1 ? 1 : 2};
   const ieRoot = $('rs-I3') && $('rs-I3').querySelector('.ie');
   const ie = ieRoot ? {cards:[...ieRoot.querySelectorAll('.ie-c')], bub:ieRoot.querySelector('.ie-bub'), q:ieRoot.querySelector('.ie-bub span'), nm:ieRoot.querySelector('.ie-nm'),
-    arr:[...ieRoot.querySelectorAll('.ie-ar')], pn:ieRoot.querySelector('.ie-pn'), ms:ieRoot.querySelector('.ie-ms'), a:0, off:[0, 1, -1]} : null;
+    pn:ieRoot.querySelector('.ie-pn'), ms:ieRoot.querySelector('.ie-ms'), a:0, off:[0, 1, -1]} : null;
   const ieRel = (i, a) => ((i - a + 4) % 3) - 1;
   function ieText(a, animate){
     const d = IE_D[a], b0 = animate && !RM.matches ? ie.bub.getBoundingClientRect() : null;
@@ -3184,18 +3177,14 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     ieSet(0);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => ieText(ie.a, false));   // 말풍선 폭은 폰트 로딩 뒤 다시 잰다
     let sw = null, swiped = false;
-    // 좌우 화살표: 이전·다음 전문가(순환). 눌림 피드백만 주고 챕터 이동 스와이프에는 전달하지 않는다
-    ie.arr.forEach(b => { const dir = b.classList.contains('ie-nx') ? 1 : -1;
-      b.addEventListener('pointerdown', e => { e.stopPropagation(); b.classList.add('press'); });
-      ['pointerup', 'pointercancel', 'pointerleave'].forEach(t => b.addEventListener(t, () => b.classList.remove('press')));
-      b.addEventListener('click', e => { e.stopPropagation(); ieGo(ie.a + dir, dir); }); });
+    // 전문가 전환은 카드 영역 스와이프와 양옆 카드 터치로만 한다. 좌우 검은 화살표는 공통 챕터 이동(I2 · I4)
     ie.cards.forEach((c, i) => c.addEventListener('click', e => { e.stopPropagation(); if (swiped) { swiped = false; return; } if (i !== ie.a) ieGo(i, ieRel(i, ie.a)); }));
     // 스와이프: 말풍선~카드 영역(y 300–890)의 가로 밀기는 캐러셀만 넘기고 Research 챕터는 넘기지 않는다
     const toY = e => { const R = ieRoot.getBoundingClientRect(); return (e.clientY - R.top)*1024/R.height; };
     ieRoot.addEventListener('pointerdown', e => { const y = toY(e); sw = (y > 300 && y < 890) ? {x:e.clientX, y:e.clientY, k:ieRoot.getBoundingClientRect().width/1366} : null; swiped = false; });
     ieRoot.addEventListener('pointerup', e => { if (!sw) return; const dx = (e.clientX - sw.x)/sw.k, dy = (e.clientY - sw.y)/sw.k; sw = null;
       if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)*1.2){ e.stopPropagation(); swiped = true; ieGo(ie.a + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1); setTimeout(() => { swiped = false; }, 0); }
-      else if (e.target.closest('.ie-c, .ie-ar')) e.stopPropagation(); });
+      else if (e.target.closest('.ie-c')) e.stopPropagation(); });
   }
   // warm the drawer images so they open instantly
   ['dR1','dR2','dR3','dR4','dR5','dI3a','dI3b','dI3c','dI3d','dI4x','dI4n1','dI4n2','dI4f1','dI4f2'].forEach(k => { const i = new Image(); i.src = SRC(k); });
