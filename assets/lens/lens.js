@@ -1,8 +1,10 @@
-// STEER Camera — Luck Lens 오행 포토부스(실시간 카메라 전용, 샘플 사진 모드 없음). 카메라 영상 · 손 위치 · 촬영 사진은 기기 안에서 처리되며 서버로 전송되지 않는다.
+// STEER Camera — Luck Lens 오행 포토부스(실시간 카메라 전용, 샘플 사진 모드 없음). 카메라 영상 · 손 위치는 기기 안에서만 처리한다.
+// 촬영한 최종 사진만 QR 저장을 위해 임시 스토리지에 올리고(share-config.js가 설정된 경우), 24시간 뒤 자동 삭제된다.
 import {createFisheye} from './fisheye.js';
 import {createFilterPreviews} from './filter-previews.js';
 import {createPalmOverlay} from './palm-overlay.js';
 import {GLYPHS} from './glyphs.js';
+import {shareEnabled, shareConfig, newId, upload, pageURL} from './share.js';
 
 const BASE = new URL('./', import.meta.url).href;
 // 어안 왜곡 강도: 0.65(중앙 1.27배) → 0.92(중앙 1.80배, 가장자리 2.8배 압축). tan 발산 한계 1.309보다 충분히 낮다
@@ -68,9 +70,22 @@ const CSS = `
 .llz.result .ll-actions{display:flex}
 .llz.result .ll-strip,.llz.result .ll-shutter,.llz.result .ll-hint{opacity:0;pointer-events:none}
 .llz.busy .ll-strip{pointer-events:none}
+/* QR 저장 패널: 결과 화면에서 렌즈 오른쪽 빈 영역(974~1366)의 가운데. 업로드 중 → QR → 실패 시 다시 시도 */
+.llz .ll-qr{position:absolute;left:1022px;top:206px;width:300px;height:368px;box-sizing:border-box;border-radius:28px;background:#fff;color:#0A0A0A;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 26px;text-align:center;word-break:keep-all;opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .3s ease,transform .3s ease,visibility 0s linear .3s}
+.llz.result .ll-qr.on{opacity:1;visibility:visible;transform:none;transition:opacity .3s ease .15s,transform .3s ease .15s,visibility 0s}
+.llz .ll-qr-box{width:220px;height:220px;display:flex;align-items:center;justify-content:center}
+.llz .ll-qr-box canvas{display:block}
+.llz .ll-qr h4{margin:18px 0 0;font-size:19px;font-weight:600;line-height:1.4;letter-spacing:-.01em}
+.llz .ll-qr p{margin:6px 0 0;font-size:14px;line-height:1.5;color:rgba(10,10,10,.55)}
+.llz .ll-qr .ll-spin{border-color:rgba(10,10,10,.12);border-top-color:var(--accent)}
+.llz .ll-qr-retry{margin-top:18px;min-width:150px;height:52px;padding:0 24px;border:0;border-radius:26px;background:#0A0A0A;color:#fff;font-size:18px;font-weight:600;cursor:pointer;transition:transform .15s ease}
+.llz .ll-qr-retry.press{transform:scale(.96)}
+.llz .ll-qr[data-s=ready] .ll-spin,.llz .ll-qr[data-s=error] .ll-spin,.llz .ll-qr:not([data-s=ready]) .ll-qr-box canvas,.llz .ll-qr:not([data-s=error]) .ll-qr-retry{display:none}
+.llz .ll-qr[data-s=error] .ll-qr-box{height:auto}
+.llz.qr .ll-save{display:none}
 .llz .ll-video{position:absolute;left:0;top:0;width:2px;height:2px;opacity:0;pointer-events:none}
 .llz .ll-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-@media (prefers-reduced-motion:reduce){.llz .ll-count.on{animation-duration:.01s}.llz .ll-flash.on{animation:none}}
+@media (prefers-reduced-motion:reduce){.llz .ll-count.on{animation-duration:.01s}.llz .ll-flash.on{animation:none}.llz .ll-qr,.llz.result .ll-qr.on{transition:none;transform:none}}
 `;
 
 const COL = [23, 236.915, 453.874, 698, 914.959, 1131.918];
@@ -93,12 +108,16 @@ export function createLens(root, hooks = {}){
     </div>
     <button class="ll-shutter" type="button" aria-label="3초 뒤 촬영" disabled>${SHUTTER}</button>
     <div class="ll-actions"><button class="ll-retake" type="button">다시 찍기</button><a class="ll-save" download="Steer-Luck-Lens.png" href="#">사진 저장</a></div>
-    <p class="ll-sr">카메라 영상·손 위치·촬영 사진은 기기 안에서 처리되며 서버로 전송되지 않습니다.</p>
+    <div class="ll-qr" role="status" aria-live="polite"><div class="ll-qr-box"><span class="ll-spin" aria-hidden="true"></span><canvas role="img" aria-label="사진 저장용 QR 코드"></canvas></div><h4></h4><p></p><button class="ll-qr-retry" type="button">다시 시도</button></div>
+    <p class="ll-sr">${shareEnabled() ? '카메라 영상과 손 위치는 기기 안에서만 처리됩니다. 촬영한 사진은 QR 저장을 위해 임시 저장소에 올라가며 ' + shareConfig.ttlHours + '시간 뒤 자동으로 삭제됩니다.' : '카메라 영상·손 위치·촬영 사진은 기기 안에서 처리되며 서버로 전송되지 않습니다.'}</p>
     <video class="ll-video" autoplay playsinline muted></video>`;
   const $ = s => root.querySelector(s);
   const video = $('.ll-video'), out = $('.ll-out'), hint = $('.ll-hint'), shutter = $('.ll-shutter');
   const stateH = $('.ll-state h3'), stateP = $('.ll-state p'), spin = $('.ll-spin'), retry = $('.ll-retry');
   const count = $('.ll-count'), flash = $('.ll-flash'), save = $('.ll-save'), buttons = [...root.querySelectorAll('.ll-f')];
+  const qr = $('.ll-qr'), qrCanvas = $('.ll-qr-box canvas'), qrH = $('.ll-qr h4'), qrP = $('.ll-qr p'), qrRetry = $('.ll-qr-retry');
+  const SHARE_ON = shareEnabled();
+  if (SHARE_ON) root.classList.add('qr');
   const renderer = createFisheye(out), previews = createFilterPreviews(buttons, STRENGTH), palm = createPalmOverlay();
   const frame = document.createElement('canvas'); frame.width = frame.height = N; const fctx = frame.getContext('2d', {willReadFrequently:renderer.type !== 'webgl'});
   const stickers = {}; for (const k of ['helm', ...KEYS]) { const im = new Image(); im.decoding = 'async'; im.src = `${BASE}st-${k}.webp`; stickers[k] = im; }
@@ -168,6 +187,45 @@ export function createLens(root, hooks = {}){
   }
   retry.addEventListener('click', () => { if (active) { emit('camera_retry'); openCamera(); } });
 
+  // ---- QR 저장: 결과 사진 업로드 → 고유 주소 QR. 촬영마다 새 ID, 다시 찍기 · 화면 이탈 · 비활동 복귀 때 업로드를 취소하고 QR을 지운다
+  const QR_TEXT = {
+    loading:['QR 코드를 만들고 있어요', '잠시만 기다려 주세요'],
+    ready:['스마트폰으로 스캔해 사진을 저장하세요', '사진은 ' + shareConfig.ttlHours + '시간 뒤 자동으로 삭제됩니다'],
+    error:['사진을 올리지 못했어요', '네트워크를 확인한 뒤 다시 시도해 주세요']
+  };
+  let shareSeq = 0, shareCtl = null, shareBlob = null, qrLib = null;
+  const loadQR = () => qrLib || (qrLib = import('./vendor/qrcode.mjs').then(m => m.default).catch(e => { qrLib = null; throw e; }));
+  function setQR(k){
+    qr.dataset.s = k; qrH.textContent = QR_TEXT[k][0]; qrP.textContent = QR_TEXT[k][1]; qr.classList.add('on');
+  }
+  function clearShare(){
+    shareSeq++; if (shareCtl) { shareCtl.abort(); shareCtl = null; }
+    shareBlob = null; qr.classList.remove('on'); delete qr.dataset.s; qrH.textContent = ''; qrP.textContent = '';
+    qrCanvas.width = qrCanvas.height = 0;   // 이전 관람객의 QR 픽셀을 남기지 않는다
+  }
+  function drawQR(make, url){
+    const q = make(0, 'M'); q.addData(url); q.make();
+    const n = q.getModuleCount(), cell = Math.max(2, Math.floor(440 / n)), size = n * cell;
+    qrCanvas.width = qrCanvas.height = size; qrCanvas.style.width = qrCanvas.style.height = size / 2 + 'px';   // 2배 해상도 정수 배율 → 모듈 경계가 흐리지 않다
+    const g = qrCanvas.getContext('2d');
+    g.fillStyle = '#fff'; g.fillRect(0, 0, size, size); g.fillStyle = '#0A0A0A';
+    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c)) g.fillRect(c * cell, r * cell, cell, cell);
+  }
+  async function share(retrying){
+    if (!SHARE_ON || !shareBlob || !result) return;
+    const seq = ++shareSeq, ctl = shareCtl = new AbortController(), id = newId();
+    setQR('loading'); if (retrying) emit('share_retry');
+    try {
+      const [make] = await Promise.all([loadQR(), upload(shareBlob, id, ctl.signal)]);
+      if (seq !== shareSeq || !result) return;
+      drawQR(make, pageURL(id)); setQR('ready'); emit('share_ready');
+    } catch (e) {
+      if (seq !== shareSeq || !result) return;
+      setQR('error'); emit('share_error', {reason:(e && e.reason) || 'error'});
+    } finally { if (shareCtl === ctl) shareCtl = null; }
+  }
+  qrRetry.addEventListener('click', () => share(true));
+
   function clearTimers(){ timers.forEach(clearTimeout); timers = []; }
   function capture(){
     if (busy || result || !active || !shown) return;
@@ -193,12 +251,13 @@ export function createLens(root, hooks = {}){
     result = true; busy = false; root.classList.remove('busy'); root.classList.add('result'); shutter.disabled = !shown;
     flash.classList.remove('on'); void flash.offsetWidth; flash.classList.add('on');
     if (raf) { cancelAnimationFrame(raf); raf = 0; }
-    save.removeAttribute('href');
-    shot.toBlob(b => { if (!b || !result) return; if (saveURL) URL.revokeObjectURL(saveURL); saveURL = URL.createObjectURL(b); save.href = saveURL; }, 'image/png');
+    save.removeAttribute('href'); clearShare();
+    if (SHARE_ON) { setQR('loading'); const seq = shareSeq; shot.toBlob(b => { if (seq !== shareSeq || !result) return; if (!b) { setQR('error'); return; } shareBlob = b; share(false); }, 'image/jpeg', .92); }
+    else shot.toBlob(b => { if (!b || !result) return; if (saveURL) URL.revokeObjectURL(saveURL); saveURL = URL.createObjectURL(b); save.href = saveURL; }, 'image/png');
     emit('capture');
   }
   function retake(){
-    if (!result) return; result = false; root.classList.remove('result'); save.removeAttribute('href');
+    if (!result) return; result = false; root.classList.remove('result'); save.removeAttribute('href'); clearShare();
     if (saveURL) { URL.revokeObjectURL(saveURL); saveURL = ''; } loop();
   }
   shutter.addEventListener('click', capture);
@@ -210,7 +269,7 @@ export function createLens(root, hooks = {}){
   window.addEventListener('pagehide', () => stopCamera());
 
   // 터치 피드백(0.96, 0.15s) — 호버 없음
-  root.addEventListener('pointerdown', ev => { const b = ev.target.closest('.ll-f,.ll-shutter,.ll-retry,.ll-actions button,.ll-actions a'); if (!b || b.disabled) return; b.classList.add('press'); const up = () => { b.classList.remove('press'); window.removeEventListener('pointerup', up, true); window.removeEventListener('pointercancel', up, true); }; window.addEventListener('pointerup', up, true); window.addEventListener('pointercancel', up, true); });
+  root.addEventListener('pointerdown', ev => { const b = ev.target.closest('.ll-f,.ll-shutter,.ll-retry,.ll-qr-retry,.ll-actions button,.ll-actions a'); if (!b || b.disabled) return; b.classList.add('press'); const up = () => { b.classList.remove('press'); window.removeEventListener('pointerup', up, true); window.removeEventListener('pointercancel', up, true); }; window.addEventListener('pointerup', up, true); window.addEventListener('pointercancel', up, true); });
 
   return {
     open(){ if (active) return; active = true; setHint('searching'); openCamera(); },
@@ -218,7 +277,7 @@ export function createLens(root, hooks = {}){
       if (!active) return; active = false; clearTimers(); stopCamera(); resumeLive = false;
       if (raf) { cancelAnimationFrame(raf); raf = 0; }
       busy = false; result = false; root.classList.remove('busy', 'result'); setShown(false); setState('connecting');
-      count.classList.remove('on'); count.textContent = ''; if (saveURL) { URL.revokeObjectURL(saveURL); saveURL = ''; } save.removeAttribute('href');
+      count.classList.remove('on'); count.textContent = ''; clearShare(); if (saveURL) { URL.revokeObjectURL(saveURL); saveURL = ''; } save.removeAttribute('href');
       settings.element = settings.from = -1; settings.t = 1; root.style.setProperty('--accent', HELM); buttons.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.element === '-1'))); lastPreview = 0;
     },
     isLive:() => live, isActive:() => active, element:() => settings.element, choose:e => choose(e, true), renderer
