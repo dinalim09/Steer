@@ -8,7 +8,7 @@ import {shareEnabled, shareConfig, newId, upload, pageURL} from './share.js';
 const BASE = new URL('./', import.meta.url).href;
 // 어안 왜곡 강도: 0.65(중앙 1.27배) → 0.92(중앙 1.80배, 가장자리 2.8배 압축). tan 발산 한계 1.309보다 충분히 낮다
 const N = 512, STRENGTH = .92, FADE = 380;
-const COLORS = ['#c2ff0a', '#ff8778', '#ffcc45', '#baa7ef', '#87dff4'], HELM = '#ff8778';
+const COLORS = ['#c2ff0a', '#ff8778', '#ffcc45', '#baa7ef', '#87dff4'], HELM = '#ffffff';   // ALL(기본) 필터 강조색: 흰색
 const KEYS = ['wood', 'fire', 'earth', 'metal', 'water'], NAMES = ['木 나무', '火 불', '土 흙', '金 쇠', '水 물'];
 const keyOf = e => e < 0 ? 'helm' : KEYS[e];
 const HINT = {loading:'손 인식을 준비하고 있어요', searching:'카메라에 손바닥을 펴보세요!', found:'오늘의 기운을 손바닥에 담아보세요!', unavailable:'카메라에 손바닥을 펴보세요!'};
