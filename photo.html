@@ -41,6 +41,9 @@
   .gone .save,.gone .tip{display:none}
   .tip{margin:12px 0 0;font-size:13px;line-height:1.5;color:rgba(10,10,10,.55);text-align:center}
   footer{margin-top:14px;font-size:12px;line-height:1.5;color:rgba(10,10,10,.4);text-align:center}
+  /* 저장용 합성 카드: 화면에는 보이지 않고, 길게 눌렀을 때만 이 이미지가 저장된다 */
+  .cardshot{position:absolute;inset:0;width:100%;height:100%;opacity:.01;-webkit-touch-callout:default}
+  .cardshot[hidden]{display:none}
   @media (prefers-reduced-motion:reduce){.spin{animation-duration:2.5s}.ph img{transition:none}}
 </style>
 </head>
@@ -49,9 +52,10 @@
   <div class="card">
     <div class="ph"><span class="spin" aria-hidden="true"></span><img id="img" alt="Luck Lens로 촬영한 오행 필터 사진"><div class="msg" role="alert"><h1 id="mh"></h1><p id="mp"></p></div></div>
     <div class="logo"><img src="assets/lens/photo-steer-logo.svg" alt="Steer"></div>
+    <img id="cardshot" class="cardshot" alt="Luck Lens 사진 카드" hidden>
   </div>
   <button class="save" id="save" type="button" disabled>사진 저장</button>
-  <p class="tip" id="tip">저장이 되지 않으면 사진을 길게 눌러 저장해 주세요.</p>
+  <p class="tip" id="tip">저장이 되지 않으면 카드를 길게 눌러 저장해 주세요.</p>
 </main>
 <footer id="ft">2026 졸업전시 · Steer</footer>
 <script type="module">
@@ -60,8 +64,36 @@ const $ = id => document.getElementById(id), m = $('m'), img = $('img'), btn = $
 const TTL = shareConfig.ttlHours * 3600e3, NAME = 'Steer-Luck-Lens.jpg';
 const id = decodeURIComponent((location.hash || '').slice(1));
 $('ft').textContent = '사진은 촬영 후 ' + shareConfig.ttlHours + '시간이 지나면 자동으로 삭제됩니다.';
-function gone(h, p){ m.classList.add('gone'); m.removeAttribute('aria-busy'); $('mh').textContent = h; $('mp').textContent = p; }
-let file = null, blobURL = '';
+function gone(h, p){ m.classList.add('gone'); m.removeAttribute('aria-busy'); $('mh').textContent = h; $('mp').textContent = p; btn.disabled = true; }
+
+// ---- 저장 이미지: Figma 2566:20154 카드(968×1214)를 화면과 같은 좌표로 Canvas에 합성 → 고정 해상도 JPEG
+// 화면 크기와 무관하게 항상 CARD_SCALE배(1936×2428)로 출력한다. 저장 버튼 · 안내 문구 등 페이지 UI는 넣지 않는다.
+// 카드 바깥 모서리(둥근 모서리 밖)는 JPEG에 투명이 없어 페이지 배경과 같은 흰색으로 채운다.
+const CARD = {w:968, h:1214, r:140, bg:'#0A0A0A', outside:'#ffffff'};
+const CIRCLE = {x:134, y:105, d:699};                         // Figma Ellipse
+const PHOTO = {x:134 - 37.88, y:105 - 29.27, size:774.75};    // 900px 촬영 사진의 렌즈 원(중심 450,440 · 지름 812)을 원 699에 맞춘 위치(CSS와 동일)
+const LOGO = {x:292, y:847, w:388.719, h:285.138};            // Figma Group 2147227886 · SVG 원본 크기(CSS: 384.719 상자에 101.04%)
+const CARD_SCALE = 2, JPEG_Q = .92;
+const loadImg = src => new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => no(new Error('image ' + src)); i.src = src; });
+async function composeCard(photo){
+  const logo = await loadImg(new URL('assets/lens/photo-steer-logo.svg', location.href).href);
+  try { if (document.fonts && document.fonts.ready) await document.fonts.ready; } catch {}
+  const c = document.createElement('canvas'); c.width = CARD.w * CARD_SCALE; c.height = CARD.h * CARD_SCALE;
+  const g = c.getContext('2d'); g.scale(CARD_SCALE, CARD_SCALE); g.imageSmoothingQuality = 'high';
+  g.fillStyle = CARD.outside; g.fillRect(0, 0, CARD.w, CARD.h);
+  g.save(); g.beginPath(); g.roundRect ? g.roundRect(0, 0, CARD.w, CARD.h, CARD.r) : roundRect(g, 0, 0, CARD.w, CARD.h, CARD.r); g.clip();
+  g.fillStyle = CARD.bg; g.fillRect(0, 0, CARD.w, CARD.h);
+  // 원형 마스크 안에 촬영 사진(오행 필터 · 손바닥 스티커 · 렌즈 테두리 포함)
+  g.save(); g.beginPath(); g.arc(CIRCLE.x + CIRCLE.d / 2, CIRCLE.y + CIRCLE.d / 2, CIRCLE.d / 2, 0, Math.PI * 2); g.clip();
+  g.drawImage(photo, PHOTO.x, PHOTO.y, PHOTO.size, PHOTO.size); g.restore();
+  g.drawImage(logo, LOGO.x, LOGO.y, LOGO.w, LOGO.h);
+  g.restore();
+  const blob = await new Promise((ok, no) => c.toBlob(b => b ? ok(b) : no(new Error('toBlob')), 'image/jpeg', JPEG_Q));
+  return blob;
+}
+function roundRect(g, x, y, w, h, r){ g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
+
+let file = null, cardURL = '';
 async function load(){
   if (!shareEnabled() || !ID_RE.test(id)) return gone('사진을 찾을 수 없어요', 'QR 코드를 다시 스캔해 주세요.');
   try {
@@ -71,20 +103,25 @@ async function load(){
     const lm = Date.parse(r.headers.get('last-modified') || '');
     if (lm && Date.now() - lm > TTL) return gone('사진 보관 기간이 지났어요', '촬영한 사진은 ' + shareConfig.ttlHours + '시간 동안만 보관됩니다.');
     const b = await r.blob();
-    file = new File([b], NAME, {type:'image/jpeg'}); blobURL = URL.createObjectURL(b);
-    img.onload = () => { m.classList.add('ready'); m.removeAttribute('aria-busy'); btn.disabled = false; };
-    img.src = blobURL;
+    await new Promise((ok, no) => { img.onload = ok; img.onerror = no; img.src = URL.createObjectURL(b); });
+    m.classList.add('ready'); m.removeAttribute('aria-busy');
+    // 공유 시트는 버튼을 누른 직후에 열어야 하므로(iOS 사용자 동작 제한) 저장 이미지를 미리 합성해 둔다
+    const card = await composeCard(img);
+    file = new File([card], NAME, {type:'image/jpeg'}); cardURL = URL.createObjectURL(card);
+    const shot = $('cardshot'); shot.src = cardURL; shot.hidden = false;   // 카드를 길게 눌러 저장해도 합성 이미지가 저장되도록 투명하게 덮는다
+    btn.disabled = false;
+    window.steerPhotoCard = {width:CARD.w * CARD_SCALE, height:CARD.h * CARD_SCALE, bytes:card.size};
   } catch {
     gone('사진을 불러오지 못했어요', '네트워크 연결을 확인한 뒤 새로고침해 주세요.');
   }
 }
-// iOS·Android: 공유 시트의 '이미지 저장'으로 사진 앱에 바로 저장. 지원하지 않는 브라우저는 파일 다운로드
+// iOS·Android: 공유 시트의 '이미지 저장'으로 사진 앱에 바로 저장. 지원하지 않는 브라우저는 파일 다운로드. 둘 다 합성 카드 JPEG를 쓴다
 btn.addEventListener('click', async () => {
   if (!file) return;
   if (navigator.canShare && navigator.canShare({files:[file]}) && matchMedia('(pointer:coarse)').matches) {
     try { await navigator.share({files:[file]}); return; } catch (e) { if (e && e.name === 'AbortError') return; }
   }
-  const a = document.createElement('a'); a.href = blobURL; a.download = NAME; document.body.appendChild(a); a.click(); a.remove();
+  const a = document.createElement('a'); a.href = cardURL; a.download = NAME; document.body.appendChild(a); a.click(); a.remove();
 });
 load();
 </script>
