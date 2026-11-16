@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#0A0A0A">
+<title>Steer · Luck Lens 사진</title>
+<link rel="icon" href="assets/favicon.svg">
+<link rel="stylesheet" href="assets/fonts/pretendard/pretendard.css">
+<style>
+  /* Luck Lens 촬영 결과 저장 페이지(관람객 스마트폰). 사진 ID는 주소의 # 뒤에만 있다 */
+  *{box-sizing:border-box}
+  html,body{margin:0;background:#0A0A0A;color:#fff}
+  body{min-height:100vh;min-height:100dvh;font-family:Pretendard,'Noto Sans KR',system-ui,-apple-system,sans-serif;-webkit-text-size-adjust:100%;display:flex;flex-direction:column;align-items:center;padding:calc(28px + env(safe-area-inset-top)) 24px calc(32px + env(safe-area-inset-bottom));word-break:keep-all}
+  header{width:100%;max-width:420px;display:flex;align-items:baseline;justify-content:space-between}
+  header b{font-size:20px;font-weight:700;letter-spacing:-.01em}
+  header span{font-size:13px;color:rgba(255,255,255,.55)}
+  main{width:100%;max-width:420px;flex:1;display:flex;flex-direction:column;align-items:center;margin-top:28px}
+  .ph{position:relative;width:100%;aspect-ratio:1;border-radius:24px;background:#141414;overflow:hidden;display:flex;align-items:center;justify-content:center}
+  .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity .3s ease;-webkit-touch-callout:default}
+  .ready .ph img{opacity:1}
+  .spin{width:40px;height:40px;border-radius:50%;border:4px solid rgba(255,255,255,.16);border-top-color:#87E6FF;animation:sp .9s linear infinite}
+  .ready .spin,.gone .spin{display:none}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .msg{display:none;padding:0 28px;text-align:center}
+  .msg h1{margin:0;font-size:20px;font-weight:600;line-height:1.45}
+  .msg p{margin:10px 0 0;font-size:15px;line-height:1.6;color:rgba(255,255,255,.6)}
+  .gone .msg{display:block}
+  .save{margin-top:24px;width:100%;height:58px;border:0;border-radius:29px;background:#87E6FF;color:#0A0A0A;font:600 18px/58px Pretendard,'Noto Sans KR',system-ui,sans-serif;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .15s ease,opacity .2s ease}
+  .save:active{transform:scale(.97)}
+  .save:disabled{opacity:.35}
+  .gone .save,.gone .tip{display:none}
+  .tip{margin:14px 0 0;font-size:13px;line-height:1.6;color:rgba(255,255,255,.55);text-align:center}
+  footer{margin-top:28px;font-size:12px;color:rgba(255,255,255,.35);text-align:center}
+  @media (prefers-reduced-motion:reduce){.spin{animation-duration:2.5s}.ph img{transition:none}}
+</style>
+</head>
+<body>
+<header><b>Steer</b><span>Luck Lens</span></header>
+<main id="m" aria-busy="true">
+  <div class="ph"><span class="spin" aria-hidden="true"></span><img id="img" alt="Luck Lens로 촬영한 오행 필터 사진"><div class="msg" role="alert"><h1 id="mh"></h1><p id="mp"></p></div></div>
+  <button class="save" id="save" type="button" disabled>사진 저장</button>
+  <p class="tip" id="tip">저장이 되지 않으면 사진을 길게 눌러 저장해 주세요.</p>
+</main>
+<footer id="ft">2026 졸업전시 · Steer</footer>
+<script type="module">
+import {shareConfig, shareEnabled, publicURL, ID_RE} from './assets/lens/share.js';
+const $ = id => document.getElementById(id), m = $('m'), img = $('img'), btn = $('save');
+const TTL = shareConfig.ttlHours * 3600e3, NAME = 'Steer-Luck-Lens.jpg';
+const id = decodeURIComponent((location.hash || '').slice(1));
+$('ft').textContent = '사진은 촬영 후 ' + shareConfig.ttlHours + '시간이 지나면 자동으로 삭제됩니다.';
+function gone(h, p){ m.classList.add('gone'); m.removeAttribute('aria-busy'); $('mh').textContent = h; $('mp').textContent = p; }
+let file = null, blobURL = '';
+async function load(){
+  if (!shareEnabled() || !ID_RE.test(id)) return gone('사진을 찾을 수 없어요', 'QR 코드를 다시 스캔해 주세요.');
+  try {
+    const r = await fetch(publicURL(id), {cache:'no-store'});
+    if (r.status === 400 || r.status === 404) return gone('사진 보관 기간이 지났어요', '촬영한 사진은 ' + shareConfig.ttlHours + '시간 동안만 보관됩니다.');
+    if (!r.ok) throw new Error(String(r.status));
+    const lm = Date.parse(r.headers.get('last-modified') || '');
+    if (lm && Date.now() - lm > TTL) return gone('사진 보관 기간이 지났어요', '촬영한 사진은 ' + shareConfig.ttlHours + '시간 동안만 보관됩니다.');
+    const b = await r.blob();
+    file = new File([b], NAME, {type:'image/jpeg'}); blobURL = URL.createObjectURL(b);
+    img.onload = () => { m.classList.add('ready'); m.removeAttribute('aria-busy'); btn.disabled = false; };
+    img.src = blobURL;
+  } catch {
+    gone('사진을 불러오지 못했어요', '네트워크 연결을 확인한 뒤 새로고침해 주세요.');
+  }
+}
+// iOS·Android: 공유 시트의 '이미지 저장'으로 사진 앱에 바로 저장. 지원하지 않는 브라우저는 파일 다운로드
+btn.addEventListener('click', async () => {
+  if (!file) return;
+  if (navigator.canShare && navigator.canShare({files:[file]}) && matchMedia('(pointer:coarse)').matches) {
+    try { await navigator.share({files:[file]}); return; } catch (e) { if (e && e.name === 'AbortError') return; }
+  }
+  const a = document.createElement('a'); a.href = blobURL; a.download = NAME; document.body.appendChild(a); a.click(); a.remove();
+});
+load();
+</script>
+</body>
+</html>
