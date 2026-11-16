@@ -348,6 +348,16 @@ a,button,[role=button],label,select,.pill,#screen:active,body.grabbing,body.grab
 #tmx .tmnv svg{display:block}
 #tmx .tmhit{position:absolute;top:12px;height:64px;z-index:3;border:0;padding:0;margin:0;background:transparent;border-radius:12px;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 #tmx .tmhit:focus-visible{outline:3px solid #87E6FF;outline-offset:2px}
+/* ===== Scenario (Figma 4218:4386 S1-1~S3-5) — 상단 내비 유지, 그 아래는 assets/scenario/scenario.js ===== */
+#scx{position:absolute;inset:0;z-index:74;background:#fff;opacity:0;visibility:hidden;transition:opacity .32s cubic-bezier(.2,.7,.2,1),visibility 0s linear .32s;touch-action:none}
+#scx.open{opacity:1;visibility:visible;transition:opacity .32s cubic-bezier(.2,.7,.2,1),visibility 0s}
+#scx:not(.open),#scx:not(.open) *{pointer-events:none!important}
+#scx .scst{position:absolute;inset:0}
+#scx .scnv{position:absolute;left:0;top:0;width:1366px;height:88px;color:#0A0A0A;z-index:2;pointer-events:none}
+#scx .scnv svg{display:block}
+#scx .schit{position:absolute;top:12px;height:64px;z-index:3;border:0;padding:0;margin:0;background:transparent;border-radius:12px;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+#scx .schit:focus-visible{outline:3px solid #87E6FF;outline-offset:2px}
+#scx .scld{position:absolute;left:40px;top:160px;font:500 18px Pretendard,'Noto Sans KR',sans-serif}
 #cmx .cmld{position:absolute;left:684px;top:390px;transform:translate(-50%,-50%);color:rgba(255,255,255,.6);font:500 18px Pretendard,'Noto Sans KR',sans-serif}
 </style>
 
@@ -1092,7 +1102,7 @@ body.bare .bar>*{pointer-events:auto}
       <p class="hint" id="hint"><span aria-hidden="true">↻</span>돌리면 물이 튀고, 누르면 기울어요</p>
       <button type="button" id="rsNav" data-nw="research" aria-label="Research 열기"></button>
       <button type="button" id="lgNav" data-nw="logic" aria-label="Service Logic으로 이동"></button>
-      <span class="nvx" data-nw="scenario" aria-hidden="true" style="left:1053px;width:95px"></span>
+      <button type="button" class="nvx" id="scNav" data-nw="scenario" aria-label="Scenario 열기" style="left:1053px;width:95px"></button>
       <button type="button" class="nvx" id="cmNav" data-nw="camera" aria-label="Camera 열기" style="left:1170px;width:86px"></button>
       <button type="button" class="nvx" id="tmNav" data-nw="team" aria-label="Team 열기" style="left:1280px;width:54px"></button>
       <button type="button" id="rsHome" aria-label="홈 화면으로"></button>
@@ -1100,6 +1110,7 @@ body.bare .bar>*{pointer-events:auto}
       <div id="lgd" role="region" aria-label="Logic 상세" aria-hidden="true"></div>
       <div id="cmx" role="region" aria-label="Camera · Luck Lens" aria-hidden="true"><div class="cmlz"></div><div class="cmnv"></div></div>
       <div id="tmx" role="region" aria-label="Team" aria-hidden="true"><div class="tmst"></div><div class="tmnv"></div></div>
+      <div id="scx" role="region" aria-label="Scenario" aria-hidden="true"><div class="scst"></div><div class="scnv"></div></div>
       <div id="rsx" role="region" aria-label="Research" aria-hidden="true">
         <div id="rsPages"></div>
         <div id="rsScrim"></div>
@@ -2604,6 +2615,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   const goLogic = () => { const l = document.getElementById('lgNav'); if (l) l.click(); };
   const goCamera = () => { if (window.steerCam) window.steerCam.open('research'); };
   const goTeam = () => { if (window.steerTeam) window.steerTeam.open(); };
+  const goScenario = () => { if (window.steerScn) window.steerScn.open('research'); };
 
   // keep the hero's helm / wheel / tap handlers on #screen from seeing anything that happens in Research
   ['pointerdown','pointermove','pointerup','pointercancel','wheel','touchstart','touchmove','touchend'].forEach(t => {
@@ -2848,7 +2860,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   const CHH = document.createElement('div'); CHH.id = 'rsChromeH';
   CHH.innerHTML = '<div class="xnv">' + steerNav.art('research') + ''
     + '<button type="button" class="rs-hit" data-nw="research" style="left:843px;top:12px;width:95px;height:64px" aria-label="Research 처음으로"></button><button type="button" class="rs-hit rs-lg" data-nw="logic" style="left:956px;top:12px;width:78px;height:64px" aria-label="Logic 열기"></button>'
-    + '<span class="rs-hit" data-nw="scenario" aria-hidden="true" style="left:1053px;top:12px;width:95px;height:64px"></span><button type="button" class="rs-hit rs-cm" data-nw="camera" style="left:1170px;top:12px;width:86px;height:64px" aria-label="Camera 열기"></button><button type="button" class="rs-hit rs-tm" data-nw="team" style="left:1280px;top:12px;width:54px;height:64px" aria-label="Team 열기"></button></div>'
+    + '<button type="button" class="rs-hit rs-sc" data-nw="scenario" style="left:1053px;top:12px;width:95px;height:64px" aria-label="Scenario 열기"></button><button type="button" class="rs-hit rs-cm" data-nw="camera" style="left:1170px;top:12px;width:86px;height:64px" aria-label="Camera 열기"></button><button type="button" class="rs-hit rs-tm" data-nw="team" style="left:1280px;top:12px;width:54px;height:64px" aria-label="Team 열기"></button></div>'
     + '<div class="ci">' + ['00','01','02','03','04','Q'].map((t, i) => '<button type="button" data-k="' + i + '" aria-label="리서치 ' + t + '">' + t + '</button>').join('') + '</div>'
     + '<button type="button" class="arr prv" aria-label="이전 챕터"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.5 3 5.5 9l6 6"/></svg></button>'
     + '<button type="button" class="arr nxt" aria-label="다음 챕터"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 3 12.5 9l-6 6"/></svg><svg class="g2" width="88" height="96" viewBox="0 0 88 96" fill="none" aria-hidden="true"><g filter="url(#f2112_1671)"><rect x="20" y="20" width="56" height="56" rx="28" fill="#0A0A0A"/><path d="M44 39L53 48L44 57" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></g><defs><filter id="f2112_1671" x="0" y="0" width="96" height="96" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset/><feGaussianBlur stdDeviation="10"/><feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0"/><feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/><feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/></filter></defs></svg></button>';
@@ -2862,6 +2874,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   CHH.querySelector('.xnv .rs-lg').addEventListener('click', goLogic);
   CHH.querySelector('.xnv .rs-cm').addEventListener('click', goCamera);
   CHH.querySelector('.xnv .rs-tm').addEventListener('click', goTeam);
+  CHH.querySelector('.xnv .rs-sc').addEventListener('click', goScenario);
   const CHX = CHV.getContext('2d'); let chT = 0;
   const NAVI = new Image(); NAVI.decoding = 'async';
   NAVI.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(steerNav.art('research').replace('<svg ', '<svg style="color:#0A0A0A" ').replace('viewBox="0 0 1366 88"', 'viewBox="830 0 536 88"').replace('width="1366"', 'width="536"').replace('fill="none" xmlns', 'fill="none" xmlns').replace(/(<svg[^>]*>)/, '$1<rect x="830" y="0" width="536" height="88" fill="#fff"/>'));
@@ -3427,7 +3440,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   hit(956, 12, 78, 64, 'Logic 메인 처음부터', () => { t0 = 0; open(); }).dataset.nw = 'logic';
   hit(1170, 12, 86, 64, 'Camera 열기', () => { if (window.steerCam) window.steerCam.open('L0'); }).dataset.nw = 'camera';
   hit(1280, 12, 54, 64, 'Team 열기', () => { if (window.steerTeam) window.steerTeam.open(); }).dataset.nw = 'team';
-  [['scenario', 1053, 95]].forEach(([k, x, w]) => { const e = document.createElement('span'); e.className = 'l0hit'; e.dataset.nw = k; e.setAttribute('aria-hidden', 'true'); Object.assign(e.style, {left:x + 'px', top:'12px', width:w + 'px', height:'64px'}); root.appendChild(e); });
+  hit(1053, 12, 95, 64, 'Scenario 열기', () => { if (window.steerScn) window.steerScn.open('L0'); }).dataset.nw = 'scenario';
   const home = document.getElementById('rsHome'); if (home) home.addEventListener('click', () => { if (isOpen()) close(); });
   ['pointerdown','pointermove','pointerup','pointercancel','wheel','touchstart','touchmove','touchend'].forEach(t => root.addEventListener(t, e => e.stopPropagation(), {passive:true}));
   document.addEventListener('keydown', e => { if (isOpen() && e.key === 'Escape') close(); });
@@ -4166,7 +4179,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   hit(956, 12, 78, 64, 'Logic 메인으로', () => toL0(true)).dataset.nw = 'logic';
   hit(1170, 12, 86, 64, 'Camera 열기', () => { if (window.steerCam) window.steerCam.open(PAGES[cur]); }).dataset.nw = 'camera';
   hit(1280, 12, 54, 64, 'Team 열기', () => { if (window.steerTeam) window.steerTeam.open(); }).dataset.nw = 'team';
-  [['scenario', 1053, 95]].forEach(([k, x, w]) => { const e = document.createElement('span'); e.className = 'ldhit'; e.dataset.nw = k; e.setAttribute('aria-hidden', 'true'); Object.assign(e.style, {left:x + 'px', top:'12px', width:w + 'px', height:'64px'}); root.appendChild(e); });
+  hit(1053, 12, 95, 64, 'Scenario 열기', () => { if (window.steerScn) window.steerScn.open(PAGES[cur]); }).dataset.nw = 'scenario';
   const home = document.getElementById('rsHome'); if (home) home.addEventListener('click', () => { if (isOpen()) close(); });
   ['pointerdown','pointermove','pointerup','pointercancel','wheel','touchstart','touchmove','touchend'].forEach(t => root.addEventListener(t, e => e.stopPropagation(), {passive:true}));
   document.addEventListener('keydown', e => { if (isOpen() && e.key === 'Escape') { e.stopImmediatePropagation(); toL0(false); } }, true);
@@ -4224,14 +4237,14 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     if (!APP_MODE && parse(location.hash)) history.replaceState(null, '', location.pathname + location.search); }
   window.addEventListener('popstate', () => { const r = parse(location.hash);
     if (r) { lock = 0; go(r.member, false); } else if (isOpen()) { want = null; if (team) team.hide(); root.classList.remove('open'); root.setAttribute('aria-hidden', 'true'); } });
-  // Team 화면의 상단 내비: Research · Logic · Camera · Team(메인으로), Scenario는 기존처럼 누름 피드백만
+  // Team 화면의 상단 내비: Research · Logic · Scenario · Camera · Team(메인으로)
   const H = steerNav.HITS;
   const hit = (k, label, fn) => { const b = document.createElement(fn ? 'button' : 'span'); b.className = 'tmhit'; b.dataset.nw = k;
     if (fn) { b.type = 'button'; b.setAttribute('aria-label', label); b.addEventListener('click', fn); } else b.setAttribute('aria-hidden', 'true');
     Object.assign(b.style, {left:H[k][0] + 'px', width:H[k][1] + 'px'}); root.appendChild(b); };
   hit('research', 'Research 열기', () => { close(); const n = document.getElementById('rsNav'); if (n) n.click(); });
   hit('logic', 'Logic 열기', () => { close(); const n = document.getElementById('lgNav'); if (n) n.click(); });
-  hit('scenario');
+  hit('scenario', 'Scenario 열기', () => { close(); if (window.steerScn) window.steerScn.open('team'); });
   hit('camera', 'Camera 열기', () => { close(); if (window.steerCam) window.steerCam.open('team'); });
   hit('team', 'Team 메인', () => { if (team && team.view() === 'main') return; open(0); });
   ['pointerdown','pointermove','pointerup','pointercancel','wheel','touchstart','touchmove','touchend'].forEach(t => root.addEventListener(t, e => e.stopPropagation(), {passive:true}));
@@ -4241,6 +4254,62 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     tn.addEventListener('click', () => open(0)); tn.addEventListener('pointerup', e => { if (e.pointerType !== 'mouse') open(0); }); }
   window.steerTeam = {open, close, isOpen, view:() => team ? team.view() : null};
   const r0 = parse(location.hash); if (r0) { history.replaceState({steerTeam:r0.member}, '', hashOf(r0.member)); lock = 0; go(r0.member, false); }   // 주소로 바로 진입
+})();
+</script>
+<script>
+// ===== Scenario 탭: 평상시 · 중요 일정 · 깜짝 스팟 장면 + 영상(assets/scenario/). 렌더링·재생은 assets/scenario/scenario.js (#SCENARIO로 바로 진입) =====
+(() => {
+  const root = document.getElementById('scx'); if (!root) return;
+  const stage = root.querySelector('.scst'), nv = root.querySelector('.scnv');
+  nv.innerHTML = steerNav.art('scenario');
+  let scn = null, loading = null, want = false;
+  const isOpen = () => root.classList.contains('open');
+  const track = (n, p) => { if (window.steerTrack) steerTrack(n, p || {}); };
+  function load(){
+    if (loading) return loading;
+    loading = import('./assets/scenario/scenario.js?v=20261117-1').then(m => {
+      scn = m.createScenario(stage, {event:(n, d) => track(n, d)});
+      return scn;
+    }).catch(() => { loading = null; stage.innerHTML = '<p class="scld">Scenario 화면을 불러오지 못했습니다. 새로고침 후 다시 시도해 주세요.</p>'; });
+    return loading;
+  }
+  function closeOthers(){
+    if (window.steerTeam && window.steerTeam.isOpen()) window.steerTeam.close();
+    if (window.steerCam && window.steerCam.isOpen()) window.steerCam.close();
+    if (window.steerResearch && window.steerResearch.isOpen()) window.steerResearch.reset();
+    if (window.steerLD && window.steerLD.isOpen()) window.steerLD.close();
+    if (window.steerL0) { const l = document.getElementById('lgx'); if (l && l.classList.contains('open')) window.steerL0.close(); }
+  }
+  // 이미 열려 있을 때 Scenario 탭을 다시 누르면 평상시 첫 장면부터
+  let t0 = 0;
+  function open(from){
+    const now = performance.now(); if (now - t0 < 450) return; t0 = now;   // 터치에서 pointerup·click이 함께 와도 한 번만
+    const again = isOpen();
+    closeOthers(); want = true; root.classList.add('open'); root.removeAttribute('aria-hidden');
+    if (!again) track('scenario_view', {from:from || 'home'});
+    load().then(s => { if (!s || !want || !isOpen()) return; if (again) s.open(0, 0); else { const st = s.state(); s.open(Math.max(0, st.scenario), Math.max(0, st.scene)); } });
+  }
+  // fresh: 전시 비활동 복귀 때는 다음 관람객을 위해 평상시 01로 되돌린다
+  function close(fresh){ want = false; if (scn) { if (fresh) scn.reset(); else scn.hide(); } root.classList.remove('open'); root.setAttribute('aria-hidden', 'true'); }
+  const H = steerNav.HITS;
+  const hit = (k, label, fn) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'schit'; b.dataset.nw = k;
+    b.setAttribute('aria-label', label); b.addEventListener('click', fn);
+    Object.assign(b.style, {left:H[k][0] + 'px', width:H[k][1] + 'px'}); root.appendChild(b); };
+  hit('research', 'Research 열기', () => { close(); const n = document.getElementById('rsNav'); if (n) n.click(); });
+  hit('logic', 'Logic 열기', () => { close(); const n = document.getElementById('lgNav'); if (n) n.click(); });
+  hit('scenario', 'Scenario 처음으로', () => open('scenario'));
+  hit('camera', 'Camera 열기', () => { close(); if (window.steerCam) window.steerCam.open('scenario'); });
+  hit('team', 'Team 열기', () => { close(); if (window.steerTeam) window.steerTeam.open(); });
+  ['pointerdown','pointermove','pointerup','pointercancel','wheel','touchstart','touchmove','touchend'].forEach(t => root.addEventListener(t, e => e.stopPropagation(), {passive:true}));
+  const home = document.getElementById('rsHome'); if (home) home.addEventListener('click', () => { if (isOpen()) close(); });
+  const sn = document.getElementById('scNav');
+  if (sn) { ['pointerdown','pointermove','pointerup','pointercancel','wheel','touchstart','touchmove','touchend'].forEach(t => sn.addEventListener(t, e => e.stopPropagation(), {passive:true}));
+    sn.addEventListener('click', () => open('home'));
+    sn.addEventListener('pointerup', e => { if (e.pointerType !== 'mouse') open('home'); }); }
+  // 앱이 백그라운드로 가면 영상을 멈추고, 돌아오면 현재 장면부터 다시 재생
+  document.addEventListener('visibilitychange', () => { if (document.hidden && scn) scn.hide(); else if (!document.hidden && isOpen() && scn) { const st = scn.state(); scn.open(st.scenario, st.scene); } });
+  window.steerScn = {open, close, isOpen};
+  if ((location.hash || '').slice(1).toUpperCase() === 'SCENARIO') open('hash');
 })();
 </script>
 <script>
@@ -4279,7 +4348,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     Object.assign(b.style, {left:H[k][0] + 'px', width:H[k][1] + 'px'}); root.appendChild(b); };
   hit('research', 'Research 열기', () => { close(); const n = document.getElementById('rsNav'); if (n) n.click(); });
   hit('logic', 'Logic 열기', () => { close(); const n = document.getElementById('lgNav'); if (n) n.click(); });
-  hit('scenario'); hit('camera', 'Camera', () => {}); hit('team', 'Team 열기', () => { close(); if (window.steerTeam) window.steerTeam.open(); });
+  hit('scenario', 'Scenario 열기', () => { close(); if (window.steerScn) window.steerScn.open('camera'); }); hit('camera', 'Camera', () => {}); hit('team', 'Team 열기', () => { close(); if (window.steerTeam) window.steerTeam.open(); });
   ['pointerdown','pointermove','pointerup','pointercancel','wheel','touchstart','touchmove','touchend'].forEach(t => root.addEventListener(t, e => e.stopPropagation(), {passive:true}));
   const home = document.getElementById('rsHome'); if (home) home.addEventListener('click', () => { if (isOpen()) close(); });
   const cm = document.getElementById('cmNav');
@@ -4297,13 +4366,14 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   const host = document.getElementById('rsx') && document.getElementById('rsx').parentElement; if (!host) return;
   const veil = document.createElement('div'); veil.id = 'idleVeil'; veil.setAttribute('aria-hidden', 'true'); host.appendChild(veil);
   let t = 0, fading = false, fadeT = 0;
-  const away = () => (window.steerTeam && window.steerTeam.isOpen()) || (window.steerCam && window.steerCam.isOpen()) || (window.steerResearch && window.steerResearch.isOpen()) || (window.steerLD && window.steerLD.isOpen()) || (window.steerL0 && document.getElementById('lgx').classList.contains('open')) || !(window.steerHome && window.steerHome.atTop());
+  const away = () => (window.steerScn && window.steerScn.isOpen()) || (window.steerTeam && window.steerTeam.isOpen()) || (window.steerCam && window.steerCam.isOpen()) || (window.steerResearch && window.steerResearch.isOpen()) || (window.steerLD && window.steerLD.isOpen()) || (window.steerL0 && document.getElementById('lgx').classList.contains('open')) || !(window.steerHome && window.steerHome.atTop());
   function arm(){ clearTimeout(t); t = setTimeout(fire, IDLE_MS); }
   function fire(){ t = 0; if (!away()) return;   // 이미 홈 첫 화면이면 아무것도 하지 않고, 다음 조작 전까지 다시 걸지 않는다
     fading = true; veil.classList.add('on'); fadeT = setTimeout(reset, FADE_MS); }
   function reset(){
     fading = false;
-    const from = window.steerTeam && window.steerTeam.isOpen() ? 'team' : window.steerCam && window.steerCam.isOpen() ? 'camera' : window.steerResearch && window.steerResearch.isOpen() ? (window.steerResearch.page() || 'research') : (window.steerLD && window.steerLD.isOpen() ? window.steerLD.page() : (document.getElementById('lgx').classList.contains('open') ? 'L0' : 'home'));
+    const from = window.steerScn && window.steerScn.isOpen() ? 'scenario' : window.steerTeam && window.steerTeam.isOpen() ? 'team' : window.steerCam && window.steerCam.isOpen() ? 'camera' : window.steerResearch && window.steerResearch.isOpen() ? (window.steerResearch.page() || 'research') : (window.steerLD && window.steerLD.isOpen() ? window.steerLD.page() : (document.getElementById('lgx').classList.contains('open') ? 'L0' : 'home'));
+    if (window.steerScn) window.steerScn.close(true);
     if (window.steerTeam) window.steerTeam.close();
     if (window.steerCam) window.steerCam.close();
     if (window.steerResearch) window.steerResearch.reset();
@@ -4328,7 +4398,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   const check = () => { const b = nav.querySelector('button.on'); const s = b ? b.dataset.label : 'HERO';
     if (s !== last){ last = s; if (window.steerTrack) steerTrack('section_view', {section:s}); } };
   new MutationObserver(check).observe(nav, {subtree:true, attributes:true, attributeFilter:['class']});
-  [['rsNav','research'],['lgNav','logic'],['cmNav','camera'],['tmNav','team'],['rsHome','home']].forEach(([id, n]) => { const el = document.getElementById(id);
+  [['rsNav','research'],['lgNav','logic'],['scNav','scenario'],['cmNav','camera'],['tmNav','team'],['rsHome','home']].forEach(([id, n]) => { const el = document.getElementById(id);
     if (el) el.addEventListener('click', () => window.steerTrack && steerTrack('nav_click', {target:n})); });
   document.querySelectorAll('#lg .st').forEach((s, i) => s.addEventListener('click', () => window.steerTrack && steerTrack('logic_step_tap', {step:i + 1})));
 })();
