@@ -2,6 +2,8 @@
 // 보안: 'Verify JWT'는 끄고(새 publishable/secret 키는 JWT가 아님), 대신 예약 실행 전용 secret을 직접 검증한다.
 //  - Edge Function Secrets의 LENS_CLEANUP_SECRET과 요청 헤더 x-lens-cleanup-secret이 일치할 때만 실행
 //  - 같은 값은 DB Vault('lens_cleanup_secret')에 있고, pg_cron 작업이 실행 시점에 읽어 헤더로 보낸다
+// 응답(2026-11-16 실제 배포 함수에서 확인한 형식과 동일):
+//  GET 등 POST 외 → 405 'Method Not Allowed' · secret 없음/불일치 → 401 'Unauthorized' · 성공 → 200 {"removed":N}
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
 const BUCKET = 'lens', TTL_MS = 24 * 60 * 60 * 1000, PAGE = 1000;
@@ -16,11 +18,12 @@ async function same(a: string, b: string) {
   return d === 0;
 }
 const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
+const text = (body: string, status: number) => new Response(body, { status, headers: { 'content-type': 'text/plain; charset=utf-8' } });
 
 Deno.serve(async (req) => {
-  if (req.method !== 'POST') return json({ error: 'method_not_allowed' }, 405);
-  if (SECRET.length < 32) { console.error('LENS_CLEANUP_SECRET 미설정 또는 너무 짧음'); return json({ error: 'not_configured' }, 503); }
-  if (!(await same(req.headers.get('x-lens-cleanup-secret') ?? '', SECRET))) { console.warn('secret 불일치 요청 거부'); return json({ error: 'unauthorized' }, 401); }
+  if (req.method !== 'POST') return text('Method Not Allowed', 405);
+  if (!SECRET) { console.error('LENS_CLEANUP_SECRET 미설정: 모든 요청 거부'); return text('Unauthorized', 401); }
+  if (!(await same(req.headers.get('x-lens-cleanup-secret') ?? '', SECRET))) { console.warn('secret 불일치 요청 거부'); return text('Unauthorized', 401); }
 
   let key = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
   try { key = JSON.parse(Deno.env.get('SUPABASE_SECRET_KEYS') ?? '{}').default || key; } catch { /* 기존 키 사용 */ }

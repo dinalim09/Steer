@@ -24,4 +24,5 @@ iPad의 Luck Lens 결과 사진을 Supabase Storage에 임시로 올리고, 관�
 - 업로드: 결과 화면에 QR이 뜨는지, Storage › lens에 `22자.jpg`가 생기는지
 - 보안: anon 키로 목록 조회(`POST /storage/v1/object/list/lens`)가 빈 결과 또는 거부인지
 - 정리: `verify.sql`로 예약 등록 · 실행 이력 · HTTP 응답 확인. Edge Functions › lens-cleanup › Logs에서 매시 7분 호출 기록
-- 외부 호출 차단: 브라우저로 함수 주소를 열면 405, secret 없이 POST하면 401이어야 한다
+- 외부 호출 차단: 브라우저로 함수 주소를 열면 405 `Method Not Allowed`, secret 없이 POST하면 401 `Unauthorized`이어야 한다
+- 이 파일과 실제 배포 함수는 같은 인증 방식(헤더 `x-lens-cleanup-secret` = Secrets `LENS_CLEANUP_SECRET` = Vault `lens_cleanup_secret`)을 쓴다. 현재 배포 함수가 정상이면 다시 배포할 필요는 없다
