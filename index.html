@@ -4524,7 +4524,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
 })();
 </script>
 <style>
-/* 터치 탭 표시(iPad): 누를 수 있는 곳을 손가락으로 탭하면 누름 커서와 같은 조타키(외곽선 심볼, Figma 1920:10976)가 72px로 0.5초 나타났다 사라진다. 손가락에 가리지 않게 탭 지점 40px 위에 띄운다.
+/* 터치 탭 표시(iPad): 누를 수 있는 곳을 손가락으로 탭하면 누름 커서와 같은 조타키(외곽선 심볼, Figma 1920:10976)가 72px로 0.9초 나타났다 사라진다(등장 0.16초 · 머묾 0.38초 · 사라짐 0.36초). 손가락에 가리지 않게 탭 지점 40px 위에 띄운다.
    마우스는 기존 CSS 커서를 그대로 쓰므로 표시하지 않는다. 끌기(10px 이상 이동)·길게 누르기(0.6초 이상)에는 표시하지 않는다 */
 #tapHelm{position:fixed;left:0;top:0;width:72px;height:68px;margin:-74px 0 0 -36px;pointer-events:none;z-index:2147483647;opacity:0;will-change:transform,opacity}
 </style>
@@ -4548,8 +4548,8 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     if (anim) anim.cancel();
     el.style.left = d.x + 'px'; el.style.top = Math.max(d.y, 76) + 'px';   // 화면 위쪽(내비)에서는 잘리지 않게 심볼 중심을 y36 아래로
     anim = el.animate(RM.matches ? [{opacity:1}, {opacity:0}]
-      : [{opacity:1, transform:'scale(.6)'}, {opacity:1, transform:'scale(1)', offset:.45}, {opacity:0, transform:'scale(1.08)'}],
-      {duration:500, easing:'ease-out'});
+      : [{opacity:0, transform:'scale(.6)'}, {opacity:1, transform:'scale(1)', offset:.18}, {opacity:1, transform:'scale(1)', offset:.6}, {opacity:0, transform:'scale(1.06)'}],
+      {duration:900, easing:'ease-out'});   // 0.16초 등장 → 0.38초 머묾 → 0.36초 사라짐
   }, {capture:true, passive:true});
 })();
 </script>
