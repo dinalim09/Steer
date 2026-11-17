@@ -32,7 +32,8 @@
     wake(document.getElementById(t.id === 'rsNav' ? 'rsx' : 'lgx')); if (t.id === 'lgNav') wake(document.getElementById('lgd'), true); }
   addEventListener('pointerdown', intent, {capture:true, passive:true}); addEventListener('pointerover', intent, {capture:true, passive:true});
   addEventListener('load', function(){ setTimeout(function(){
-    var later = function(f){ setTimeout(function(){ if (window.requestIdleCallback) requestIdleCallback(f, {timeout:300}); else f(); }, 150); };
+    var later = function(f){ setTimeout(function(){ var w = (window.steerBusyUntil || 0) - performance.now(); if (w > 0) { setTimeout(function(){ later(f); }, w); return; }   /* 화면 전환 중(steerBusyUntil, Team)이면 끝난 뒤로 */
+      if (window.requestIdleCallback) requestIdleCallback(f, {timeout:300}); else f(); }, 150); };
     var q = function(sel){ return [].slice.call(document.querySelectorAll(sel)); };
     /* 우선순위: Research 첫 화면·각 장 → Logic → 나머지. 그리기는 하지 않으므로 짧은 작업으로 끝난다 */
     var steps = q('#rsx .rs-page').concat(q('#lgx'), q('#lgd .ldpg'), q('#lgd'), q('[role="region"]')).map(function(el){ return function(){ wake(el, true); }; });
@@ -2591,7 +2592,7 @@ void main(){
   let prev = performance.now(), probeT = 0, probeN = 0, probeSum = 0;
   function frame(now){
     // Camera가 화면을 덮고 있는 동안에는 홈(출항 · 바다 · 카드) 렌더를 멈춘다. 닫히면 시간이 튀지 않도록 prev만 갱신하며 대기
-    if (window.steerCam && window.steerCam.isOpen()){ prev = now; requestAnimationFrame(frame); return; }
+    if ((window.steerCam && window.steerCam.isOpen()) || (window.steerTeam && window.steerTeam.covers && window.steerTeam.covers())){ prev = now; requestAnimationFrame(frame); return; }   // Team이 화면을 다 덮은 동안도 같다
     if (now - prev < 14){ requestAnimationFrame(frame); return; }    // 120 Hz displays: render at 60
     const raw = (now - prev)/1000, dt = Math.min(.05, raw); prev = now; const t = now/1000;
     if (!document.hidden && t > 1.5 && q > 0){
@@ -4332,13 +4333,25 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   const stage = root.querySelector('.tmst'), nv = root.querySelector('.tmnv');
   nv.innerHTML = steerNav.art('team');
   let team = null, loading = null, lock = 0, want = null, entered = false;   // entered: 이 세션에서 메인 사진을 눌러 개인 페이지로 들어왔는지
-  const isOpen = () => root.classList.contains('open');
+  let pending = 0, openedAt = 0;   // pending: 모듈 준비를 기다리는 진입 요청 번호(0 = 없음)
+  const isOpen = () => root.classList.contains('open') || pending > 0;
+  // 모듈 미리 받기: 아래 의존 모듈을 Team 모듈과 동시에 받아 3단계 연쇄(team → mega·team-data → members) 대기를 없앤다.
+  // ※ 주소(?v=)는 assets/team/team.js · team-data.js의 import 주소와 같아야 효과가 있다(다르면 미리 받기만 헛돌 뿐 동작은 같음)
+  const TEAM_MOD = './assets/team/team.js?v=20261117-8';
+  const TEAM_DEPS = ['mega.js?v=20261117-1', 'team-data.js?v=20261117-7', 'members/chaeeun.js?v=20261117-7', 'members/sumin.js?v=20261117-3', 'members/yeongsil.js?v=20261117-1'];
+  let preloaded = false;
+  function preloadDeps(){ if (preloaded) return; preloaded = true;
+    [TEAM_MOD].concat(TEAM_DEPS.map(d => './assets/team/' + d)).forEach(href => { const l = document.createElement('link'); l.rel = 'modulepreload'; l.href = href; document.head.appendChild(l); });
+    // Team 메인 썸네일 3장(team-data.js의 photoBlur)도 모듈과 동시에 높은 우선순위로
+    ['m1-blur.webp', 'sumin-blur.webp', 'yeongsil-blur.webp'].forEach(f => { const l = document.createElement('link'); l.rel = 'preload'; l.as = 'image'; l.fetchPriority = 'high'; l.href = './assets/team/' + f; document.head.appendChild(l); }); }
   const track = (n, p) => { if (window.steerTrack) steerTrack(n, p || {}); };
   const hashOf = v => v ? '#TEAM-' + v : '#TEAM';
   const parse = h => { const m = /^#TEAM(?:-(\d))?$/i.exec(h || ''); return m ? {member:m[1] ? +m[1] : 0} : null; };
   function load(){
     if (loading) return loading;
-    loading = import('./assets/team/team.js?v=20261117-7')   /* ?v= : 배포마다 올려 iPad·CDN의 이전 모듈 캐시와 섞이지 않게 */.then(m => {
+    preloadDeps();
+    root.classList.add('cvw');   // 미방문 화면은 그리지 않는 규칙(content-visibility)의 예외: Team은 미리 만든 화면을 미리 그려 두어 첫 진입 때 바로 보이게
+    loading = import(TEAM_MOD)   /* ?v= : 배포마다 올려 iPad·CDN의 이전 모듈 캐시와 섞이지 않게 */.then(m => {
       team = m.createTeam(stage, {onMember:id => { entered = true; go(id, true); }, onBack:back});
       return team;
     }).catch(() => { loading = null; stage.innerHTML = '<p style="position:absolute;left:40px;top:160px;font:500 18px Pretendard,sans-serif">Team 화면을 불러오지 못했습니다. 새로고침 후 다시 시도해 주세요.</p>'; });
@@ -4356,9 +4369,25 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   // view: 0 = 메인, 1~3 = 개인 페이지. push: 기록을 남길지(브라우저 뒤로 가기용)
   function go(view, push){
     const now = performance.now(); if (now - lock < 450) return; lock = now;   // 빠른 연속 터치로 화면이 두 번 바뀌지 않게
+    want = view;
+    // 모듈이 아직 준비 중이면(유휴 미리 준비 전에 누른 경우) 클릭을 버리지 않고 기다렸다가 들어간다.
+    // 그동안 지금 화면을 그대로 두어 하얀 빈 화면이 보이지 않게 하고, 0.7초가 넘으면 기존처럼 먼저 연다
+    if (!team) { const id = ++pending, snap = others(), t = setTimeout(() => reveal(view, push, id, snap), 700);
+      load().then(tm => tm && tm.ready ? tm.ready() : null).then(() => { clearTimeout(t); reveal(view, push, id, snap); }); return; }   // 썸네일까지 준비되면 바로(최대 0.7초)
+    reveal(view, push, 0);
+  }
+  // 다른 화면들의 열림 상태(기다리는 사이 사용자가 다른 화면을 열었는지 보려고)
+  const others = () => [window.steerResearch && steerResearch.isOpen(), window.steerLD && steerLD.isOpen(), (document.getElementById('lgx') || {classList:{contains:() => false}}).classList.contains('open'),
+    window.steerCam && steerCam.isOpen(), window.steerScn && steerScn.isOpen()].map(v => !!v).join();   // !! : 아직 스크립트가 없는 화면(undefined)도 '닫힘'과 같게
+  function reveal(view, push, id, snap){
+    if (id && pending !== id) return; pending = 0;
+    if (want !== view) return;
+    if (id && snap !== others()) { want = null; return; }   // 기다리는 사이 다른 화면으로 갔으면 Team 진입은 취소
     closeOthers();
     if (push && !APP_MODE && location.hash.toUpperCase() !== hashOf(view)) history.pushState({steerTeam:view}, '', hashOf(view));
-    root.classList.add('open'); root.removeAttribute('aria-hidden'); want = view;
+    if (!root.classList.contains('open')) openedAt = performance.now();
+    window.steerBusyUntil = performance.now() + 900;   // 화면 전환 동안 첫 로딩 뒤 미리 받기(head 스크립트)를 잠시 미룬다
+    root.classList.add('open'); root.removeAttribute('aria-hidden');
     load().then(t => { if (!t || want !== view || !isOpen()) return;
       if (view) { if (!t.showMember(view)) { t.showMain(); view = 0; } } else t.showMain();
       root.classList.toggle('tmdark', !!view);
@@ -4369,10 +4398,10 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   function back(){ if (APP_MODE) { lock = 0; go(0, false); return; }
     if (entered && history.state && history.state.steerTeam > 0) { entered = false; history.back(); return; }
     history.replaceState({steerTeam:0}, '', '#TEAM'); lock = 0; go(0, false); }
-  function close(){ want = null; if (team) team.hide(); root.classList.remove('open', 'tmdark'); root.setAttribute('aria-hidden', 'true');
+  function close(){ want = null; pending = 0; if (team) team.hide(); root.classList.remove('open', 'tmdark'); root.setAttribute('aria-hidden', 'true');
     if (!APP_MODE && parse(location.hash)) history.replaceState(null, '', location.pathname + location.search); }
   window.addEventListener('popstate', () => { const r = parse(location.hash);
-    if (r) { lock = 0; go(r.member, false); } else if (isOpen()) { want = null; if (team) team.hide(); root.classList.remove('open', 'tmdark'); root.setAttribute('aria-hidden', 'true'); } });
+    if (r) { lock = 0; go(r.member, false); } else if (isOpen()) { want = null; pending = 0; if (team) team.hide(); root.classList.remove('open', 'tmdark'); root.setAttribute('aria-hidden', 'true'); } });
   // Team 화면의 상단 내비: Research · Logic · Scenario · Camera · Team(메인으로)
   const H = steerNav.HITS;
   const hit = (k, label, fn) => { const b = document.createElement(fn ? 'button' : 'span'); b.className = 'tmhit'; b.dataset.nw = k;
@@ -4388,7 +4417,18 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   const tn = document.getElementById('tmNav');
   if (tn) { ['pointerdown','pointermove','pointerup','pointercancel','wheel','touchstart','touchmove','touchend'].forEach(t => tn.addEventListener(t, e => e.stopPropagation(), {passive:true}));
     tn.addEventListener('click', () => open(0)); tn.addEventListener('pointerup', e => { if (e.pointerType !== 'mouse') open(0); }); }
-  window.steerTeam = {open, close, isOpen, view:() => team ? team.view() : null};
+  // covers: Team이 화면을 거의 덮은 상태(페이드 시작 0.12초 뒤, 불투명도 약 0.8 이상) — 홈 렌더 루프가 이때부터 쉰다(덮인 홈을 그리는 합성 비용 절약)
+  const covers = () => root.classList.contains('open') && performance.now() - openedAt > 120;
+  // 유휴 미리 준비: 홈 첫 화면이 안정된 뒤(load + 3.5초, 한가할 때) 모듈을 받고 Team 화면(DOM·시계·썸네일)을 숨긴 채 만들어 둔다.
+  // 팀원 개인 페이지 사진은 여기서 받지 않는다(Team 메인이 보인 뒤 낮은 우선순위로)
+  const prepare = () => { if (!loading) load(); };
+  const ric = f => window.requestIdleCallback ? requestIdleCallback(f, {timeout:1500}) : setTimeout(f, 200);
+  const later = () => setTimeout(() => ric(prepare), 3500);
+  if (document.readyState === 'complete') later(); else addEventListener('load', later, {once:true});
+  // Team 버튼에 손가락·마우스가 닿는 순간(누르기 전)부터 준비를 시작한다
+  const TEAM_BTN = '#tmNav,[data-nw="team"],.rs-tm';
+  ['pointerdown', 'pointerover'].forEach(t => addEventListener(t, e => { if (!loading && e.target && e.target.closest && e.target.closest(TEAM_BTN)) prepare(); }, {capture:true, passive:true}));
+  window.steerTeam = {open, close, isOpen, covers, prepare, view:() => team ? team.view() : null};
   const r0 = parse(location.hash); if (r0) { history.replaceState({steerTeam:r0.member}, '', hashOf(r0.member)); lock = 0; go(r0.member, false); }   // 주소로 바로 진입
 })();
 </script>

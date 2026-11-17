@@ -4,6 +4,7 @@
 import MEGA from './mega.js?v=20261117-1';
 import {PIVOT, PERIOD, HANDS, MEMBERS} from './team-data.js?v=20261117-7';
 
+performance.mark('steer-team:mod');   // 성능 측정 표시: 모듈 준비 완료
 const BASE = new URL('./', import.meta.url).href;
 const NS = 'http://www.w3.org/2000/svg';
 const RM = matchMedia('(prefers-reduced-motion: reduce)');
@@ -18,6 +19,8 @@ const CSS = `
 #tmx .tms{position:absolute;inset:0;overflow:hidden;background:#fff;color:#0A0A0A}
 #tmx .tm-v{position:absolute;inset:0;visibility:hidden}
 #tmx .tm-v.on{visibility:visible}
+#tmx .tm-pg{position:absolute;inset:0}
+#tmx .tm-pg[hidden]{display:none}
 #tmx .tm-abs{position:absolute;display:block;max-width:none}
 #tmx .tm-clock{position:absolute;inset:0;pointer-events:none}
 #tmx .tm-arm{position:absolute;width:0;height:0;will-change:transform;pointer-events:none}
@@ -89,10 +92,15 @@ function tipOffRange(h){
   const off = d => { const r = (h.angle + d) * Math.PI / 180, s = Math.sin(r), c = Math.cos(r);   // 끝 방향 = (sin, -cos)
     const X = PIVOT.x + R * s, Y = PIVOT.y - R * c;
     return out(X + hw * c, Y + hw * s) && out(X - hw * c, Y - hw * s); };
-  let a = null, b = null;
-  for (let i = 0; i <= 3600; i++) { const d = i / 10, o = off(d); if (o && a === null) a = d; if (!o && a !== null && b === null) { b = d; break; } }
-  return a !== null && b !== null ? [a, b] : null;   // 회전 0°(Figma 배치)는 바늘 끝이 화면 안
+  // 1° 간격으로 경계가 든 구간을 찾고, 그 1° 안만 0.1° 간격으로 다시 본다(0.1° 전수 탐색과 같은 값, 계산량 약 1/9)
+  const first = (from, want) => { for (let j = from; j <= 360; j++) if (off(j) === want) {
+      for (let i = Math.max(0, (j - 1) * 10); i <= j * 10; i++) if (off(i / 10) === want) return i; } return null; };
+  const ai = first(0, true); if (ai === null) return null;
+  const bi = first(Math.ceil(ai / 10), false); if (bi === null) return null;
+  return [ai / 10, bi / 10];   // 회전 0°(Figma 배치)는 바늘 끝이 화면 안
 }
+const PLANS = {};
+const spinPlanCached = k => PLANS[k] || (PLANS[k] = spinPlan(k));
 function spinPlan(k){
   const T = PERIOD[k], w = 360 / T, r = tipOffRange(HANDS[k]);
   const fast = 1.2 + .3 * (T - 30) / 150;              // 화면 밖 구간 통과 시간(초): 초침 1.2 · 분침 1.32 · 시침 1.5
@@ -103,9 +111,12 @@ function spinPlan(k){
   return {T, range:r, cycle, css:'@keyframes tmS-' + k + '{' + kf + '}'};
 }
 const at = (el, x, y, extra) => { el.classList.add('tm-abs'); Object.assign(el.style, {left:x + 'px', top:y + 'px'}, extra || {}); return el; };
-const img = (src, x, y, w, h, alt = '') => { const i = new Image(); i.src = BASE + src; i.alt = alt; i.decoding = 'async'; i.draggable = false; return at(i, x, y, {width:w + 'px', height:h + 'px'}); };
+let PRIO = 'auto';   // 지금 만드는 이미지의 받기 우선순위(개인 페이지를 미리 만들 땐 low, 열 때는 high)
+const img = (src, x, y, w, h, alt = '') => { const i = new Image(); if (PRIO !== 'auto') i.fetchPriority = PRIO; i.src = BASE + src; i.alt = alt; i.decoding = 'async'; i.draggable = false; return at(i, x, y, {width:w + 'px', height:h + 'px'}); };
+const idle = f => (window.requestIdleCallback ? requestIdleCallback(f, {timeout:600}) : setTimeout(f, 60));
 
-export function createTeam(stage, hooks = {}){
+export function createTeam(stage, hooks = {}){ performance.mark('steer-team:ct0'); try { return createTeam_(stage, hooks); } finally { performance.mark('steer-team:ct1'); } }
+function createTeam_(stage, hooks = {}){
   if (!document.getElementById('tm-css')) { const st = document.createElement('style'); st.id = 'tm-css'; st.textContent = CSS; document.head.appendChild(st); }
   if (document.fonts && document.fonts.load) document.fonts.load('500 28px InterT').catch(() => {});   // 크레딧 영문 글꼴을 미리 받아 둔다
   stage.classList.add('tms');
@@ -134,14 +145,12 @@ export function createTeam(stage, hooks = {}){
   // 바늘별 회전 계획(바늘 끝이 화면 밖인 구간 가속) — 한 번만 계산해 keyframes로 넣는다
   const plans = {}; let kcss = '';
   for (const k of Object.keys(HANDS)) {
-    const pl = spinPlan(k); plans[k] = pl; kcss += pl.css;
+    const pl = spinPlanCached(k); plans[k] = pl; kcss += pl.css;
     arms[k].style.setProperty('--T', pl.cycle.toFixed(3) + 's'); arms[k].style.setProperty('--spin', 'tmS-' + k);
   }
   const kst = document.getElementById('tm-kf') || document.head.appendChild(Object.assign(document.createElement('style'), {id:'tm-kf'})); kst.textContent = kcss;
-  // 개인 페이지 사진(프로필·오른쪽 컷아웃)을 미리 받아 해독해 둔다 → 개인 페이지 첫 프레임부터 컷아웃이 보이며 함께 움직인다
-  const warm = [];
-  MEMBERS.forEach(m => [m.photo, ...(m.cutouts || []).map(c => c.src)].forEach(src => { if (!src) return;
-    const i = new Image(); i.src = BASE + src; if (i.decode) i.decode().catch(() => {}); warm.push(i); }));
+  // 개인 페이지 사진(프로필·컷아웃)은 여기서 받지 않는다: 메인 썸네일이 먼저 오도록 하고, 메인이 보인 뒤 한가할 때
+  // 팀원 페이지를 하나씩 미리 만들며 낮은 우선순위로 받는다(warmAll). 사진·숫자를 누르는 순간 그 팀원은 높은 우선순위로(ensure)
   // 사진·숫자 = 한 버튼(같은 목적지). Figma 위치에 고정, 터치해도 바늘은 계속 돈다
   const btns = MEMBERS.map(m => {
     const lb = m.labelBox, pb = m.photoBox, x0 = Math.min(lb.x, pb.x), y0 = Math.min(lb.y, pb.y), x1 = Math.max(lb.x + lb.w, pb.x + 120), y1 = pb.y + 126;
@@ -149,13 +158,14 @@ export function createTeam(stage, hooks = {}){
     b.setAttribute('aria-label', (m.display || m.name) + ' 개인 페이지 ' + m.label.replace('3o', '30'));
     Object.assign(b.style, {left:x0 + 'px', top:y0 + 'px', width:(x1 - x0) + 'px', height:(y1 - y0) + 'px'});
     const inner = document.createElement('span'); inner.className = 'tm-mbi';
-    const ph = new Image(); ph.src = BASE + m.photoBlur; ph.alt = ''; ph.decoding = 'async'; ph.draggable = false;
+    const ph = new Image(); ph.fetchPriority = 'high'; ph.src = BASE + m.photoBlur; ph.alt = ''; ph.decoding = 'async'; ph.draggable = false;
+    if (ph.decode) ph.decode().catch(() => {});   // 숨은 상태에서 미리 해독 → 첫 프레임부터 사진이 보인다
     Object.assign(ph.style, {left:(pb.x - x0 - 8) + 'px', top:(pb.y - y0 - 8) + 'px', width:'136px', height:'142px'});   // 흐림 번짐 여백 8px 포함
     const lab = mega([m.label], 30, 37, 28.8, .04, '#000000', lb.align, lb.w);
     Object.assign(lab.style, {left:(lb.x - x0) + 'px', top:(lb.y - y0) + 'px'});
     inner.append(ph, lab); b.appendChild(inner); mbs.appendChild(b);
     const release = () => b.classList.remove('press');
-    b.addEventListener('pointerdown', e => { b.classList.add('press'); try { b.setPointerCapture(e.pointerId); } catch {} });
+    b.addEventListener('pointerdown', e => { b.classList.add('press'); try { b.setPointerCapture(e.pointerId); } catch {} ensure(m.id, 'high'); });
     b.addEventListener('pointerup', () => b.classList.remove('press'));
     b.addEventListener('pointercancel', release);
     b.addEventListener('lostpointercapture', () => setTimeout(() => { if (!b.classList.contains('nav')) release(); }, 0));
@@ -166,9 +176,17 @@ export function createTeam(stage, hooks = {}){
   // ---------- 개인 페이지 ----------
   let anims = [];
   const stopMember = () => { anims.forEach(a => a.cancel()); anims = []; };
-  function buildMember(m){
+  // 팀원 페이지는 처음 한 번만 만들어(묶음 tm-pg) 숨겨 두고, 다시 열 때는 보이기 + 등장 애니메이션만 다시 재생한다
+  const pages = new Map();
+  function ensure(id, prio){
+    let pg = pages.get(id); if (pg) { if (prio === 'high') pg.imgs.forEach(i => { if (!i.complete) i.fetchPriority = 'high'; }); return pg; }
+    const m = MEMBERS.find(x => x.id === id); if (!m) return null;
+    const wrap = document.createElement('div'); wrap.className = 'tm-pg'; wrap.hidden = true; mem.appendChild(wrap);
+    PRIO = prio || 'auto'; let p; try { p = buildMember(m, wrap); } finally { PRIO = 'auto'; }
+    pg = {wrap, p, m, imgs:[...wrap.querySelectorAll('img')]}; pages.set(id, pg); return pg;
+  }
+  function buildMember(m, mem){
     const label = m.display || m.name;
-    stopMember(); mem.textContent = ''; mem.setAttribute('aria-label', label + ' 개인 페이지');
     // ← 뒤로(Figma 좌측 상단 chevron 자리). 화면 낭독용 이름은 aria-label 'Back to Team'
     const back = document.createElement('button'); back.type = 'button'; back.className = 'tm-back'; back.setAttribute('aria-label', 'Back to Team');
     back.innerHTML = '<svg width="22" height="38" viewBox="-3 -3 22 38" fill="none" aria-hidden="true"><path d="M16 0L0 16L16 32" stroke="currentColor" stroke-width="5.333" stroke-linecap="round" stroke-linejoin="round"/></svg>';   // 글자 없이 화살표만(위치·크기 그대로, 터치 영역 63×64)
@@ -182,7 +200,7 @@ export function createTeam(stage, hooks = {}){
       const to = MEMBERS[idx + d]; if (!to) return;
       const a = document.createElement('button'); a.type = 'button'; a.className = 'tm-arr ' + cls; a.setAttribute('aria-label', lab + ' · ' + (to.display || to.name));
       a.innerHTML = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + path + '"/></svg>';
-      a.addEventListener('pointerdown', () => a.classList.add('press')); ['pointerup', 'pointercancel', 'pointerleave'].forEach(t => a.addEventListener(t, () => a.classList.remove('press')));
+      a.addEventListener('pointerdown', () => { a.classList.add('press'); ensure(to.id, 'high'); }); ['pointerup', 'pointercancel', 'pointerleave'].forEach(t => a.addEventListener(t, () => a.classList.remove('press')));
       a.addEventListener('click', () => hooks.onMember && hooks.onMember(to.id));
       mem.appendChild(a);
     });
@@ -254,19 +272,34 @@ export function createTeam(stage, hooks = {}){
   let clockT0 = null;
   const markT0 = () => { if (clockT0 === null) clockT0 = performance.now(); };
   const restartClock = () => {
-    clock.classList.remove('tm-run'); btns.forEach(b => b.classList.remove('press', 'nav')); markT0();
-    const el = (performance.now() - clockT0) / 1000;
+    btns.forEach(b => b.classList.remove('press', 'nav')); markT0();
+    const el = (performance.now() - clockT0) / 1000, running = clock.classList.contains('tm-run');
+    clock.classList.remove('tm-run');
     for (const k in arms) arms[k].style.setProperty('--dl', (-(el % plans[k].cycle)).toFixed(3) + 's');
-    void clock.offsetWidth; clock.classList.add('tm-run');
+    // 이미 돌고 있을 때만 강제 레이아웃으로 다시 시작시킨다(보통은 멈춰 있던 상태라 클래스만 붙이면 새로 시작 — 문서 전체 강제 레이아웃 생략)
+    if (running) void clock.offsetWidth;
+    clock.classList.add('tm-run');
   };
+  // 메인이 보인 뒤 한가할 때: 팀원 페이지를 순서대로 하나씩 미리 만들고(이미지 낮은 우선순위) 해독해 둔다
+  let warming = false;
+  const warmAll = () => { if (warming) return; warming = true;
+    const q = MEMBERS.map(m => m.id);
+    (function next(){ const id = q.shift(); if (id == null) return;
+      idle(() => { const pg = ensure(id, 'low');
+        if (pg) pg.imgs.forEach(i => { if (i.decode) i.decode().catch(() => {}); });
+        next(); }); })(); };
+  const showPage = id => { pages.forEach((pg, k) => { pg.wrap.hidden = k !== id; }); };
   return {
-    showMain(){ stopMember(); mem.classList.remove('on'); main.classList.add('on'); restartClock(); view = 'main'; },
+    // 메인 썸네일 3장이 받아지고 해독되면 끝나는 약속(Team을 처음 누른 경우 이것까지 기다렸다 화면을 연다)
+    ready:() => Promise.all(btns.map(b => { const i = b.querySelector('img'); return i.decode ? i.decode().catch(() => {}) : null; })),
+    showMain(){ stopMember(); mem.classList.remove('on'); main.classList.add('on'); restartClock(); view = 'main'; setTimeout(() => idle(warmAll), 400); },
     showMember(id){
-      const m = MEMBERS.find(x => x.id === id); if (!m) return false;
+      const pg = ensure(id, 'high'); if (!pg) return false;
       markT0(); clock.classList.remove('tm-run'); main.classList.remove('on');
-      const p = buildMember(m); mem.classList.add('on'); playMember(p); view = 'member:' + id; return true;
+      stopMember(); showPage(id); mem.setAttribute('aria-label', (pg.m.display || pg.m.name) + ' 개인 페이지');
+      mem.classList.add('on'); playMember(pg.p); view = 'member:' + id; return true;
     },
-    hide(){ clock.classList.remove('tm-run'); clockT0 = null; stopMember(); main.classList.remove('on'); mem.classList.remove('on'); mem.textContent = ''; view = null; },
+    hide(){ clock.classList.remove('tm-run'); clockT0 = null; stopMember(); main.classList.remove('on'); mem.classList.remove('on'); showPage(null); view = null; },
     view:() => view, members:MEMBERS.map(m => m.id), plans:() => plans
   };
 }
