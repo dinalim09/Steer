@@ -37,18 +37,22 @@ export function createTracks(){
     });
   }
   // 매 프레임: 각 손을 목표 위치로 부드럽게 따라가고, 감지가 끊긴 손은 서서히 지운다
+  // 따라가는 비율은 60fps 기준값(.45 · .35 · 투명도 .25/.2)을 실제 경과 시간에 맞춰 환산한다 → 그리는 빈도가 달라도 같은 속도
+  let lastStep = 0;
   function step(now){
+    const f = lastStep ? Math.min(4, Math.max(.25, (now - lastStep) / (1000 / 60))) : 1; lastStep = now;
+    const k = r => 1 - Math.pow(1 - r, f);
     for (const t of tracks) {
       const g = t.target;
       if (g && now - t.seen < HOLD) {
-        t.x += (g.x - t.x) * .45; t.y += (g.y - t.y) * .45; t.size += (g.size - t.size) * .35;
-        t.rotation += wrap(g.rotation - t.rotation) * .35; t.a = Math.min(1, t.a + .25);
-      } else t.a -= .2;
+        t.x += (g.x - t.x) * k(.45); t.y += (g.y - t.y) * k(.45); t.size += (g.size - t.size) * k(.35);
+        t.rotation += wrap(g.rotation - t.rotation) * k(.35); t.a = Math.min(1, t.a + .25 * f);
+      } else t.a -= .2 * f;
     }
     tracks = tracks.filter(t => t.a > 0 || (t.target && now - t.seen < HOLD));
     return tracks;
   }
   const active = now => tracks.some(t => t.target && now - t.seen < HOLD);
-  const reset = () => { tracks = []; };
+  const reset = () => { tracks = []; lastStep = 0; };
   return {update, step, active, reset, get list(){ return tracks; }};
 }

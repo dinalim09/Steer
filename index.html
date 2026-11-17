@@ -2521,6 +2521,8 @@ void main(){
   // ---- loop ----
   let prev = performance.now(), probeT = 0, probeN = 0, probeSum = 0;
   function frame(now){
+    // Camera가 화면을 덮고 있는 동안에는 홈(출항 · 바다 · 카드) 렌더를 멈춘다. 닫히면 시간이 튀지 않도록 prev만 갱신하며 대기
+    if (window.steerCam && window.steerCam.isOpen()){ prev = now; requestAnimationFrame(frame); return; }
     if (now - prev < 14){ requestAnimationFrame(frame); return; }    // 120 Hz displays: render at 60
     const raw = (now - prev)/1000, dt = Math.min(.05, raw); prev = now; const t = now/1000;
     if (!document.hidden && t > 1.5 && q > 0){
@@ -2643,7 +2645,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   const vs=[...document.querySelectorAll('video')];
   vs.forEach(v=>{v.muted=true;v.defaultMuted=true;v.setAttribute('muted','');v.controls=false;v.removeAttribute('controls');});
   // iPad 저전력 모드 등 자동재생 차단 시: 첫 터치/클릭에서 재생 재시도
-  const kick=()=>{const h9=document.getElementById('home9');
+  const kick=()=>{if(window.steerCam&&window.steerCam.isOpen())return;const h9=document.getElementById('home9');
     // 새 홈이 보이는 동안엔 가려진 영상을 계속 재생하지 않는다 — 저전력 모드 자동재생 허용만 받도록 한 번 재생했다 바로 멈춘다
     if(h9&&!h9.hidden&&h9.style.visibility!=='hidden'){vs.forEach(v=>{if(v.paused&&!v.dataset.primed){v.dataset.primed='1';v.play().then(()=>v.pause()).catch(()=>{});}});return;}
     vs.forEach(v=>{const sea=v.id==='seaVid';const want=sea||(v.style.opacity!=='0'&&v.closest('#screen.v6'));if(want&&v.paused)v.play().catch(()=>{});});};
@@ -4386,7 +4388,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   function load(){
     if (loading) return loading;
     stage.innerHTML = '<p class="cmld">카메라를 준비하고 있어요</p>';
-    loading = import('./assets/lens/lens.js?v=20261117-5').then(m => {
+    loading = import('./assets/lens/lens.js?v=20261117-p1').then(m => {
       stage.innerHTML = '';
       lens = m.createLens(stage, {event:(type, d) => track('lens_' + type, d)});
       return lens;
@@ -4399,11 +4401,15 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     if (window.steerLD && window.steerLD.isOpen()) window.steerLD.close();
     if (window.steerL0) { const l = document.getElementById('lgx'); if (l && l.classList.contains('open')) window.steerL0.close(); }
     if (isOpen()) return;
-    want = true; root.classList.add('open'); root.removeAttribute('aria-hidden');
+    want = true; root.classList.add('open'); root.removeAttribute('aria-hidden'); holdVideos();
     track('camera_view', {from:from || 'home'});
     load().then(l => { if (l && want && isOpen()) l.open(); });
   }
-  function close(){ want = false; if (lens) lens.close(); root.classList.remove('open'); root.setAttribute('aria-hidden', 'true'); }
+  function close(){ want = false; if (lens) lens.close(); root.classList.remove('open'); root.setAttribute('aria-hidden', 'true'); releaseVideos(); }
+  // Camera 아래에 가려진 영상(홈 바다 · Research 배경 등)은 열려 있는 동안 멈췄다가, 닫을 때 재생 중이던 것만 다시 재생한다
+  let held = [];
+  function holdVideos(){ document.querySelectorAll('video').forEach(v => { if (!root.contains(v) && !v.paused) { v.pause(); held.push(v); } }); }
+  function releaseVideos(){ const list = held; held = []; list.forEach(v => { const p = v.play(); if (p && p.catch) p.catch(() => {}); }); }
   const H = steerNav.HITS;
   const hit = (k, label, fn) => { const b = document.createElement(fn ? 'button' : 'span'); b.className = 'cmhit'; b.dataset.nw = k;
     if (fn) { b.type = 'button'; b.setAttribute('aria-label', label); b.addEventListener('click', fn); } else b.setAttribute('aria-hidden', 'true');
