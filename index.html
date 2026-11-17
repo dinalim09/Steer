@@ -1045,7 +1045,8 @@ body.bare .bar>*{pointer-events:auto}
 #home9 .h9wave svg{display:block;width:100%;height:100%}
 #h9type,.h9typeW{position:absolute;left:271.6px;top:201.8px;width:824px;height:621px;overflow:visible;transform-origin:411.4px 310.7px;will-change:transform,opacity}
 /* 출항 왜곡: 고정 진폭으로 한 번만 그려 둔 왜곡 사본을 겹쳐 투명도로 섞는다(매 프레임 필터를 다시 계산하지 않음) */
-.h9typeW{opacity:.001;pointer-events:none}
+/* 평소(돌리는 동안)엔 숨겨 두어 GPU가 매 프레임 합성하지 않게 한다 — 출항이 시작되면 한 장씩 차례로 켠다 */
+.h9typeW{opacity:.001;pointer-events:none;visibility:hidden}
 #h9fill{position:absolute;inset:0;background:#7EE4FF;opacity:0;pointer-events:none}
 /* 조타륜 캔버스: 돌리는 동안 축(683, 512.5) 중심 600×600 · 출항 중엔 스크립트가 화면 전체로 넓힌다 */
 #h9wheel{position:absolute;left:383px;top:212.5px;width:600px;height:600px}
@@ -1977,6 +1978,7 @@ void main(){
         else for (let k = 0; k < lv.length - 1; k++) if (amp < lv[k + 1]){ const m = (amp - lv[k])/(lv[k + 1] - lv[k]); op[k] = 1 - m; op[k + 1] = m; break; }
         css(typeEl, 'opacity', (fade*op[0]).toFixed(3));
         typeWs.forEach((w, k) => {
+          css(w, 'visibility', dir > 0 && u >= k*.035 ? 'visible' : '');   // 출항 첫 몇 프레임에 나눠서 켬(필터 첫 렌더가 한꺼번에 몰리지 않게)
           const o = op[k + 1];
           if (o > .002 && typeEl.style.transform) css(w, 'transform', typeEl.style.transform);
           css(w, 'opacity', o > .002 ? (fade*o).toFixed(3) : '');
@@ -4494,6 +4496,20 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     if (e.pointerType === 'mouse' || isFs()) return;
     try { const r = req.call(el); if (r && r.catch) r.catch(() => {}); } catch (err) {}
   }, true);
+})();
+</script>
+<script>
+/* 닫혀 있는 화면(Research·Logic·Scenario·Team 등 role=region · aria-hidden=true) 안에서 자동 재생 중인 영상은 멈춰 둔다.
+   보이지 않는 영상 디코딩이 홈의 조타륜 반응을 무겁게 하지 않게 — 그 화면이 다시 열리면 멈췄던 영상만 이어서 재생한다 */
+(() => {
+  const closedRegion = v => v.closest('[role="region"][aria-hidden="true"]');
+  setInterval(() => {
+    document.querySelectorAll('video').forEach(v => { if (!v.paused && closedRegion(v)){ v.pause(); v.dataset.held = '1'; } });
+  }, 800);
+  new MutationObserver(ms => ms.forEach(m => {
+    const r = m.target; if (r.getAttribute('aria-hidden') === 'true' || r.getAttribute('role') !== 'region') return;
+    r.querySelectorAll('video[data-held]').forEach(v => { delete v.dataset.held; const p = v.play(); if (p && p.catch) p.catch(() => {}); });
+  })).observe(document.body, {attributes:true, subtree:true, attributeFilter:['aria-hidden']});
 })();
 </script>
 </body></html>
