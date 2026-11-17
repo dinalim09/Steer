@@ -2271,6 +2271,8 @@ void main(){
   // 전시 모드 비활동 복귀: 기존 setVersion으로 첫 화면(scroll 0, 히어로 영상)으로 즉시 되돌리고 보너스 스티커를 비운다
   window.steerHome = {
     atTop: () => scrollS < 2 && scrollT === 0 && !B14.items.length && H9.atRest(),
+    // 다른 탭에서 홈(로고)으로 돌아올 때: 스크롤 업 모션 없이 첫 화면(scroll 0)으로 바로. 이미 맨 위면 아무것도 하지 않는다(첫 화면 연출 유지). 스티커는 그대로
+    top(){ if (scrollS < 2 && scrollT === 0) return; lastWheel = 0; lock6 = 0; scrollDrag = null; setVersion(version); },
     reset(){ B14.items.forEach(o => { o.getAnimations().forEach(a => a.cancel()); o.remove(); }); B14.items = []; B14.n = 0; B14.counts = [0, 0, 0, 0, 0];
       B14.cnt.forEach(n => n.textContent = '0'); B14.tint.style.backgroundColor = 'transparent'; lastWheel = 0; lock6 = 0; scrollDrag = null; setVersion(version); }
   };
@@ -3283,7 +3285,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   scrim.addEventListener('click', closeOverlays); $('rsSheetClose').addEventListener('click', closeOverlays); $('rsCardClose').addEventListener('click', closeOverlays);
 
   // top-left symbol: back to the home hero (closes Research, then returns the hero to its top)
-  function goHome(){ close(); const top = $('p13'); if (top) top.click(); }
+  function goHome(){ close(); if (window.steerHome && window.steerHome.top) window.steerHome.top(); }   // 홈 첫 화면으로 즉시(스크롤 업 모션 없음)
   $('rsHome').addEventListener('click', goHome);
   $('rsHome').addEventListener('pointerup', e => { if (e.pointerType !== 'mouse') goHome(); });
   $('rsNav').addEventListener('click', () => show('land'));
