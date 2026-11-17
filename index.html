@@ -4225,7 +4225,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   const parse = h => { const m = /^#TEAM(?:-(\d))?$/i.exec(h || ''); return m ? {member:m[1] ? +m[1] : 0} : null; };
   function load(){
     if (loading) return loading;
-    loading = import('./assets/team/team.js?v=20261117-5')   /* ?v= : 배포마다 올려 iPad·CDN의 이전 모듈 캐시와 섞이지 않게 */.then(m => {
+    loading = import('./assets/team/team.js?v=20261117-6')   /* ?v= : 배포마다 올려 iPad·CDN의 이전 모듈 캐시와 섞이지 않게 */.then(m => {
       team = m.createTeam(stage, {onMember:id => { entered = true; go(id, true); }, onBack:back});
       return team;
     }).catch(() => { loading = null; stage.innerHTML = '<p style="position:absolute;left:40px;top:160px;font:500 18px Pretendard,sans-serif">Team 화면을 불러오지 못했습니다. 새로고침 후 다시 시도해 주세요.</p>'; });

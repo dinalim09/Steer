@@ -17,7 +17,7 @@ export const HANDS = {
 //  (30m) 사진 → 분침 끝 · (1h) 사진 → 시침 끝 · (3h) 사진 → 초침 끝
 //  Team 배치 순서: 1 임채은 → 2 김수민 → 3 윤영실. 개인 페이지 내용(이름·크레딧·컷아웃)은 members/*.js에 팀원별로 분리
 //  메인 사진(m1-blur · sumin-blur · yeongsil-blur)은 각 팀원 개인 페이지 프로필 사진(Figma)을 2배로 놓고 흐림(Gaussian 4px · 2배 기준)을 준 것 — m1과 같은 방식
-import CHAEEUN from './members/chaeeun.js?v=20261117-1';
+import CHAEEUN from './members/chaeeun.js?v=20261117-6';
 import SUMIN from './members/sumin.js?v=20261117-3';
 import YEONGSIL from './members/yeongsil.js?v=20261117-1';
 export const MEMBERS = [
