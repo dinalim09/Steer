@@ -1761,7 +1761,7 @@ void main(){
     }
 
     // 상태
-    const SAIL_T = 2.6, BACK_T = 1.8, SPIN = 1080, SCROLL_AT = .3, NEED = 120;   // 초 · 초 · 출항 때 더 도는 각도 · ver 6 스크롤을 시작하는 지점 · 출항에 필요한 회전(°, 1/3바퀴)
+    const SAIL_T = 1.6, BACK_T = 1.4, SPIN = 1080, SCROLL_AT = .2, NEED = 120;   // 초 · 초 · 출항 때 더 도는 각도 · ver 6 스크롤을 시작하는 지점 · 출항에 필요한 회전(°, 1/3바퀴)
     let th = 14, tgt = 14, om = 0, hd = 0, p9 = VIEW.pitch, y9 = VIEW.yaw, drag = false, last = 0, travel = 0, net = 0, rect = null;
     let u = 0, dir = 0, sailed = false, spin0 = 0, spinDir = 1, launched = false, drawn = false, warpOn = false, dTh = NaN, dP = NaN, dY = NaN;
     const sea = {roll:0, vr:0, x:0, vx:0, y:0, vy:0, stir:0, om:0, pf:0, pfy:0, pb:0, pby:0, ph:0};
@@ -1998,7 +1998,7 @@ void main(){
     }
     prevTheta = theta;
     if (sailing){
-      const k = Math.min(1, (now - trans0)/TRANS_MS), e = k < .5 ? 4*k*k*k : 1 - Math.pow(-2*k + 2, 3)/2;   // slow start, slow landing
+      const k = Math.min(1, (now - trans0)/(H9.on ? 1300 : TRANS_MS)), e = k < .5 ? 4*k*k*k : 1 - Math.pow(-2*k + 2, 3)/2;   // slow start, slow landing · 새 홈 출항은 1.3초
       scrollS = scrollT = 1024*e;
       if (k >= 1){ sailing = false; arrived = true; }
     } else if (version === 6){
