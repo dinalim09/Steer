@@ -1,4 +1,33 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><script>/* 기존 홈 보기(?home=old)일 때만 새 홈을 끈다 — 새로고침 첫 화면에 기존 홈이 비치지 않게 기본값은 새 홈 */if(new URLSearchParams(location.search).get("home")==="old")document.documentElement.classList.add("homeOld");</script><style>html.homeOld #home9{display:none}</style><link rel="manifest" href="manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Steer"><link rel="apple-touch-icon" href="assets/app/icon-180.png"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit-media-controls-overlay-play-button,video::-webkit-media-controls-start-playback-button{display:none!important;-webkit-appearance:none!important;opacity:0!important}
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><script>/* 기존 홈 보기(?home=old)일 때만 새 홈을 끈다 — 새로고침 첫 화면에 기존 홈이 비치지 않게 기본값은 새 홈 */if(new URLSearchParams(location.search).get("home")==="old")document.documentElement.classList.add("homeOld");</script><style>html.homeOld #home9{display:none}</style><style>html.boot [role="region"][aria-hidden="true"]:not(.cvw),html.boot #rsx .rs-page[aria-hidden="true"]:not(.cvw),html.boot #lgd[aria-hidden="true"] .ldpg:not(.cvw){content-visibility:hidden}</style><script>/* 초기 로딩: 닫혀 있는 화면(Research·Logic)의 이미지·영상은 첫 화면이 뜬 뒤에 받는다.
+   첫 로딩 동안(html.boot)은 닫힌 화면 전체를 그리지 않아(content-visibility) 그 화면의 글꼴 조각도 나중에 받는다.
+   각 화면 스크립트가 끝날 때 steerDefer(root)로 src를 data-dsrc로 옮겨 두고(같은 작업 안이라 요청 전에 막힘),
+   ① 그 화면이 열릴 때(aria-hidden → false) 즉시 ② 첫 로딩이 끝나고 브라우저가 한가할 때 되돌린다 */
+(function(){
+  document.documentElement.classList.add('boot');
+  var Q = 'img[src]:not([src^="data:"]):not([src^="blob:"]),video[src],source[src]';
+  // full: 화면이 열릴 때 — 영상까지 원래대로(자동재생·preload 복구). 한가할 때(idle)는 이미지만 받고 영상은 메타데이터만(재생·디코딩 없음)
+  function wake(r, idle){ if (!r || !r.querySelectorAll) return; r.querySelectorAll('[data-dsrc]').forEach(function(e){
+      if (e.tagName === 'VIDEO' || e.tagName === 'SOURCE') { var v = e.tagName === 'VIDEO' ? e : e.parentElement;
+        if (idle) { if (!v.dataset.dmeta) { v.dataset.dmeta = '1'; v.preload = 'metadata'; e.setAttribute('src', e.getAttribute('data-dsrc')); } return; }
+        if (!v.dataset.dmeta) e.setAttribute('src', e.getAttribute('data-dsrc'));
+        e.removeAttribute('data-dsrc'); delete v.dataset.dmeta;
+        if (v.dataset.dpre) { v.preload = v.dataset.dpre; delete v.dataset.dpre; }
+        if (v.dataset.dauto) { v.autoplay = true; delete v.dataset.dauto; }
+        return; }
+      e.setAttribute('src', e.getAttribute('data-dsrc')); e.removeAttribute('data-dsrc'); }); }
+  window.steerDefer = function(r){ try { if (!r || r.getAttribute('aria-hidden') !== 'true') return;
+    r.querySelectorAll(Q).forEach(function(e){ e.setAttribute('data-dsrc', e.getAttribute('src')); e.removeAttribute('src'); if (e.tagName === 'VIDEO') { e.dataset.dpre = e.getAttribute('preload') || 'auto'; e.preload = 'none'; if (e.autoplay) { e.dataset.dauto = '1'; e.autoplay = false; } } }); } catch (_) {} };
+  window.steerWake = wake;
+  new MutationObserver(function(ms){ ms.forEach(function(m){ var r = m.target; if (r.getAttribute('aria-hidden') !== 'true' && r.querySelector && r.querySelector('[data-dsrc]')) wake(r);   /* 열림 = aria-hidden 제거 또는 false */ }); })
+    .observe(document.documentElement, {attributes:true, subtree:true, attributeFilter:['aria-hidden']});
+  // 첫 로딩 뒤: 닫힌 화면을 한 덩어리씩(한가할 때마다 하나) 그리고 이미지를 받는다 — 한 번에 하면 170ms 넘게 멈춰 조타륜 첫 조작과 겹칠 수 있어 나눈다
+  addEventListener('load', function(){ setTimeout(function(){
+    var parts = [].slice.call(document.querySelectorAll('[role="region"]')).concat([].slice.call(document.querySelectorAll('#rsx .rs-page, #lgd .ldpg')));
+    var idle = function(f){ setTimeout(function(){ if (window.requestIdleCallback) requestIdleCallback(f, {timeout:250}); else f(); }, 100); };   /* 홈 애니메이션이 계속 돌아 한가한 때가 드물어 최대 0.35초 간격으로 진행 */
+    (function next(){ var el = parts.shift(); if (!el) { document.documentElement.classList.remove('boot'); return; }
+      try { el.classList.add('cvw'); wake(el, true); if (performance.mark) performance.mark('steer-cvw:' + (el.id || 'part')); } catch (_) {} idle(next); })();
+  }, 2500); });
+})();</script><link rel="manifest" href="manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Steer"><link rel="apple-touch-icon" href="assets/app/icon-180.png"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit-media-controls-overlay-play-button,video::-webkit-media-controls-start-playback-button{display:none!important;-webkit-appearance:none!important;opacity:0!important}
 </style></head><body class="bare">
 
 <!-- Google Analytics 4: put the measurement ID (G-…) below; until then nothing is sent -->
@@ -3350,6 +3379,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
       cur = null; root.querySelectorAll('.rs-page.on').forEach(p => { p.classList.remove('on'); p.setAttribute('aria-hidden', 'true'); }); close(); }
   };
 
+  if (window.steerDefer) steerDefer(root);   // 닫힌 Research의 이미지·영상은 첫 화면 이후에 받는다(head 스크립트 참고)
   const h = (location.hash || '').slice(1).toUpperCase();
   if (h === 'RESEARCH') show('land'); else if (h === 'IE') show('I3'); else if (h === 'I6') show('I5'); else if (P[h]) show(h);   // 구 I6 주소는 새 I5로
 })();
@@ -3534,6 +3564,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   ['pointerdown','pointermove','pointerup','pointercancel','wheel','touchstart','touchmove','touchend'].forEach(t => root.addEventListener(t, e => e.stopPropagation(), {passive:true}));
   document.addEventListener('keydown', e => { if (isOpen() && e.key === 'Escape') close(); });
   window.steerL0 = {open, close};
+  if (window.steerDefer) steerDefer(root);   // 닫힌 Logic L0의 이미지는 첫 화면 이후에
   if ((location.hash || '').slice(1).toUpperCase() === 'LOGIC') open();
 })();
 </script>
@@ -4271,6 +4302,7 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
   ['pointerdown','pointermove','pointerup','pointercancel','wheel','touchstart','touchmove','touchend'].forEach(t => root.addEventListener(t, e => e.stopPropagation(), {passive:true}));
   document.addEventListener('keydown', e => { if (isOpen() && e.key === 'Escape') { e.stopImmediatePropagation(); toL0(false); } }, true);
   show(0, false);
+  if (window.steerDefer) steerDefer(root);   // 닫힌 Logic 상세의 이미지는 첫 화면 이후에
   window.steerLD = {open, close, isOpen, page:() => PAGES[cur], go, select:setEl};
   const hs = (location.hash || '').slice(1).toUpperCase();
   const HS = {'LOGIC-T1':'translate-01', 'LOGIC-T2':'translate-02', 'LOGIC-C1':'combine-01', 'LOGIC-C2':'combine-02', 'LOGIC-E1':'explain-01', 'LOGIC-R1':'record-01', 'LOGIC-R2':'record-02'};
