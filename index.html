@@ -1689,7 +1689,10 @@ void main(){
     const view = (p, y, z = 1) => M4([1,0,0,0, 0,1,0,0, 0,0,1,0, 0, full ? HUB_Y : 0, -DIST/z, 1], M4(RXm(R(p)), RYm(R(y))));
     let V = view(VIEW.pitch, VIEW.yaw);                                // 프레임마다 갱신 — pointermove는 이것만 읽는다
 
-    const gl = cv.getContext('webgl', {alpha:true, premultipliedAlpha:true, antialias:true, depth:true, powerPreference:'high-performance'});
+    // 조타륜 캔버스 2개: 돌릴 때 쓰는 600×600(cv) · 출항 때 쓰는 화면 전체(cvF). 둘 다 로드 때 만들어 두어 출항 순간 캔버스를 다시 만들지 않는다(덜컹 방지)
+    const cvF = cv.cloneNode(false); cvF.id = 'h9wheelF'; cvF.style.cssText = 'position:absolute;left:0;top:0;width:1366px;height:1024px;visibility:hidden'; cv.after(cvF);
+    function mkGL(canvas){
+    const gl = canvas.getContext('webgl', {alpha:true, premultipliedAlpha:true, antialias:true, depth:true, powerPreference:'high-performance'});
     let mesh = null;
     if (gl){
       const sh = (k, src) => { const s = gl.createShader(k); gl.shaderSource(s, src); gl.compileShader(s); return gl.getShaderParameter(s, gl.COMPILE_STATUS) ? s : null; };
@@ -1725,22 +1728,30 @@ void main(){
       }
       gl.clearColor(0, 0, 0, 0);
     }
+    return gl ? {gl, mesh, cv:canvas} : null;
+    }
+    const GB = mkGL(cv), GF = mkGL(cvF), gl = GB && GB.gl;
     const Mw = new Float32Array(16), MVP = new Float32Array(16);
     function draw(th){
-      if (!mesh) return;
-      M4(V, RZm(-R(th)), Mw); M4(full ? PRJF : PRJ, Mw, MVP);
-      gl.viewport(0, 0, cv.width, cv.height); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-      gl.uniformMatrix4fv(mesh.uMVP, false, MVP); gl.uniformMatrix4fv(mesh.uM, false, Mw);
-      gl.drawElements(gl.TRIANGLES, mesh.n, gl.UNSIGNED_SHORT, 0);
+      const G = full && GF && GF.mesh ? GF : GB; if (!G || !G.mesh) return;
+      const g = G.gl, m = G.mesh;
+      M4(V, RZm(-R(th)), Mw); M4(G === GF ? PRJF : PRJ, Mw, MVP);
+      g.viewport(0, 0, G.cv.width, G.cv.height); g.clear(g.COLOR_BUFFER_BIT | g.DEPTH_BUFFER_BIT);
+      g.uniformMatrix4fv(m.uMVP, false, MVP); g.uniformMatrix4fv(m.uM, false, Mw);
+      g.drawElements(g.TRIANGLES, m.n, g.UNSIGNED_SHORT, 0);
     }
-    function size(){                                                   // 캔버스 크기: 평소 600×600 · 출항 중 화면 전체
-      const d = full ? Math.min(fitD, 1) : fitD;                        // 출항 중 화면 전체 캔버스는 배율 1로 (빠르게 돌며 다가오는 동안이라 차이가 작고, 픽셀은 1/4)
-      const w = full ? 1366 : BOX, h = full ? 1024 : BOX, pw = Math.round(w*fitS*d), ph = Math.round(h*fitS*d);
-      if (cv.width !== pw || cv.height !== ph){ cv.width = pw; cv.height = ph; dTh = NaN; }
-      cv.style.left = (full ? 0 : HUB.x - HALF) + 'px'; cv.style.top = (full ? 0 : HUB.y - HALF) + 'px';
-      cv.style.width = w + 'px'; cv.style.height = h + 'px';
+    const clearAll = () => { for (const G of [GB, GF]) if (G) G.gl.clear(G.gl.COLOR_BUFFER_BIT); };
+    function size(){                                                   // 크기는 화면 맞춤 때만 바꾼다 — 출항 때는 보이는 캔버스만 바꾼다
+      const pb = Math.round(BOX*fitS*fitD), d = Math.min(fitD, 1), fw = Math.round(1366*fitS*d), fh = Math.round(1024*fitS*d);
+      if (cv.width !== pb){ cv.width = cv.height = pb; dTh = NaN; }
+      if (cvF.width !== fw || cvF.height !== fh){ cvF.width = fw; cvF.height = fh; }   // 출항 중 화면 전체는 배율 1(픽셀 1/4)
     }
-    const setFull = f => { if (full !== f){ const t = performance.now(); full = f; size(); if (f && meter) meter.resize(performance.now() - t); } };
+    const setFull = f => {
+      if (full === f) return;
+      const t = performance.now(); full = f && !!(GF && GF.mesh);
+      cv.style.visibility = full ? 'hidden' : ''; cvF.style.visibility = full ? '' : 'hidden'; dTh = NaN;
+      if (f && meter) meter.resize(performance.now() - t);
+    };
     // 화면 좌표 → 기울어진 바퀴 면 위의 각도 (손가락이 손잡이를 잡고 돌리는 느낌). 프레임마다 구한 V만 읽으므로 가볍다.
     function angle(sx, sy){
       const n0 = V[8], n1 = V[9], n2 = V[10], o2 = V[14];
@@ -1751,13 +1762,15 @@ void main(){
     }
 
     // 상태
-    const SAIL_T = 2.6, BACK_T = 1.8, SPIN = 1080, SCROLL_AT = .45, NEED = 120;   // 초 · 초 · 출항 때 더 도는 각도 · ver 6 스크롤을 시작하는 지점 · 출항에 필요한 회전(°, 1/3바퀴)
+    const SAIL_T = 2.6, BACK_T = 1.8, SPIN = 1080, SCROLL_AT = .3, NEED = 120;   // 초 · 초 · 출항 때 더 도는 각도 · ver 6 스크롤을 시작하는 지점 · 출항에 필요한 회전(°, 1/3바퀴)
     let th = 14, tgt = 14, om = 0, hd = 0, p9 = VIEW.pitch, y9 = VIEW.yaw, drag = false, last = 0, travel = 0, net = 0, rect = null;
     let u = 0, dir = 0, sailed = false, spin0 = 0, spinDir = 1, launched = false, drawn = false, warpOn = false, dTh = NaN, dP = NaN, dY = NaN;
     const sea = {roll:0, vr:0, x:0, vx:0, y:0, vy:0, stir:0, om:0, pf:0, pfy:0, pb:0, pby:0, ph:0};
     const c01 = x => Math.max(0, Math.min(1, x)), seg = (x, a, b) => c01((x - a)/(b - a));
     const eio = x => x < .5 ? 4*x*x*x : 1 - Math.pow(-2*x + 2, 3)/2, ein = x => x*x*x;
     const wrapA = a => ((a + 540) % 360) - 180;
+    // 출항 회전 곡선: 손이 돌리던 속도(약 150°/s)로 바로 이어서 돌기 시작해 점점 빨라진다 — 진행 막대가 차고 멈칫하는 구간을 없앤다
+    const spinE = x => .35*x + .65*eio(x);
     const at = e => ({x:(e.clientX - rect.left)/scale, y:(e.clientY - rect.top)/scale});   // 화면 위치는 누를 때 한 번만 잰다
 
 
@@ -1839,7 +1852,7 @@ void main(){
       const m = document.createElement('div');
       m.style.cssText = 'position:absolute;left:12px;bottom:12px;z-index:99;padding:8px 10px;border-radius:10px;background:rgba(0,0,0,.72);color:#fff;font:600 13px/1.45 ui-monospace,Menlo,monospace;white-space:pre;pointer-events:none';
       screen.appendChild(m);
-      window.__h9 = () => ({th, tgt, u, full, cw: cv.width, ch: cv.height});   // 측정 모드 전용: 바퀴 각도·목표 각도 확인
+      window.__h9 = () => ({th, tgt, u, full, cw: (full ? cvF : cv).width, ch: (full ? cvF : cv).height});   // 측정 모드 전용: 바퀴 각도·목표 각도 확인
       let t0 = performance.now(), n = 0, worst = 0, long = 0, prevF = 0, mv = 0;
       // 출항 1회 기록: 캔버스 전환(600×600 → 전체) 직후 프레임 · SVG 왜곡 진폭을 바꾼 직후 프레임 · 그 밖의 출항 프레임을 나눠 잰다
       // (프레임 간격 d는 직전 프레임에서 바꾼 것을 그리는 시간까지 포함하므로, 바꾼 '다음' 프레임의 d를 그 작업에 귀속한다)
@@ -1901,10 +1914,10 @@ void main(){
         if (meter) meter.frame(now);
         // 출항 / 귀항
         if (!dir && !sailed && travel >= NEED && scrollS < 2) sailOut();
-        if (!dir && sailed && scrollT === 0 && scrollS < 700){ dir = -1; spin0 = th - spinDir*SPIN*eio(u); }   // 맨 위로 돌아오면 같은 움직임을 거꾸로 감는다
+        if (!dir && sailed && scrollT === 0 && scrollS < 700){ dir = -1; spin0 = th - spinDir*SPIN*spinE(u); }   // 맨 위로 돌아오면 같은 움직임을 거꾸로 감는다
         if (dir){
           u = c01(u + dir*dt/(dir > 0 ? SAIL_T : BACK_T));
-          tgt = spin0 + spinDir*SPIN*eio(u);                              // 출항: 같은 방향으로 휘몰아 돈다 · 귀항: 되감기
+          tgt = spin0 + spinDir*SPIN*spinE(u);                              // 출항: 같은 방향으로 휘몰아 돈다 · 귀항: 되감기
           if (dir > 0 && !launched && u >= SCROLL_AT){ launched = true; sail = 1; sailing = true; trans0 = now; }   // ver 6 스크롤로 두 번째 페이지 진입
           if (dir > 0 && u >= 1){ dir = 0; sailed = true; }
           if (dir < 0 && u <= 0){ dir = 0; sailed = false; launched = false; travel = net = 0; tgt = th; setFull(false); }
@@ -1928,10 +1941,10 @@ void main(){
         if (shown && u < .999){
           // 거의 안 변했으면 다시 그리지 않는다
           if (full || !(Math.abs(th - dTh) < .02 && Math.abs(p9 - dP) < .01 && Math.abs(y9 - dY) < .01)){ draw(th); dTh = th; dP = p9; dY = y9; drawn = true; }
-        } else if (drawn && gl){ gl.clear(gl.COLOR_BUFFER_BIT); drawn = false; dTh = NaN; }
+        } else if (drawn && gl){ clearAll(); drawn = false; dTh = NaN; }
         if (!shown) return;
         // 바다: 스프링(감쇠 진동)으로 크게 기울고 쓸리고 솟는다 — 놓으면 반대로 한두 번 출렁이다 멈춘다
-        const surge = 720*eio(seg(u, .12, .62));
+        const surge = 720*eio(seg(u, .04, .5));                          // 막대가 차자마자 바다가 차오르기 시작
         if (FX >= 2){
           const K = 26, C = 3.4, spring = (x, v, g) => { v += (K*(g - x) - C*v)*dt; return [x + v*dt, v]; };
           [sea.roll, sea.vr] = spring(sea.roll, sea.vr, -steer*9);
@@ -1948,7 +1961,7 @@ void main(){
         } else if (surge){
           css(waveF, 'transform', `translate3d(0,${(-surge).toFixed(1)}px,0) scale(2)`); css(waveB, 'transform', `translate3d(0,${(-surge*1.08).toFixed(1)}px,0) scale(2)`);
         }
-        const fill = seg(u, .38, .62);
+        const fill = seg(u, .28, .5);
         css(fillEl, 'opacity', fill ? fill.toFixed(3) : '0');              // 배경색을 매 프레임 다시 칠하지 않고, 하늘색 층의 투명도만 바꾼다
         // 글씨: 돌리는 동안엔 CSS 3D(원근·기울기·일렁임)만으로 휘청이고, 출항하면 바퀴 축을 중심으로 같은 방향으로 소용돌이치며 빨려 든다
         const v = ein(seg(u, 0, .7));
