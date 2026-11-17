@@ -17,8 +17,8 @@ function makeWebGL(canvas){
   const compile = (type, text) => { const shader = gl.createShader(type); gl.shaderSource(shader, text); gl.compileShader(shader); if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) throw Error(gl.getShaderInfoLog(shader)); return shader; };
   const program = gl.createProgram();
   gl.attachShader(program, compile(gl.VERTEX_SHADER, 'attribute vec2 position;varying vec2 uv;void main(){uv=(position+1.)*.5;gl_Position=vec4(position,0.,1.);}'));
-  gl.attachShader(program, compile(gl.FRAGMENT_SHADER, `precision highp float;varying vec2 uv;uniform sampler2D frame;uniform sampler2D sticker;uniform float elemA;uniform float amtA;uniform float elemB;uniform float amtB;uniform float mixT;uniform float power;${gradeGLSL}
-void main(){vec2 p=uv*2.-1.;float r=length(p);if(r>1.){gl_FragColor=vec4(0.);return;}float a=power*1.2;float rs=a<.001?r:tan(r*a)/tan(a);vec2 q=(r>.00001?p*rs/r:p)*.5+.5;vec3 rgb=texture2D(frame,q).rgb;rgb=mix(gradeColor(rgb,elemA,amtA),gradeColor(rgb,elemB,amtB),mixT);vec4 ink=texture2D(sticker,q);gl_FragColor=vec4(mix(rgb,ink.rgb,ink.a),1.-smoothstep(.992,1.,r));}`));
+  gl.attachShader(program, compile(gl.FRAGMENT_SHADER, `precision highp float;varying vec2 uv;uniform sampler2D frame;uniform sampler2D sticker;uniform float elemA;uniform float amtA;uniform float elemB;uniform float amtB;uniform float mixT;uniform float power;uniform vec4 crop;${gradeGLSL}
+void main(){vec2 p=uv*2.-1.;float r=length(p);if(r>1.){gl_FragColor=vec4(0.);return;}float a=power*1.2;float rs=a<.001?r:tan(r*a)/tan(a);vec2 q=(r>.00001?p*rs/r:p)*.5+.5;vec3 rgb=texture2D(frame,vec2(crop.x+mix(q.x,1.-q.x,step(crop.z,0.))*abs(crop.z),crop.y+q.y*crop.w)).rgb;rgb=mix(gradeColor(rgb,elemA,amtA),gradeColor(rgb,elemB,amtB),mixT);vec4 ink=texture2D(sticker,q);gl_FragColor=vec4(mix(rgb,ink.rgb,ink.a),1.-smoothstep(.992,1.,r));}`));
   gl.linkProgram(program); if (!gl.getProgramParameter(program, gl.LINK_STATUS)) throw Error(gl.getProgramInfoLog(program)); gl.useProgram(program);
   const buffer = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buffer); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
   const loc = gl.getAttribLocation(program, 'position'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
@@ -26,10 +26,18 @@ void main(){vec2 p=uv*2.-1.;float r=length(p);if(r>1.){gl_FragColor=vec4(0.);ret
     for (const [key, value] of [[gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE], [gl.TEXTURE_MIN_FILTER, gl.LINEAR], [gl.TEXTURE_MAG_FILTER, gl.LINEAR]]) gl.texParameteri(gl.TEXTURE_2D, key, value); return tex; });
   gl.uniform1i(gl.getUniformLocation(program, 'frame'), 0); gl.uniform1i(gl.getUniformLocation(program, 'sticker'), 1);
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
-  const U = n => gl.getUniformLocation(program, n), power = U('power'), eA = U('elemA'), aA = U('amtA'), eB = U('elemB'), aB = U('amtB'), mT = U('mixT');
-  return {canvas, type:'webgl', render(frame, sticker, settings){
+  const U = n => gl.getUniformLocation(program, n), power = U('power'), eA = U('elemA'), aA = U('amtA'), eB = U('elemB'), aB = U('amtB'), mT = U('mixT'), uCrop = U('crop');
+  // stickerChanged === false면 스티커 텍스처 업로드를 건너뛴다(손이 없을 때 매 프레임 빈 512 캔버스를 올리지 않음). 생략하면 항상 올린다
+  // frame이 <video>이면 영상을 그대로 텍스처로 올리고, 정사각 중앙 크롭 + 좌우 반전은 셰이더에서 한다(2D 캔버스 복사 생략).
+  // crop = (u0, v0, ±폭, 높이): 폭이 음수면 좌우 반전. 캔버스(이미 크롭 · 반전된 512 프레임)는 (0,0,1,1)
+  let stickerSet = false;
+  return {canvas, type:'webgl', video:true, render(frame, sticker, settings, stickerChanged){
     gl.viewport(0, 0, N, N); gl.uniform1f(power, settings.strength); const g = grades(settings); gl.uniform1f(eA, g[0]); gl.uniform1f(aA, g[1]); gl.uniform1f(eB, g[2]); gl.uniform1f(aB, g[3]); gl.uniform1f(mT, g[4]);
-    [frame, sticker].forEach((image, i) => { gl.activeTexture(gl.TEXTURE0 + i); gl.bindTexture(gl.TEXTURE_2D, textures[i]); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image); });
+    const vw = frame.videoWidth, vh = frame.videoHeight;
+    if (vw && vh) { const s = Math.min(vw, vh); gl.uniform4f(uCrop, (vw - s) / 2 / vw, (vh - s) / 2 / vh, -s / vw, s / vh); } else gl.uniform4f(uCrop, 0, 0, 1, 1);
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, textures[0]); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, frame);
+    gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, textures[1]);
+    if (!stickerSet || stickerChanged !== false) { gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, sticker); stickerSet = true; }
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); }};
 }
 function makeCPU(canvas){

@@ -9,7 +9,7 @@
 // 진단 옵션(주소 뒤 ?lensHands=main | worker | auto, ?lensDebug=1): main은 메인 스레드 강제, worker는 Worker만(자동 전환 없음).
 // 상태는 window.steerLensDiag에 기록되고, lensDebug=1이면 화면 왼쪽 아래에 표시된다.
 import {palmPose} from './hand-geometry.mjs';
-import {createTracks} from './palm-tracks.js';
+import {createTracks} from './palm-tracks.js?v=20261117-p1';
 // INTERVAL: 추론 간격(ms). Worker는 응답이 올 때까지 다음 프레임을 보내지 않으므로 손 2개로 추론이 길어져도 자동으로 간격이 늘어난다.
 // 메인 스레드 대체 경로는 추론이 화면 그리기를 막으므로, 최근 추론 시간의 1.5배(최대 MAIN_MAX)까지 간격을 넓힌다
 const N = 512, SCAN = 320, INTERVAL = 100, MAIN_MAX = 180;
@@ -109,6 +109,8 @@ export function createPalmOverlay(){
     starting = (P.force === 'main' ? startMain('진단 옵션으로 메인 스레드 강제') : startWorker());
     return starting;
   }
+  // 이번 프레임에 손 인식용 프레임이 필요한지(추론 간격이 됐고 이전 추론이 끝났는지) — 필요할 때만 512 프레임을 그리기 위함
+  const scanDue = now => ready && !failed && !busy && now - last >= (main && !worker ? Math.min(MAIN_MAX, Math.max(INTERVAL, diag.inferMs * 1.5)) : INTERVAL);
   // source: 좌우 반전 · 정사각 크롭된 512 프레임
   function scanHands(source, now){
     if (!ready || failed || busy || now - last < (main && !worker ? Math.min(MAIN_MAX, Math.max(INTERVAL, diag.inferMs * 1.5)) : INTERVAL)) return;
@@ -130,16 +132,20 @@ export function createPalmOverlay(){
     if (P.debug && diag.sent % 5 === 0) panel();
   }
   // 손바닥마다 같은 스티커를 부드럽게 따라 그린다(손별 크기 · 각도 유지). 반환: 안내 문구 상태
+  // inkDirty: 이번 호출에서 스티커 캔버스가 바뀌었는지. 손이 없고 이미 비어 있으면 지우지도 다시 올리지도 않는다(WebGL 텍스처 업로드 절약)
+  let inkEmpty = true, inkDirty = true;
   function paintPalm(sticker, now){
-    ictx.clearRect(0, 0, N, N);
     const list = tracks.step(now), ok = sticker && sticker.complete && sticker.naturalWidth;
-    if (ok) for (const t of list) {
+    if (!ok || !list.length) { inkDirty = !inkEmpty; if (!inkEmpty) { ictx.clearRect(0, 0, N, N); inkEmpty = true; } return failed ? 'unavailable' : !ready ? 'loading' : tracks.active(now) ? 'found' : 'searching'; }
+    ictx.clearRect(0, 0, N, N); inkEmpty = false; inkDirty = true;
+    for (const t of list) {
       const w = t.size * N * 2.1, h = w * sticker.naturalHeight / sticker.naturalWidth;
       ictx.save(); ictx.globalAlpha = Math.max(0, Math.min(1, t.a)); ictx.translate(t.x * N, t.y * N); ictx.rotate(t.rotation); ictx.drawImage(sticker, -w / 2, -h / 2, w, h); ictx.restore();
     }
     return failed ? 'unavailable' : !ready ? 'loading' : tracks.active(now) ? 'found' : 'searching';
   }
-  function clear(){ ictx.clearRect(0, 0, N, N); tracks.reset(); }
+  function clear(){ ictx.clearRect(0, 0, N, N); tracks.reset(); inkEmpty = true; inkDirty = true; }
+  const inkChanged = () => inkDirty;
 
   // 모델 · WASM 파일 응답 확인(진단 표시가 켜졌거나 초기화가 실패했을 때만): 상태 코드 · 크기 · 캐시 헤더
   let assetsChecked = false;
@@ -164,5 +170,5 @@ export function createPalmOverlay(){
       (d.workerError ? '\nworker error ' + d.workerError : '') + '\nlum main ' + d.lumMain + ' / worker ' + d.lumWorker + ' · errors ' + d.errors + (d.lastError ? ' · ' + d.lastError : '') +
       '\nassets ' + JSON.stringify(d.assets) + '\n' + d.ua + '\n---\n' + d.log.slice(-12).join('\n');
   }
-  return {ink, start, scanHands, paintPalm, clear};
+  return {ink, start, scanHands, scanDue, paintPalm, clear, inkChanged};
 }

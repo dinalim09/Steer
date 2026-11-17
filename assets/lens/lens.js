@@ -1,8 +1,8 @@
 // STEER Camera — Luck Lens 오행 포토부스(실시간 카메라 전용, 샘플 사진 모드 없음). 카메라 영상 · 손 위치는 기기 안에서만 처리한다.
 // 촬영한 최종 사진만 QR 저장을 위해 임시 스토리지에 올리고(share-config.js가 설정된 경우), 24시간 뒤 자동 삭제된다.
-import {createFisheye} from './fisheye.js';
-import {createFilterPreviews} from './filter-previews.js?v=20261117-2';
-import {createPalmOverlay} from './palm-overlay.js';
+import {createFisheye} from './fisheye.js?v=20261117-p1';
+import {createFilterPreviews} from './filter-previews.js?v=20261117-p1';
+import {createPalmOverlay} from './palm-overlay.js?v=20261117-p1';
 import {shareEnabled, shareConfig, newId, upload, pageURL} from './share.js';
 
 const BASE = new URL('./', import.meta.url).href;
@@ -229,13 +229,27 @@ export function createLens(root, hooks = {}){
     const vw = video.videoWidth, vh = video.videoHeight; if (!vw || !vh) return false;
     const s = Math.min(vw, vh); fctx.save(); fctx.setTransform(-1, 0, 0, 1, N, 0); fctx.drawImage(video, (vw - s) / 2, (vh - s) / 2, s, s, 0, 0, N, N); fctx.restore(); return true;
   }
+  // 프레임 속도: 카메라 영상은 초당 약 30장이므로, 새 영상 프레임이 왔을 때만 렌즈를 다시 그린다.
+  // 120Hz iPad에서 같은 영상을 화면 주기마다 4번씩 다시 그리던 낭비를 없앤다. 필터 전환 중에는 매 화면 주기 그린다.
+  // requestVideoFrameCallback이 없는 브라우저는 33ms 간격으로 제한한다
+  const RVFC = typeof video.requestVideoFrameCallback === 'function';
+  let freshFrame = true, lastDraw = 0, vfc = 0;
+  const watchFrames = () => { if (RVFC && !vfc) vfc = video.requestVideoFrameCallback(() => { vfc = 0; freshFrame = true; if (live) watchFrames(); }); };
+  // 필터 썸네일 5개는 한 프레임에 하나씩 나눠 그린다(한 번에 다섯 개를 그리면 iPad에서 주기적으로 끊김이 생긴다). 하나당 약 60ms 간격
+  const PREVIEW_STEP = 60;
   function tick(now){
     raf = 0; if (!active || result || !live) return;
-    if (settings.t < 1) { const x = Math.min(1, (now - fadeStart) / FADE); settings.t = x * x * (3 - 2 * x); if (x >= 1) { settings.t = 1; settings.from = settings.element; } }
-    if (live && drawVideo()) {
+    const fading = settings.t < 1;
+    if (fading) { const x = Math.min(1, (now - fadeStart) / FADE); settings.t = x * x * (3 - 2 * x); if (x >= 1) { settings.t = 1; settings.from = settings.element; } }
+    const due = RVFC ? freshFrame : now - lastDraw >= 33;
+    if ((due || fading || !shown) && video.videoWidth && video.videoHeight) {
+      freshFrame = false; lastDraw = now; watchFrames();
+      // WebGL은 영상을 직접 받아 셰이더에서 크롭 · 반전한다. 512 프레임 캔버스는 손 인식 · 썸네일에 필요할 때만 그린다
+      const previewDue = now - lastPreview > PREVIEW_STEP, direct = renderer.video;
+      if (!direct || palm.scanDue(now) || (previewDue && previews.needsFrame())) drawVideo();
       palm.scanHands(frame, now); const st = palm.paintPalm(stickers[keyOf(settings.element)], now);
-      setHint(st); renderer.render(frame, palm.ink, settings);
-      if (now - lastPreview > 180) { lastPreview = now; previews.render(frame, true); }
+      setHint(st); renderer.render(direct ? video : frame, palm.ink, settings, palm.inkChanged());
+      if (previewDue) { lastPreview = now; previews.renderNext(frame, true); }
       if (!shown) setShown(true);
     }
     raf = requestAnimationFrame(tick);
@@ -245,12 +259,12 @@ export function createLens(root, hooks = {}){
   function stopCamera(){
     request++;
     if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; emit('camera_stop'); }
-    video.pause(); video.srcObject = null; live = false; palm.clear(); setShown(false); lastPreview = 0;
+    video.pause(); video.srcObject = null; live = false; palm.clear(); setShown(false); lastPreview = 0; freshFrame = true;
   }
   // 화면을 떠날 때(Camera 닫기 · 90초 비활동 복귀)는 스트림을 끊지 않고 쉬게만 한다.
   // iPad 홈 화면 웹앱 · Safari(묻기)는 getUserMedia를 다시 부를 때마다 권한을 다시 물으므로, 한 번 받은 스트림을 페이지가 살아 있는 동안 재사용한다
   function parkCamera(){
-    request++; video.pause(); live = false; palm.clear(); setShown(false); lastPreview = 0;
+    request++; video.pause(); live = false; palm.clear(); setShown(false); lastPreview = 0; freshFrame = true;
     if (stream) emit('camera_park');
   }
   // 카메라 권한 진단: 요청 직전 권한 상태(granted · prompt · denied · unknown), 실행 방식(홈 화면 웹앱 app · Safari browser),
