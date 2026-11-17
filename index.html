@@ -1043,10 +1043,12 @@ body.bare .bar>*{pointer-events:auto}
 /* 물결: 절반 크기로 그려 두고 scale(2) — 보이는 범위·회전 중심은 이전(2006×1500, 축 683·712)과 같다 */
 #home9 .h9wave{position:absolute;left:181.5px;top:667px;width:1003px;height:750px;will-change:transform;transform-origin:501.5px 45px;transform:scale(2)}
 #home9 .h9wave svg{display:block;width:100%;height:100%}
-#h9type,.h9typeW{position:absolute;left:271.6px;top:201.8px;width:824px;height:621px;overflow:visible;transform-origin:411.4px 310.7px;will-change:transform,opacity}
+#h9type{position:absolute;left:271.6px;top:201.8px;width:824px;height:621px;overflow:visible;transform-origin:411.4px 310.7px;will-change:transform,opacity}
+/* 왜곡 그림: 필터 영역(글씨 기준 -100px 바깥까지)을 덮고, 회전 중심은 글씨와 같게 */
+.h9typeW{position:absolute;left:171.6px;top:101.8px;width:1024px;height:821px;transform-origin:511.4px 410.7px;will-change:transform,opacity}
 /* 출항 왜곡: 고정 진폭으로 한 번만 그려 둔 왜곡 사본을 겹쳐 투명도로 섞는다(매 프레임 필터를 다시 계산하지 않음) */
 /* 평소(돌리는 동안)엔 숨겨 두어 GPU가 매 프레임 합성하지 않게 한다 — 출항이 시작되면 한 장씩 차례로 켠다 */
-.h9typeW{opacity:.001;pointer-events:none;visibility:hidden}
+.h9typeW{opacity:0;pointer-events:none;display:none}
 #h9fill{position:absolute;inset:0;background:#7EE4FF;opacity:0;pointer-events:none}
 /* 조타륜 캔버스: 돌리는 동안 축(683, 512.5) 중심 600×600 · 출항 중엔 스크립트가 화면 전체로 넓힌다 */
 #h9wheel{position:absolute;left:383px;top:212.5px;width:600px;height:600px}
@@ -1650,19 +1652,28 @@ void main(){
     // 출항 왜곡: 세기별(30·60·100·150) 왜곡 글씨를 미리 한 번씩 그려 두고, 이웃한 두 장을 투명도로 섞어 점점 일그러지게 한다
     // (매 프레임 필터를 다시 계산하지 않으면서 '점점 심해지는' 왜곡을 유지)
     const WARP_AMPS = [30, 60, 100, 150];
+    // 세기별 왜곡 글씨를 로드 후 쉬는 시간에 한 번씩 '그림(캔버스)'으로 구워 둔다.
+    // 출항 중엔 이 그림을 겹쳐 투명도만 바꾸므로 SVG 필터 계산이 전혀 없다(이전: 출항 첫 프레임들에 필터 4번 계산 → 덜컹)
     const typeWs = (() => {
-      const base = document.getElementById('h9warp'), svgT = document.getElementById('h9type'), NS = 'http://www.w3.org/2000/svg';
-      if (!base || !svgT) return [];
-      return WARP_AMPS.map((amp, k) => {
-        const f = base.cloneNode(true); f.id = 'h9warp' + k;
-        f.querySelectorAll('[id]').forEach(n => n.removeAttribute('id'));
-        f.querySelector('feDisplacementMap').setAttribute('scale', amp);
-        base.parentNode.appendChild(f);
-        const sv = document.createElementNS(NS, 'svg'); sv.setAttribute('class', 'h9typeW'); sv.setAttribute('viewBox', '-0.05 -0.72 824 621'); sv.setAttribute('aria-hidden', 'true');
-        const us = document.createElementNS(NS, 'use'); us.setAttribute('href', '#h9typePath'); us.setAttribute('filter', `url(#h9warp${k})`); sv.appendChild(us);
-        (k ? document.querySelectorAll('.h9typeW')[k - 1] : svgT).after(sv);
-        return sv;
-      });
+      const svgT = document.getElementById('h9type'), path = document.getElementById('h9typePath');
+      if (!svgT || !path || !window.Blob) return [];
+      const RES = 1.25, W = 1024, H = 821;                                // 필터 영역(-100…924 × -100…721) · 배율 1.25
+      const list = WARP_AMPS.map(() => { const c = document.createElement('canvas'); c.className = 'h9typeW'; c.width = Math.round(W*RES); c.height = Math.round(H*RES); c.setAttribute('aria-hidden', 'true'); return c; });
+      let at = svgT; list.forEach(c => { at.after(c); at = c; });
+      list.ready = 0;
+      const d = path.getAttribute('d');
+      const bake = k => {
+        if (k >= list.length) return;
+        if (drag || dir){ setTimeout(() => bake(k), 400); return; }      // 돌리거나 출항 중엔 쉰다
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W*RES}" height="${H*RES}" viewBox="-100 -100 ${W} ${H}"><filter id="f" filterUnits="userSpaceOnUse" x="-100" y="-100" width="${W}" height="${H}" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.011 0.022" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="${WARP_AMPS[k]}" xChannelSelector="R" yChannelSelector="G"/></filter><path filter="url(#f)" fill="#0A0A0A" stroke="#fff" stroke-width="12" stroke-linejoin="round" paint-order="stroke" transform="translate(0.05 0.72)" d="${d}"/></svg>`;
+        const url = URL.createObjectURL(new Blob([svg], {type:'image/svg+xml'})), im = new Image();
+        im.onload = () => { try { list[k].getContext('2d').drawImage(im, 0, 0); list.ready = k + 1; } catch (e) {} URL.revokeObjectURL(url); setTimeout(() => bake(k + 1), 120); };
+        im.onerror = () => URL.revokeObjectURL(url);                     // 실패하면 왜곡 없이 CSS 원근만 쓴다
+        im.src = url;
+      };
+      const start = () => setTimeout(() => bake(0), 2500);
+      if (document.readyState === 'complete') start(); else addEventListener('load', start, {once:true});
+      return list;
     })();
     const typeEl = document.getElementById('h9type'), typePath = document.getElementById('h9typePath'), turb = document.getElementById('h9turb'), disp = document.getElementById('h9disp');
     const pill9 = document.getElementById('h9pill'), bar9 = document.getElementById('h9bar'), tog = document.getElementById('homeTog');
@@ -1972,13 +1983,13 @@ void main(){
           css(typeEl, 'transform', `perspective(1100px) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) rotate(${(v*220*spinDir).toFixed(2)}deg) skewX(${skew.toFixed(2)}deg) skewY(${wob.toFixed(2)}deg) scale(${(1 - .8*v).toFixed(3)})`);
         } else if (v) css(typeEl, 'transform', `rotate(${(v*220*spinDir).toFixed(2)}deg) scale(${(1 - .8*v).toFixed(3)})`);
         // 출항 왜곡: 원래처럼 세기 v×170으로 점점 심해진다 — 세기별로 그려 둔 두 장 사이를 투명도로 섞는다
-        const amp = FX >= 4 && !reduce && dir > 0 && typeWs.length ? v*170 : 0, fade = u > .42 ? 1 - seg(u, .42, .72) : 1;
+        const amp = FX >= 4 && !reduce && dir > 0 && typeWs.ready === WARP_AMPS.length ? v*170 : 0, fade = u > .42 ? 1 - seg(u, .42, .72) : 1;
         const lv = [0, ...WARP_AMPS], op = new Array(lv.length).fill(0);
         if (amp >= lv[lv.length - 1]) op[lv.length - 1] = 1;
         else for (let k = 0; k < lv.length - 1; k++) if (amp < lv[k + 1]){ const m = (amp - lv[k])/(lv[k + 1] - lv[k]); op[k] = 1 - m; op[k + 1] = m; break; }
         css(typeEl, 'opacity', (fade*op[0]).toFixed(3));
         typeWs.forEach((w, k) => {
-          css(w, 'visibility', dir > 0 && u >= k*.035 ? 'visible' : '');   // 출항 첫 몇 프레임에 나눠서 켬(필터 첫 렌더가 한꺼번에 몰리지 않게)
+          css(w, 'display', amp && dir > 0 && u >= k*.03 ? 'block' : '');   // 출항 중에만 켬(평소엔 합성 비용 0)
           const o = op[k + 1];
           if (o > .002 && typeEl.style.transform) css(w, 'transform', typeEl.style.transform);
           css(w, 'opacity', o > .002 ? (fade*o).toFixed(3) : '');
