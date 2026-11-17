@@ -4524,9 +4524,9 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
 })();
 </script>
 <style>
-/* 터치 탭 표시(iPad): 누를 수 있는 곳을 손가락으로 탭하면 누름 커서와 같은 조타키(외곽선 심볼, Figma 1920:10976)가 0.3초 나타났다 사라진다.
+/* 터치 탭 표시(iPad): 누를 수 있는 곳을 손가락으로 탭하면 누름 커서와 같은 조타키(외곽선 심볼, Figma 1920:10976)가 72px로 0.5초 나타났다 사라진다. 손가락에 가리지 않게 탭 지점 40px 위에 띄운다.
    마우스는 기존 CSS 커서를 그대로 쓰므로 표시하지 않는다. 끌기(10px 이상 이동)·길게 누르기(0.6초 이상)에는 표시하지 않는다 */
-#tapHelm{position:fixed;left:0;top:0;width:48px;height:45px;margin:-23px 0 0 -24px;pointer-events:none;z-index:2147483647;opacity:0;will-change:transform,opacity}
+#tapHelm{position:fixed;left:0;top:0;width:72px;height:68px;margin:-74px 0 0 -36px;pointer-events:none;z-index:2147483647;opacity:0;will-change:transform,opacity}
 </style>
 <img id="tapHelm" alt="" aria-hidden="true" draggable="false" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2234%22 height=%2232%22 viewBox=%22-2 -2 74 70%22%3E%3Cpath d=%22M45.3775 22.6803C44.6165 23.7149 45.4231 25.1652 46.7036 25.0644L63.7162 23.7256C64.4583 23.6672 65.1311 24.162 65.2964 24.8879L65.8218 27.1945C66.025 28.0866 65.389 28.9512 64.4769 29.023L50.2381 30.1438C48.8528 30.2528 48.3476 32.0241 49.467 32.8475L68.1135 46.5626C68.7809 47.0535 68.9239 47.9924 68.4331 48.6597L67.0195 50.5816C66.5286 51.2489 65.5897 51.392 64.9224 50.9011L44.7795 36.0854C43.6601 35.262 42.1197 36.2718 42.4282 37.6267L48.0504 62.3198C48.2535 63.2118 47.6177 64.0763 46.7056 64.1481L44.348 64.3338C43.6057 64.3923 42.9329 63.8975 42.7676 63.1715L37.0727 38.1582C36.7876 36.9058 35.1629 36.5677 34.4018 37.6024L20.7837 56.117C20.2929 56.7843 19.354 56.9274 18.6866 56.4365L16.4517 54.7927C15.7843 54.3018 15.6412 53.3629 16.1321 52.6955L29.6999 34.2493C30.4609 33.2146 29.6543 31.7644 28.3738 31.8652L3.01478 33.8617C2.27252 33.9201 1.59974 33.4252 1.43447 32.6993L0.909521 30.3933C0.706453 29.5012 1.34233 28.6367 2.25437 28.5649L27.415 26.584C28.8002 26.475 29.3054 24.7036 28.186 23.8803L7.96368 9.00612C7.29633 8.51527 7.15326 7.57636 7.64411 6.90901L9.0577 4.98716C9.54856 4.31981 10.4875 4.17673 11.1548 4.66759L29.8801 18.4407C30.9995 19.264 32.54 18.2542 32.2315 16.8993L29.0419 2.8901C28.8388 1.99808 29.4746 1.13358 30.3867 1.06174L32.7444 0.876017C33.4866 0.817549 34.1594 1.31238 34.3248 2.03835L38.1042 18.6362C38.3894 19.8885 40.0141 20.2266 40.7751 19.1919L51.1698 5.05978C51.6606 4.39243 52.5995 4.24935 53.2669 4.74021L55.5018 6.38409C56.1692 6.87495 56.3123 7.81386 55.8214 8.4812L45.3775 22.6803Z%22 fill=%22%23FFFFFF%22 stroke=%22%230A0A0A%22 stroke-width=%222.6%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E">
 <script>
@@ -4546,10 +4546,10 @@ video::-webkit-media-controls,video::-webkit-media-controls-panel,video::-webkit
     const d = down; down = null;
     if (!d || e.pointerId !== d.id || performance.now() - d.t > 600) return;
     if (anim) anim.cancel();
-    el.style.left = d.x + 'px'; el.style.top = d.y + 'px';
+    el.style.left = d.x + 'px'; el.style.top = Math.max(d.y, 76) + 'px';   // 화면 위쪽(내비)에서는 잘리지 않게 심볼 중심을 y36 아래로
     anim = el.animate(RM.matches ? [{opacity:1}, {opacity:0}]
       : [{opacity:1, transform:'scale(.6)'}, {opacity:1, transform:'scale(1)', offset:.45}, {opacity:0, transform:'scale(1.08)'}],
-      {duration:300, easing:'ease-out'});
+      {duration:500, easing:'ease-out'});
   }, {capture:true, passive:true});
 })();
 </script>
